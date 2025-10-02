@@ -1,0 +1,124 @@
+<div class="admin-profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <h2>Profil Administrateur</h2>
+    </div>
+
+    <div class="profile-content" *ngIf="admin">
+      <form [formGroup]="profileForm" >
+        
+        <!-- ID Personnel (lecture seule) -->
+        <div class="form-group">
+          <label>ID Personnel</label>
+          <input 
+            type="text" 
+            class="form-control readonly"
+            [value]="admin.persoId"
+            readonly>
+        </div>
+
+        <!-- Nom Personnel -->
+        <div class="form-group">
+          <label for="persoName">Nom Personnel</label>
+          <input 
+            type="text" 
+            id="persoName"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('persoName')"
+            formControlName="persoName"
+            [readonly]="!isEditing">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('persoName')">
+            {{ getFieldError('persoName') }}
+          </div>
+        </div>
+
+        <!-- Site -->
+        <div class="form-group">
+          <label for="site">Site</label>
+          <input 
+            type="text" 
+            id="site"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('site')"
+            formControlName="site"
+            [readonly]="!isEditing">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('site')">
+            {{ getFieldError('site') }}
+          </div>
+        </div>
+
+        <!-- Type -->
+        <div class="form-group">
+          <label for="type">Type</label>
+          <input 
+            type="text" 
+            id="type"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('type')"
+            formControlName="type"
+            [readonly]="!isEditing">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('type')">
+            {{ getFieldError('type') }}
+          </div>
+        </div>
+
+        <!-- Code Entité -->
+        <div class="form-group">
+          <label for="codeEntite">Code Entité</label>
+          <input 
+            type="text" 
+            id="codeEntite"
+            class="form-control"
+            [class.is-invalid]="isFieldInvalid('codeEntite')"
+            formControlName="codeEntite"
+            [readonly]="!isEditing">
+          <div class="invalid-feedback" *ngIf="isFieldInvalid('codeEntite')">
+            {{ getFieldError('codeEntite') }}
+          </div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="form-actions">
+          <ng-container *ngIf="!isEditing">
+            <button 
+              type="button" 
+              class="btn btn-primary"
+              (click)="toggleEdit()">
+              <i class="fas fa-edit"></i>
+              Modifier
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="isEditing">
+            <button 
+              type="submit" 
+              class="btn btn-success"
+              [disabled]="profileForm.invalid || loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!loading" class="fas fa-save"></i>
+              {{ loading ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+            
+            <button 
+              type="button" 
+              class="btn btn-secondary ms-2"
+              (click)="toggleEdit()"
+              [disabled]="loading">
+              <i class="fas fa-times"></i>
+              Annuler
+            </button>
+          </ng-container>
+        </div>
+      </form>
+    </div>
+
+    <!-- Message si aucun admin n'est connecté -->
+    <div class="no-admin-message" *ngIf="!admin">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>Aucun profil administrateur trouvé.</p>
+    </div>
+  </div>
+</div>

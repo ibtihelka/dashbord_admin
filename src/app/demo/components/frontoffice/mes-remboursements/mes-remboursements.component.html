@@ -1,0 +1,110 @@
+<div class="remboursements-container">
+  <div class="header">
+    <div class="title-section">
+      <h2 class="title">Mes remboursements</h2>
+      <div class="user-info" *ngIf="currentUser">
+    
+      </div>
+    </div>
+    
+   <!-- Informations de debug -->
+<div class="debug-info"
+     style="margin-top: 1rem; padding: 0.5rem; background: #f8f9fa;
+            border-radius: 4px; font-size: 0.9rem; color: #666;">
+
+  <div>{{ getDebugInfo() }}</div>
+  <div *ngIf="loading" style="color: #007bff;">
+    ⏳ Chargement en cours...
+  </div>
+
+  <!-- ✅ Message + bouton à droite -->
+  <div *ngIf="!loading && !error && remboursements.length > 0"
+       style="color: #28a745; display: flex; justify-content: space-between; align-items: center;">
+    <span>✅ {{ remboursements.length }} remboursement(s) trouvé(s)</span>
+     <button class="reload-button-minimal" onclick="reload()">
+                <span class="reload-icon">🔄</span>
+                Actualiser
+            </button>
+  </div>
+
+  <!-- ⚠️ Aucun remboursement -->
+  <div *ngIf="!loading && !error && remboursements.length === 0"
+       style="color: #ffc107;">
+    ⚠️ Aucun remboursement trouvé
+  </div>
+
+  <!-- ❌ Erreur -->
+  <div *ngIf="error" style="color: #dc3545;">
+    ❌ Erreur
+  </div>
+</div>
+
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des remboursements...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-button" (click)="loadRemboursements()">Réessayer</button>
+  </div>
+
+  <!-- Remboursements Table -->
+  <div *ngIf="!loading && !error && remboursements.length > 0" class="table-container">
+    <div class="table-wrapper">
+      <table class="remboursements-table">
+        <thead>
+          <tr>
+            <th>Ref Bordereau</th>
+            <th>N° Bulletin de soins</th>
+            <th>Date Soin</th>
+            <th>Bénéficiaire</th>
+            <th>Montant dépensé</th>
+            <th>Montant remboursé</th>
+            <th>Statut</th>
+            <th>Observations</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let remb of remboursements; trackBy: trackByRefBs" class="table-row">
+            <td>{{ remb.refBorderau || '-' }}</td>
+            <td>{{ remb.refBsPhys }}</td>
+            <td>{{ formatDate(remb.datBs) }}</td>
+            <td>{{ remb.nomPrenPrest || '-' }}</td>
+            <td class="amount">{{ formatAmount(remb.mntBs) }}</td>
+            <td class="amount">{{ formatAmount(remb.mntBsRemb) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(remb.statBs)">
+                {{ remb.statBs || 'Non défini' }}
+              </span>
+            </td>
+            <td class="observation">{{ remb.observation || '-' }}</td>
+            <td class="actions">
+              <button class="action-button details-button" (click)="onConsulter(remb)" title="Consulter les détails">
+                📋 Détails
+              </button>
+              <button class="action-button reclamation-button" (click)="onReclamation(remb)" title="Faire une réclamation"
+                      [disabled]="remb.statBs === 'Règlement effectué'">
+                📝 Réclamation
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && remboursements.length === 0" class="empty-state">
+    <div class="empty-icon">📭</div>
+    <h3>Aucun remboursement trouvé</h3>
+    <p>Vous n'avez actuellement aucun remboursement enregistré.</p>
+    <button class="retry-button" (click)="reload()">Actualiser</button>
+  </div>
+</div>`

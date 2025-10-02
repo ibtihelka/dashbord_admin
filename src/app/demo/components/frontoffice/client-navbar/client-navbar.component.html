@@ -1,0 +1,114 @@
+<nav class="client-navbar">
+  <div class="navbar-container">
+    <!-- Logo/Brand -->
+    <div class="navbar-brand" (click)="navigateToHome()">
+       <img src="assets/layout/images/logo(1).png" alt="Logo" class="logo-img">
+    </div>
+
+    <!-- Navigation Items -->
+    <div class="navbar-nav">
+      <a class="nav-item" (click)="navigateToHome()" [class.active]="isRouteActive('accueil')">
+        <i class="pi pi-home"></i>
+        <span>Accueil</span>
+      </a>
+      
+      <a class="nav-item" (click)="navigateToRemboursements()" [class.active]="isRouteActive('mesRemboursements')">
+        <i class="pi pi-money-bill"></i>
+        <span>Remboursements</span>
+      </a>
+      
+      <a class="nav-item" (click)="navigateToSuggestions()" [class.active]="isRouteActive('suggestions-reclamations')">
+        <i class="pi pi-comments"></i>
+        <span>Suggestions</span>
+      </a>
+      
+      <a class="nav-item" (click)="navigateToChangeRib()" [class.active]="isRouteActive('changement-rib')">
+        <i class="pi pi-credit-card"></i>
+        <span>RIB</span>
+      </a>
+      
+      <a class="nav-item" (click)="navigateToChangePhone()" [class.active]="isRouteActive('changement-tel')">
+        <i class="pi pi-phone"></i>
+        <span>Téléphone</span>
+      </a>
+    </div>
+
+    <!-- User Profile Dropdown -->
+    <div class="profile-dropdown" (clickOutside)="closeDropdown()" *ngIf="currentUser">
+      <button class="profile-button" (click)="toggleProfileDropdown()">
+        <div class="profile-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="profile-info">
+          <span class="profile-name">{{ getUserDisplayName() }}</span>
+          <span class="profile-email">{{ getUserEmail() }}</span>
+        </div>
+        <i class="pi pi-chevron-down dropdown-arrow" [class.rotated]="isProfileDropdownOpen"></i>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div class="dropdown-menu" [class.show]="isProfileDropdownOpen">
+        <div class="dropdown-header">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="user-details">
+              <span class="user-name">{{ getUserDisplayName() }}</span>
+              <span class="user-email">{{ getUserEmail() }}</span>
+              <small class="user-id">ID: {{ getUserId() }}</small>
+            </div>
+          </div>
+        </div>
+        
+        <div class="dropdown-divider"></div>
+        
+        <div class="dropdown-items">
+          <button class="dropdown-item" (click)="navigateToHome()">
+            <i class="pi pi-home"></i>
+            <span>Accueil</span>
+          </button>
+          
+          <button class="dropdown-item" (click)="navigateToProfile()">
+            <i class="pi pi-user"></i>
+            <span>Mon Profil</span>
+          </button>
+          
+          <button class="dropdown-item" (click)="navigateToRemboursements()">
+            <i class="pi pi-money-bill"></i>
+            <span>Mes Remboursements</span>
+          </button>
+
+          <div class="dropdown-divider"></div>
+          
+          <button class="dropdown-item" (click)="navigateToSuggestions()">
+            <i class="pi pi-comments"></i>
+            <span>Suggestions & Réclamations</span>
+          </button>
+          
+          <button class="dropdown-item" (click)="navigateToChangeRib()">
+            <i class="pi pi-credit-card"></i>
+            <span>Changement RIB</span>
+          </button>
+          
+          <button class="dropdown-item" (click)="navigateToChangePhone()">
+            <i class="pi pi-phone"></i>
+            <span>Changement Téléphone</span>
+          </button>
+          
+          <div class="dropdown-divider"></div>
+          
+          <button class="dropdown-item logout" (click)="logout()">
+            <i class="pi pi-sign-out"></i>
+            <span>Se déconnecter</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Affichage de loading si pas d'utilisateur -->
+    <div class="profile-loading" *ngIf="!currentUser">
+      <i class="pi pi-spinner pi-spin"></i>
+    </div>
+  </div>
+</nav>
