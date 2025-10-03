@@ -8,6 +8,10 @@ import { UserDetailedStats, UserStats, UserStatsService } from '../demo/service/
 })
 export class UserStatsComponent implements OnInit {
     
+    // Entreprises disponibles
+    companies: string[] = [];
+    selectedCompany: string | null = null;
+    
     // Statistiques globales
     globalStats: UserStats | null = null;
     
@@ -26,17 +30,69 @@ export class UserStatsComponent implements OnInit {
     constructor(private userStatsService: UserStatsService) {}
 
     ngOnInit(): void {
+        this.loadCompanies();
         this.loadStats();
     }
 
     /**
-     * Charger toutes les statistiques
+     * Charger la liste des entreprises
+     */
+    loadCompanies(): void {
+        this.userStatsService.getAllCompanies().subscribe({
+            next: (companies) => {
+                this.companies = companies;
+                console.log('✅ Entreprises chargées:', companies);
+            },
+            error: (err) => {
+                console.error('❌ Erreur lors du chargement des entreprises:', err);
+            }
+        });
+    }
+
+    /**
+     * Gérer le changement d'entreprise sélectionnée
+     */
+    onCompanyChange(): void {
+        console.log('🏢 Entreprise sélectionnée:', this.selectedCompany);
+        this.loadStats();
+    }
+
+    /**
+     * Réinitialiser le filtre (toutes les entreprises)
+     */
+    clearCompanyFilter(): void {
+        this.selectedCompany = null;
+        this.loadStats();
+    }
+
+    /**
+     * Actualiser les statistiques
+     */
+    refreshStats(): void {
+        this.loadStats();
+    }
+
+    /**
+     * Charger toutes les statistiques (avec ou sans filtre entreprise)
      */
     loadStats(): void {
         this.loading = true;
         this.error = null;
 
-        // Charger les stats globales
+        if (this.selectedCompany) {
+            // Charger les stats pour une entreprise spécifique
+            this.loadStatsForCompany(this.selectedCompany);
+        } else {
+            // Charger les stats globales (toutes entreprises)
+            this.loadGlobalStats();
+        }
+    }
+
+    /**
+     * Charger les statistiques globales (toutes entreprises)
+     */
+    private loadGlobalStats(): void {
+        // Stats globales
         this.userStatsService.getGlobalStats().subscribe({
             next: (stats) => {
                 this.globalStats = stats;
@@ -48,7 +104,7 @@ export class UserStatsComponent implements OnInit {
             }
         });
 
-        // Charger les stats détaillées
+        // Stats détaillées
         this.userStatsService.getDetailedStats().subscribe({
             next: (stats) => {
                 this.detailedStats = stats;
@@ -61,7 +117,7 @@ export class UserStatsComponent implements OnInit {
             }
         });
 
-        // Charger l'évolution mensuelle
+        // Évolution mensuelle
         this.userStatsService.getEvolutionStats().subscribe({
             next: (evolution) => {
                 this.initEvolutionChart(evolution);
@@ -69,7 +125,7 @@ export class UserStatsComponent implements OnInit {
                 console.log('✅ Stats évolution chargées:', evolution);
             },
             error: (err) => {
-                console.error('⚠️ Erreur stats évolution (normal si dateCreation absent):', err);
+                console.error('⚠️ Erreur stats évolution:', err);
                 this.evolutionChartData = null;
                 this.loading = false;
             }
@@ -77,111 +133,125 @@ export class UserStatsComponent implements OnInit {
     }
 
     /**
-     * Initialiser les graphiques principaux
+     * Charger les statistiques pour une entreprise spécifique
      */
-    initCharts(): void {
+    private loadStatsForCompany(codeEntreprise: string): void {
+        // Stats globales de l'entreprise
+        this.userStatsService.getGlobalStatsByCompany(codeEntreprise).subscribe({
+            next: (stats) => {
+                this.globalStats = stats;
+                console.log(`✅ Stats globales entreprise ${codeEntreprise}:`, stats);
+            },
+            error: (err) => {
+                console.error('❌ Erreur stats globales entreprise:', err);
+                this.error = 'Erreur lors du chargement des statistiques de l\'entreprise';
+            }
+        });
+
+        // Stats détaillées de l'entreprise
+        this.userStatsService.getDetailedStatsByCompany(codeEntreprise).subscribe({
+            next: (stats) => {
+                this.detailedStats = stats;
+                this.initCharts();
+                console.log(`✅ Stats détaillées entreprise ${codeEntreprise}:`, stats);
+            },
+            error: (err) => {
+                console.error('❌ Erreur stats détaillées entreprise:', err);
+                this.error = 'Erreur lors du chargement des statistiques détaillées de l\'entreprise';
+            }
+        });
+
+        // Évolution mensuelle de l'entreprise
+        this.userStatsService.getEvolutionStatsByCompany(codeEntreprise).subscribe({
+            next: (evolution) => {
+                this.initEvolutionChart(evolution);
+                this.loading = false;
+                console.log(`✅ Stats évolution entreprise ${codeEntreprise}:`, evolution);
+            },
+            error: (err) => {
+                console.error('⚠️ Erreur stats évolution entreprise:', err);
+                this.evolutionChartData = null;
+                this.loading = false;
+            }
+        });
+    }
+
+    /**
+     * Initialiser les graphiques de répartition (sexe et situation familiale)
+     */
+    private initCharts(): void {
         if (!this.detailedStats) return;
 
-        const documentStyle = getComputedStyle(document.documentElement);
-
-        // Chart répartition par sexe
-        const sexeLabels = Object.keys(this.detailedStats.repartitionParSexe).map(sexe => {
-            if (sexe === 'M' || sexe === 'H') return 'Hommes';
-            if (sexe === 'F') return 'Femmes';
+        // Graphique répartition par sexe
+        const sexeLabels = Object.keys(this.detailedStats.repartitionParSexe).map(key => {
+            if (key === 'M') return 'Hommes';
+            if (key === 'F') return 'Femmes';
             return 'Non défini';
         });
 
         this.sexeChartData = {
             labels: sexeLabels,
-            datasets: [{
-                data: Object.values(this.detailedStats.repartitionParSexe),
-                backgroundColor: [
-                    documentStyle.getPropertyValue('--blue-500'),
-                    documentStyle.getPropertyValue('--pink-500'),
-                    documentStyle.getPropertyValue('--gray-500')
-                ],
-                hoverBackgroundColor: [
-                    documentStyle.getPropertyValue('--blue-400'),
-                    documentStyle.getPropertyValue('--pink-400'),
-                    documentStyle.getPropertyValue('--gray-400')
-                ]
-            }]
+            datasets: [
+                {
+                    data: Object.values(this.detailedStats.repartitionParSexe),
+                    backgroundColor: ['#42A5F5', '#EC407A', '#66BB6A'],
+                    hoverBackgroundColor: ['#64B5F6', '#F06292', '#81C784']
+                }
+            ]
         };
 
-        // Chart répartition par situation familiale
+        // Graphique répartition par situation familiale
         const situationLabels = Object.keys(this.detailedStats.repartitionParSituationFamiliale)
-            .map(s => this.getSituationLabel(s));
+            .map(key => this.getSituationLabel(key));
 
         this.situationChartData = {
             labels: situationLabels,
-            datasets: [{
-                label: 'Nombre d\'adhérents',
-                data: Object.values(this.detailedStats.repartitionParSituationFamiliale),
-                backgroundColor: documentStyle.getPropertyValue('--primary-500'),
-                borderColor: documentStyle.getPropertyValue('--primary-500'),
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: 'Nombre d\'adhérents',
+                    data: Object.values(this.detailedStats.repartitionParSituationFamiliale),
+                    backgroundColor: ['#AB47BC', '#EF5350', '#26A69A', '#FF7043', '#5C6BC0'],
+                    hoverBackgroundColor: ['#BA68C8', '#EF5350', '#26C6DA', '#FF8A65', '#7986CB']
+                }
+            ]
         };
     }
 
     /**
      * Initialiser le graphique d'évolution mensuelle
      */
-    initEvolutionChart(evolution: {[key: string]: number}): void {
-        if (!evolution || Object.keys(evolution).length === 0) {
-            this.evolutionChartData = null;
-            return;
-        }
-
-        const documentStyle = getComputedStyle(document.documentElement);
-        
-        // Extraire les labels et données
+    private initEvolutionChart(evolution: {[key: string]: number}): void {
         const labels = Object.keys(evolution);
         const data = Object.values(evolution);
 
         this.evolutionChartData = {
             labels: labels,
-            datasets: [{
-                label: 'Nouveaux adhérents',
-                data: data,
-                fill: true,
-                backgroundColor: 'rgba(104, 211, 145, 0.2)', // Vert transparent
-                borderColor: documentStyle.getPropertyValue('--green-500'),
-                tension: 0.4,
-                pointBackgroundColor: documentStyle.getPropertyValue('--green-500'),
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
+            datasets: [
+                {
+                    label: 'Nouveaux adhérents',
+                    data: data,
+                    fill: false,
+                    borderColor: '#42A5F5',
+                    tension: 0.4,
+                    backgroundColor: '#42A5F5'
+                }
+            ]
         };
-
-        console.log('📈 Graphique évolution initialisé:', {
-            labels: labels,
-            data: data
-        });
-    }
-
-    /**
-     * Rafraîchir les statistiques
-     */
-    refreshStats(): void {
-        this.loadStats();
-    }
-
-    /**
-     * Obtenir les clés d'un objet
-     */
-    getObjectKeys(obj: any): string[] {
-        return obj ? Object.keys(obj) : [];
     }
 
     /**
      * Calculer le pourcentage
      */
-    getPercentage(value: number, total: number): number {
-        if (!value || !total || total === 0) return 0;
-        return Math.round((value / total) * 100);
+    getPercentage(value: number, total: number): string {
+        if (total === 0) return '0';
+        return ((value / total) * 100).toFixed(1);
+    }
+
+    /**
+     * Obtenir les clés d'un objet (pour *ngFor)
+     */
+    getObjectKeys(obj: any): string[] {
+        return obj ? Object.keys(obj) : [];
     }
 
     /**
@@ -189,54 +259,43 @@ export class UserStatsComponent implements OnInit {
      */
     getSituationLabel(situation: string): string {
         const labels: { [key: string]: string } = {
-            'C': 'Célibataire',
             'CELIBATAIRE': 'Célibataire',
-            'M': 'Marié(e)',
             'MARIE': 'Marié(e)',
-            'D': 'Divorcé(e)',
             'DIVORCE': 'Divorcé(e)',
-            'V': 'Veuf(ve)',
-            'VEUF': 'Veuf(ve)',
-            'NON_DEFINI': 'Non défini'
+            'VEUF': 'Veuf/Veuve',
+            'CONCUBINAGE': 'Concubinage',
+            'PACSE': 'Pacsé(e)'
         };
-        return labels[situation.toUpperCase()] || situation;
+        return labels[situation] || situation;
     }
 
     /**
      * Obtenir l'icône pour une situation familiale
      */
     getSituationIcon(situation: string): string {
-        const situationUpper = situation.toUpperCase();
         const icons: { [key: string]: string } = {
-            'C': 'pi-user',
             'CELIBATAIRE': 'pi-user',
-            'M': 'pi-heart',
             'MARIE': 'pi-heart',
-            'D': 'pi-heart-fill',
-            'DIVORCE': 'pi-heart-fill',
-            'V': 'pi-user-minus',
-            'VEUF': 'pi-user-minus',
-            'NON_DEFINI': 'pi-question-circle'
+            'DIVORCE': 'pi-heart-slash',
+            'VEUF': 'pi-times-circle',
+            'CONCUBINAGE': 'pi-users',
+            'PACSE': 'pi-link'
         };
-        return icons[situationUpper] || 'pi-user';
+        return icons[situation] || 'pi-question-circle';
     }
 
     /**
      * Obtenir la couleur pour une situation familiale
      */
     getSituationColor(situation: string): string {
-        const situationUpper = situation.toUpperCase();
         const colors: { [key: string]: string } = {
-            'C': 'blue',
             'CELIBATAIRE': 'blue',
-            'M': 'green',
-            'MARIE': 'green',
-            'D': 'orange',
+            'MARIE': 'pink',
             'DIVORCE': 'orange',
-            'V': 'gray',
             'VEUF': 'gray',
-            'NON_DEFINI': 'gray'
+            'CONCUBINAGE': 'teal',
+            'PACSE': 'purple'
         };
-        return colors[situationUpper] || 'blue';
+        return colors[situation] || 'gray';
     }
 }

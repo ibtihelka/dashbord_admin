@@ -1,9 +1,6 @@
-// src/app/service/user-stats.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-
 
 export interface User {
     persoId: string;
@@ -18,7 +15,6 @@ export interface User {
     contact: string;
 }
 
-
 export interface UserStats {
     total: number;
     nouveaux: number;
@@ -26,12 +22,13 @@ export interface UserStats {
 
 export interface UserDetailedStats {
     repartitionParSexe: {
-        [key: string]: number; // 'M', 'F', etc.
+        [key: string]: number;
     };
     repartitionParSituationFamiliale: {
-        [key: string]: number; // 'CELIBATAIRE', 'MARIE', etc.
+        [key: string]: number;
     };
 }
+
 @Injectable({
     providedIn: 'root'
 })
@@ -40,49 +37,65 @@ export class UserStatsService {
 
     constructor(private http: HttpClient) {}
 
-   
-
     /**
-     * Récupère tous les utilisateurs avec leurs détails
+     * Récupère tous les utilisateurs
      */
     getAllUsers(): Observable<User[]> {
         return this.http.get<User[]>(this.apiUrl);
     }
 
-  
-
-  
-
-    private calculateAge(birthDate: Date): number {
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        
-        return age;
-
-
-    }
+    // ========== NOUVELLE MÉTHODE: RÉCUPÉRER LES ENTREPRISES ==========
     
     /**
-     * Obtenir les statistiques globales (total et nouveaux)
+     * Récupère la liste de tous les codes d'entreprise
+     */
+    getAllCompanies(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.apiUrl}/companies`);
+    }
+
+    // ========== STATISTIQUES GLOBALES (TOUTES ENTREPRISES) ==========
+    
+    /**
+     * Statistiques globales de tous les adhérents
      */
     getGlobalStats(): Observable<UserStats> {
         return this.http.get<UserStats>(`${this.apiUrl}/stats/global`);
     }
 
     /**
-     * Obtenir les statistiques détaillées
+     * Statistiques détaillées de tous les adhérents
      */
     getDetailedStats(): Observable<UserDetailedStats> {
         return this.http.get<UserDetailedStats>(`${this.apiUrl}/stats/detailed`);
     }
 
-
+    /**
+     * Évolution mensuelle de tous les adhérents
+     */
     getEvolutionStats(): Observable<{[key: string]: number}> {
-    return this.http.get<{[key: string]: number}>(`${this.apiUrl}/stats/evolution`);
-}
+        return this.http.get<{[key: string]: number}>(`${this.apiUrl}/stats/evolution`);
+    }
+
+    // ========== STATISTIQUES PAR ENTREPRISE ==========
+    
+    /**
+     * Statistiques globales pour une entreprise spécifique
+     */
+    getGlobalStatsByCompany(codeEntreprise: string): Observable<UserStats> {
+        return this.http.get<UserStats>(`${this.apiUrl}/stats/global/company/${codeEntreprise}`);
+    }
+
+    /**
+     * Statistiques détaillées pour une entreprise spécifique
+     */
+    getDetailedStatsByCompany(codeEntreprise: string): Observable<UserDetailedStats> {
+        return this.http.get<UserDetailedStats>(`${this.apiUrl}/stats/detailed/company/${codeEntreprise}`);
+    }
+
+    /**
+     * Évolution mensuelle pour une entreprise spécifique
+     */
+    getEvolutionStatsByCompany(codeEntreprise: string): Observable<{[key: string]: number}> {
+        return this.http.get<{[key: string]: number}>(`${this.apiUrl}/stats/evolution/company/${codeEntreprise}`);
+    }
 }

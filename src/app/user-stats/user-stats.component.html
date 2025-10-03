@@ -1,20 +1,42 @@
 <div class="grid">
-    <!-- En-tête avec bouton retour -->
+    <!-- En-tête avec bouton retour et sélecteur d'entreprise -->
     <div class="col-12">
         <div class="card">
-            <div class="flex justify-content-between align-items-center">
+            <div class="flex flex-column lg:flex-row justify-content-between align-items-start lg:align-items-center gap-3">
                 <div>
                     <h3 class="m-0">📊 Statistiques des Adhérents</h3>
-                    <p class="text-600 mt-2">Vue détaillée des adhérents de la mutuelle</p>
+                    <p class="text-600 mt-2 mb-0">
+                        <span *ngIf="!selectedCompany">Vue globale de tous les adhérents</span>
+                        <span *ngIf="selectedCompany">Entreprise: <strong>{{ selectedCompany }}</strong></span>
+                    </p>
                 </div>
-                <div class="flex gap-2">
+                
+                <!-- Sélecteur d'entreprise -->
+                <div class="flex flex-column sm:flex-row gap-2 align-items-stretch sm:align-items-center w-full lg:w-auto">
+                    <div class="p-inputgroup flex-1" style="min-width: 250px;">
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-building"></i>
+                        </span>
+                        <p-dropdown 
+                            [options]="companies" 
+                            [(ngModel)]="selectedCompany"
+                            (onChange)="onCompanyChange()"
+                            placeholder="Toutes les entreprises"
+                            [showClear]="true"
+                            styleClass="w-full">
+                        </p-dropdown>
+                    </div>
+                    
                     <button pButton 
                             type="button" 
-                            label="Retour" 
-                            icon="pi pi-arrow-left" 
-                            class="p-button-outlined"
-                            routerLink="/admin">
+                            icon="pi pi-times" 
+                            class="p-button-outlined p-button-secondary"
+                            *ngIf="selectedCompany"
+                            (click)="clearCompanyFilter()"
+                            pTooltip="Afficher toutes les entreprises"
+                            tooltipPosition="bottom">
                     </button>
+                    
                     <button pButton 
                             type="button" 
                             label="Actualiser" 
@@ -22,6 +44,14 @@
                             class="p-button-outlined"
                             [loading]="loading"
                             (click)="refreshStats()">
+                    </button>
+                    
+                    <button pButton 
+                            type="button" 
+                            label="Retour" 
+                            icon="pi pi-arrow-left" 
+                            class="p-button-outlined"
+                            routerLink="/admin">
                     </button>
                 </div>
             </div>
@@ -64,7 +94,10 @@
                         <i class="pi pi-users text-white text-2xl"></i>
                     </div>
                 </div>
-                <span class="text-white-alpha-90">Adhérents enregistrés</span>
+                <span class="text-white-alpha-90">
+                    <span *ngIf="selectedCompany">de l'entreprise</span>
+                    <span *ngIf="!selectedCompany">Adhérents enregistrés</span>
+                </span>
             </div>
         </div>
 
@@ -143,7 +176,7 @@
 
                 <!-- Détails -->
                 <div class="mt-4">
-                    <div class="grid" *ngFor="let sexe of getObjectKeys(detailedStats.repartitionParSexe); let i = index">
+                    <div class="grid" *ngFor="let sexe of getObjectKeys(detailedStats.repartitionParSexe)">
                         <div class="col-6">
                             <div class="flex align-items-center">
                                 <div class="w-1rem h-1rem border-round mr-2"
@@ -214,7 +247,7 @@
             </div>
         </div>
 
-        <!-- Évolution des adhésions (optionnel) -->
+        <!-- Évolution des adhésions -->
         <div class="col-12" *ngIf="evolutionChartData">
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-4">
@@ -229,11 +262,11 @@
             </div>
         </div>
 
-        <!-- Tableau détaillé par situation familiale et sexe -->
+        <!-- Tableau détaillé par situation familiale -->
         <div class="col-12">
             <div class="card">
                 <div class="flex justify-content-between align-items-center mb-4">
-                    <h5>📋 Analyse Croisée: Situation Familiale × Sexe</h5>
+                    <h5>📋 Analyse Croisée: Situation Familiale</h5>
                 </div>
 
                 <div class="grid">
