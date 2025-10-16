@@ -1,7 +1,55 @@
+
+.welcome-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 0 2rem;
+}
+
+.welcome-section h1 {
+  font-size: 2rem;
+  color: #2b2b2b;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-section .user-name {
+  color: #007ad9; /* bleu PrimeNG */
+  font-weight: 700;
+}
+
+.welcome-section .highlight {
+  color: #2b2b2b; /* orange doux */
+  font-weight: 700;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 500px;
+  text-align: left;
+}
+
+.features-list li {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
 .accueil-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,6 +57,7 @@
   padding: 20px;
   box-sizing: border-box;
 }
+
 
 .main-content {
   display: flex;
@@ -55,7 +104,7 @@
 }
 
 .welcome-section h1 .highlight {
-  color: #4CAF50;
+  color: #000000;
   font-weight: 800;
 }
 

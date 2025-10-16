@@ -14,3 +14,22 @@ $gutter: 1rem; //for primeflex grid system
 /* Demos */
 @import "assets/demo/styles/flags/flags.css";
 @import "assets/demo/styles/badges.scss";
+
+
+.page-container {
+  margin-left: 0;
+  margin-top: 70px; /* hauteur de la navbar */
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 70px);
+  background-color: #e6e9f0;
+
+  &.sidebar-open {
+    margin-left: 280px; /* largeur du sidebar */
+  }
+}
+
+.page-content {
+  padding: 2rem;
+}
+
+

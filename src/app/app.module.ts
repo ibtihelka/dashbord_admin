@@ -40,12 +40,23 @@ import { ChartModule } from 'primeng/chart';
 import { RemboursementService } from './demo/service/remboursement.service';
 import { UserStatsComponent } from './user-stats/user-stats.component';
 import { UserStatsService } from './demo/service/user-stats.service';
+import { MesSuggestionsComponent } from './demo/components/frontoffice/mes-suggestions/mes-suggestions.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { MesRibsComponent } from './demo/components/frontoffice/mes-ribs/mes-ribs.component';
+import { MesTelephonesComponent } from './demo/components/frontoffice/mes-telephones/mes-telephones.component';
+import { ClientFooterComponent } from './demo/components/frontoffice/client-footer/client-footer.component';
+import { ReclamationComponent } from './demo/components/frontoffice/reclamation/reclamation.component';
+import { MonTelephoneComponent } from './demo/components/frontoffice/mon-telephone/mon-telephone.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent, MesSuggestionsComponent, MesRibsComponent, MesTelephonesComponent, ClientFooterComponent, ReclamationComponent, MonTelephoneComponent
     ],
-    imports: [ToastModule, 
+    imports: [  TagModule,
+    DialogModule,
+    ToastModule, 
         AppRoutingModule,
         AppLayoutModule,
         TableModule,
@@ -66,7 +77,8 @@ import { UserStatsService } from './demo/service/user-stats.service';
         DropdownModule,
         ChartModule,
         TableModule,
-        ButtonModule
+        ButtonModule,
+            ProgressSpinnerModule, 
     ],
     providers: [
         { provide:  LocationStrategy, useClass: HashLocationStrategy },

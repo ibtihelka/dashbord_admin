@@ -1,3 +1,7 @@
+<div class="page-container" [class.sidebar-open]="true">
+  <div class="page-content">
+  
+
 <div class="profile-container" *ngIf="currentUser">
   <div class="profile-header">
     <div class="profile-avatar-large">
@@ -5,7 +9,7 @@
     </div>
     <div class="profile-header-info">
       <h1 class="profile-title">{{ getUserDisplayName() }}</h1>
-      <p class="profile-subtitle">{{ currentUser.email }}</p>
+     
       <span class="profile-id">ID: {{ currentUser.persoId }}</span>
     </div>
     <div class="profile-actions">
@@ -186,7 +190,7 @@
     </div>
 
     <!-- Informations bancaires -->
-    <div class="profile-card">
+    <div class="profile-card full-width">
       <div class="card-header">
         <h3>
           <i class="pi pi-credit-card"></i>
@@ -214,7 +218,49 @@
       </div>
     </div>
 
-  
+    <!-- Membres de la famille -->
+    <div class="profile-card family-card full-width">
+      <div class="card-header">
+        <h3>
+          <i class="pi pi-users"></i>
+          Membres de la famille
+          <span class="family-count" *ngIf="getTotalFamilyMemberCount() > 0">
+            ({{ getTotalFamilyMemberCount() }})
+          </span>
+        </h3>
+      </div>
+      <div class="card-content">
+        <div *ngIf="getFilteredFamilyMembers().length === 0" class="empty-state">
+          <i class="pi pi-users"></i>
+          <p>Aucun membre de famille enregistré</p>
+        </div>
+
+        <div *ngIf="getFilteredFamilyMembers().length > 0" class="family-members">
+          <div class="family-member" *ngFor="let membre of getFilteredFamilyMembers(); let i = index">
+            <div class="member-avatar">
+              <i class="pi" [class.pi-user]="membre.sexe === 'Masculin'" [class.pi-user]="membre.sexe === 'Féminin'"></i>
+              <span class="member-type-badge" [class.conjoint]="membre.typPrestataire === 'CONJOINT'" [class.enfant]="membre.typPrestataire === 'ENFANT'">
+                {{ getTypePrestataire(membre.typPrestataire) }}
+              </span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">{{ membre.prenomPrestataire }}</h4>
+              <div class="member-details">
+                <div class="detail-item">
+                  <i class="pi pi-calendar"></i>
+                  <span>{{ formatDate(membre.datNais) }} ({{ calculateAge(membre.datNais) }})</span>
+                </div>
+                <div class="detail-item">
+                  <i class="pi pi-venus-mars"></i>
+                  <span>{{ membre.sexe }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -225,3 +271,10 @@
     <p>Chargement du profil...</p>
   </div>
 </div>
+
+
+</div>
+</div>
+
+
+<app-client-footer></app-client-footer>

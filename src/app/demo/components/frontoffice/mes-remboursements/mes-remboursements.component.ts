@@ -152,12 +152,7 @@ export class MesRemboursementsComponent implements OnInit, OnDestroy {
     // Par exemple : ouvrir un modal ou naviguer vers une page de détail
   }
 
-  onReclamation(remboursement: Remboursement) {
-    console.log('Réclamation pour le remboursement:', remboursement.refBsPhys);
-    console.log('Détails:', remboursement);
-    // TODO: Implémenter la logique de réclamation
-    // Par exemple : ouvrir un formulaire de réclamation
-  }
+ 
 
   trackByRefBs(index: number, item: Remboursement): string {
     return item.refBsPhys;
@@ -176,4 +171,12 @@ export class MesRemboursementsComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+
+
+  onReclamation(remboursement: Remboursement) {
+  // Naviguer vers la page réclamations avec le refBsPhys en paramètre
+  this.router.navigate(['/clients/reclamations'], {
+    queryParams: { refBsPhys: remboursement.refBsPhys }
+  });
+}
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/demo/api/login.model';
 import { AuthService } from 'src/app/demo/service/auth.service';
@@ -126,7 +125,61 @@ export class ClientProfileComponent implements OnInit, OnDestroy {
     return situations[this.currentUser?.situationAdhesion || ''] || this.currentUser?.situationAdhesion || 'N/A';
   }
 
+  // Méthodes pour la section Famille
+  getTypePrestataire(type: string): string {
+    const types: { [key: string]: string } = {
+      'CONJOINT': 'Conjoint(e)',
+      'ENFANT': 'Enfant',
+      'PERE': 'Père',
+      'MERE': 'Mère'
+    };
+    return types[type] || type;
+  }
 
+  calculateAge(dateString: string): string {
+    if (!dateString) return 'N/A';
+    try {
+      const birthDate = new Date(dateString);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age + ' ans';
+    } catch {
+      return 'N/A';
+    }
+  }
 
-  
+  // Compte tous les membres (incluant l'adhérent)
+  getTotalFamilyMemberCount(): number {
+    return this.currentUser?.familles?.length || 0;
+  }
+
+  // Compte uniquement les membres à afficher (sans l'adhérent)
+  getFamilyMemberCount(): number {
+    return this.getFilteredFamilyMembers().length;
+  }
+
+  hasFamilyMembers(): boolean {
+    return this.getFamilyMemberCount() > 0;
+  }
+
+  // Filtrer les membres de famille pour exclure la personne elle-même
+  getFilteredFamilyMembers(): any[] {
+    if (!this.currentUser?.familles) {
+      return [];
+    }
+    
+    // Filtrer uniquement les membres qui ne sont pas la personne elle-même
+    // On garde seulement CONJOINT, ENFANT, PERE, MERE (pas la personne principale)
+    return this.currentUser.familles.filter(membre => 
+      membre.typPrestataire && 
+      membre.typPrestataire.toUpperCase() !== 'ADHERENT' &&
+      membre.typPrestataire.toUpperCase() !== 'PRINCIPAL'
+    );
+  }
 }

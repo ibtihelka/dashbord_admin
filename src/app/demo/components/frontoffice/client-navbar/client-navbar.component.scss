@@ -1,129 +1,71 @@
+// client-navbar.component.scss
+
+// ============================================
+// NAVBAR STYLES
+// ============================================
 .client-navbar {
-  // Nouveau dégradé moderne avec des couleurs plus vibrantes
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
-  position: sticky;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  height: 70px;
   
-  // Container principal avec hauteur réduite
   .navbar-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 2rem; // Hauteur réduite
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: 70px; // Hauteur fixe réduite
+    padding: 0 2rem;
+    height: 100%;
+    max-width: 100%;
   }
 
-  // Section logo repositionnée et améliorée
   .navbar-brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    gap: 1rem;
     
-    &:hover {
-      transform: scale(1.05);
+    .sidebar-toggle {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 10px;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      i {
+        color: white;
+        font-size: 1.3rem;
+      }
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
     }
     
     .logo-img {
-      height: 70px !important; // Logo agrandi
+      height: 50px !important;
       width: auto !important;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+      cursor: pointer;
       transition: all 0.3s ease;
-       border-radius: 50px;
+      border-radius: 50px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+      
       &:hover {
+        transform: scale(1.05);
         filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.3));
       }
     }
-    
-    .brand-text {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: white;
-      letter-spacing: -0.5px;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-    }
   }
 
-  // Navigation centrale améliorée
-  .navbar-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-    justify-content: center;
-    
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
-      color: rgba(255, 255, 255, 0.9);
-      text-decoration: none;
-      border-radius: 25px; // Plus arrondi
-      font-weight: 600;
-      font-size: 0.9rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-      border: 2px solid transparent;
-      white-space: nowrap;
-      position: relative;
-      overflow: hidden;
-      
-      // Effet de brillance
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s ease;
-      }
-      
-      i {
-        font-size: 1.1rem;
-        margin-right: 0.25rem;
-        transition: all 0.3s ease;
-      }
-      
-      &:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        border-color: rgba(255, 255, 255, 0.3);
-        
-        &::before {
-          left: 100%;
-        }
-        
-        i {
-          transform: scale(1.1);
-        }
-      }
-      
-      &.active {
-        background: rgba(255, 255, 255, 0.25);
-        border-color: rgba(255, 255, 255, 0.5);
-        color: white;
-        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-        
-        i {
-          color: #ffd700; // Icône dorée pour l'état actif
-        }
-      }
-    }
-  }
-
-  // Dropdown profil modernisé
+  // Profile dropdown styles
   .profile-dropdown {
     position: relative;
     
@@ -194,7 +136,6 @@
       }
     }
 
-    // Menu dropdown amélioré
     .dropdown-menu {
       position: absolute;
       top: calc(100% + 0.75rem);
@@ -217,13 +158,11 @@
       }
     }
 
-    // Header du dropdown modernisé
     .dropdown-header {
       padding: 2rem 1.5rem 1.5rem;
       background: linear-gradient(135deg, #f8f9ff, #e8ecff);
       position: relative;
       
-      // Effet décoratif
       &::before {
         content: '';
         position: absolute;
@@ -288,14 +227,12 @@
       }
     }
 
-    // Séparateur amélioré
     .dropdown-divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
       margin: 0.75rem 0;
     }
 
-    // Items du dropdown
     .dropdown-items {
       padding: 1rem;
     }
@@ -314,7 +251,6 @@
       transition: all 0.3s ease;
       font-size: 0.95rem;
       font-weight: 500;
-      position: relative;
       
       i {
         font-size: 1.1rem;
@@ -348,37 +284,307 @@
     }
   }
 
-  // Responsive design amélioré
-  @media (max-width: 768px) {
-    .navbar-container {
-      padding: 0.5rem 1rem;
-      min-height: 60px;
+  .profile-loading {
+    color: white;
+    font-size: 1.5rem;
+  }
+}
+
+// ============================================
+// SIDEBAR STYLES
+// ============================================
+.sidebar {
+  position: fixed;
+  left: -280px;
+  top: 70px;
+  width: 280px;
+  height: calc(100vh - 70px);
+  background: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
+  z-index: 999;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  &.open {
+    left: 0;
+  }
+  
+  // Sur desktop, sidebar toujours visible
+  @media (min-width: 1024px) {
+    left: 0;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    
+    h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #1f2937;
+      font-weight: 700;
     }
     
-    .navbar-brand .logo-img {
-      height: 40px !important;
-    }
-    
-    .navbar-nav {
-      gap: 0.25rem;
+    .close-sidebar {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 8px;
+      width: 35px;
+      height: 35px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
       
-      .nav-item {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
-        
-        span {
-          display: none;
-        }
+      i {
+        color: #6b7280;
+        font-size: 1.2rem;
+      }
+      
+      &:hover {
+        background: #e5e7eb;
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  .sidebar-nav {
+    padding: 1rem;
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #6b7280;
+      text-decoration: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 0.95rem;
+      position: relative;
+      
+      i {
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      &:hover {
+        background: #f3f4f6;
+        color: #667eea;
+        transform: translateX(5px);
         
         i {
-          margin-right: 0;
+          transform: scale(1.1);
+        }
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        
+        i {
+          color: white;
+        }
+        
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 4px;
+          height: 70%;
+          background: white;
+          border-radius: 0 4px 4px 0;
         }
       }
     }
+  }
+}
+
+// Overlay pour mobile
+.sidebar-overlay {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 70px);
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 998;
+  
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// ============================================
+// LAYOUT HELPERS - À ajouter dans votre styles globaux
+// ============================================
+// Ajoutez ces classes dans votre fichier global styles.scss
+
+/* 
+.page-container {
+  margin-left: 0;
+  margin-top: 70px;
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 70px);
+  
+  &.sidebar-open {
+    margin-left: 280px;
+  }
+}
+
+.page-content {
+  padding: 2rem;
+}
+*/
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+@media (max-width: 768px) {
+  .client-navbar {
+    .navbar-container {
+      padding: 0 1rem;
+    }
     
-    .profile-dropdown .dropdown-menu {
-      min-width: 300px;
-      right: -1rem;
+    .navbar-brand {
+      .logo-img {
+        height: 40px !important;
+      }
+    }
+    
+    .profile-dropdown {
+      .profile-info {
+        display: none;
+      }
+      
+      .dropdown-menu {
+        min-width: 300px;
+        right: -1rem;
+      }
     }
   }
+  
+  .sidebar {
+    .sidebar-header {
+      .close-sidebar {
+        display: flex;
+      }
+    }
+  }
+  
+  // Sur mobile, ne pas décaler le contenu
+  .page-container.sidebar-open {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  // Option: Sidebar toujours visible sur grand écran
+  .sidebar {
+    left: 0;
+  }
+  
+  .page-container {
+    margin-left: 280px;
+  }
+  
+  .sidebar-overlay {
+    display: none;
+  }
+  
+  .navbar-brand .sidebar-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-container.sidebar-open {
+    margin-left: 0;
+  }
+}
+
+
+// Ajoutez ces styles à votre client-navbar.component.scss
+
+// Section partenaire dans la navbar
+.navbar-partner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  .partner-company-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    letter-spacing: 0.5px;
+  }
+
+  .partner-logo {
+    height: 35px;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    position: static;
+    transform: none;
+    flex: 1;
+    justify-content: center;
+    margin: 0 10px;
+    
+    .partner-company-name {
+      font-size: 0.9rem;
+    }
+
+    .partner-logo {
+      height: 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .partner-company-name {
+      display: none; // Masquer le texte sur très petits écrans
+    }
+
+    .partner-logo {
+      height: 25px;
+    }
+  }
+}
+
+// Ajustement de la navbar-container pour accommoder le logo partenaire
+.navbar-container {
+  position: relative; // Important pour le positionnement absolu du logo partenaire
+}
+
+// Responsive: Assurer que le profil reste à droite
+.profile-dropdown {
+  margin-left: auto;
 }

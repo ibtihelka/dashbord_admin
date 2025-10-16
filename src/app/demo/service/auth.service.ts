@@ -33,8 +33,9 @@ export class AuthService {
     }
   }
 
+  // ========== AUTHENTIFICATION ==========
+
   login(request: LoginRequest): Observable<LoginResponse> {
-    // Forcer les headers
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
@@ -91,5 +92,75 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getUserType() === 'ADMIN';
+  }
+
+  // ========== GESTION DU RIB ==========
+
+  /**
+   * Récupérer le RIB d'un utilisateur
+   * GET /api/users/{persoId}/rib
+   */
+  getRibByPersoId(persoId: string): Observable<{ persoId: string; rib: string }> {
+    return this.http.get<{ persoId: string; rib: string }>(
+      `${this.baseUrl}/${persoId}/rib`
+    );
+  }
+
+  /**
+   * Modifier le RIB d'un utilisateur
+   * PUT /api/users/{persoId}/rib
+   * @param persoId - ID de l'utilisateur
+   * @param newRib - Nouveau RIB (20 chiffres)
+   */
+  updateRib(persoId: string, newRib: string): Observable<{ 
+    success: boolean; 
+    message: string; 
+    persoId: string; 
+    rib: string 
+  }> {
+    return this.http.put<{ 
+      success: boolean; 
+      message: string; 
+      persoId: string; 
+      rib: string 
+    }>(
+      `${this.baseUrl}/${persoId}/rib`,
+      { rib: newRib }
+    );
+  }
+
+  // ========== GESTION DU CONTACT/TÉLÉPHONE ==========
+
+  /**
+   * Récupérer le numéro de téléphone d'un utilisateur
+   * GET /api/users/{persoId}/contact
+   */
+  getContactByPersoId(persoId: string): Observable<{ persoId: string; contact: string }> {
+    return this.http.get<{ persoId: string; contact: string }>(
+      `${this.baseUrl}/${persoId}/contact`
+    );
+  }
+
+  /**
+   * Modifier le numéro de téléphone d'un utilisateur
+   * PUT /api/users/{persoId}/contact
+   * @param persoId - ID de l'utilisateur
+   * @param newContact - Nouveau numéro de téléphone
+   */
+  updateContact(persoId: string, newContact: string): Observable<{ 
+    success: boolean; 
+    message: string; 
+    persoId: string; 
+    contact: string 
+  }> {
+    return this.http.put<{ 
+      success: boolean; 
+      message: string; 
+      persoId: string; 
+      contact: string 
+    }>(
+      `${this.baseUrl}/${persoId}/contact`,
+      { contact: newContact }
+    );
   }
 }

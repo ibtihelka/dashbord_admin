@@ -236,8 +236,10 @@ export class RemboursementStatsComponent implements OnInit, OnDestroy {
     }
 
     formatCurrency(value: number): string {
-        return this.remboursementService.formatCurrency(value);
-    }
+    if (value == null) return '0.000';
+    return value.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+}
+
 
     /**
      * Obtenir une classe CSS selon le statut

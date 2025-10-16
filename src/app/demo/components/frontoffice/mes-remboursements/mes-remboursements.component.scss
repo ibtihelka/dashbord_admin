@@ -1,3 +1,28 @@
+
+
+.page-container {
+  margin-left: 0;
+  margin-top: 70px; /* hauteur navbar */
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 70px);
+  background-color: #e6e9f0;
+
+  &.sidebar-open {
+    margin-left: 265px; /* largeur sidebar */
+  }
+}
+
+.page-content {
+  padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .page-container.sidebar-open {
+    margin-left: 0;
+  }
+}
+
+
 .remboursements-container {
   padding: 2rem;
   background-color: #f8f9fa;

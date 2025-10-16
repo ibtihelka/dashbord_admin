@@ -1,0 +1,210 @@
+<div class="page-container" [class.sidebar-open]="true">
+  <div class="page-content">
+    
+    <div class="reclamation-container">
+      <div class="page-header">
+        <h1 class="page-title">
+          <i class="pi pi-exclamation-circle"></i>
+          Mes Réclamations
+        </h1>
+        <p class="page-subtitle">Gérez vos réclamations concernant vos remboursements</p>
+        
+      
+      </div>
+
+      <!-- Formulaire de création (conditionnel) -->
+      <div class="reclamation-form-card" *ngIf="showForm">
+        <div class="card-header">
+          <h3>
+            <i class="pi pi-plus-circle"></i>
+            Nouvelle Réclamation
+          </h3>
+          <button 
+            class="btn-close"
+            (click)="toggleForm()"
+            title="Fermer">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+        <div class="card-content">
+          <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
+            
+            <!-- Sélection du numéro de BS -->
+            <div class="form-group">
+              <label for="refBsPhys">
+                Numéro du BS <span class="required">*</span>
+              </label>
+              <select 
+                id="refBsPhys"
+                class="form-control" 
+                formControlName="refBsPhys"
+                (change)="onRemboursementSelect($event)">
+                <option value="">Sélectionnez un bulletin de soins</option>
+                <option *ngFor="let remb of remboursements" [value]="remb.refBsPhys">
+                  {{ remb.refBsPhys }} - {{ remb.nomPrenPrest }} ({{ formatDate(remb.datBs) }})
+                </option>
+              </select>
+              <small class="error-message" *ngIf="reclamationForm.get('refBsPhys')?.invalid && reclamationForm.get('refBsPhys')?.touched">
+                Veuillez sélectionner un bulletin de soins
+              </small>
+            </div>
+
+            <!-- Titre de la réclamation -->
+            <div class="form-group">
+              <label for="titreReclamation">
+                Titre <span class="required">*</span>
+              </label>
+              <input 
+                type="text"
+                id="titreReclamation"
+                class="form-control" 
+                formControlName="titreReclamation"
+                placeholder="Ex: Remboursement incomplet">
+              <small class="error-message" *ngIf="reclamationForm.get('titreReclamation')?.invalid && reclamationForm.get('titreReclamation')?.touched">
+                Le titre est requis
+              </small>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+              <label for="texteReclamation">
+                Description <span class="required">*</span>
+              </label>
+              <textarea 
+                id="texteReclamation"
+                class="form-control" 
+                formControlName="texteReclamation"
+                rows="5"
+                placeholder="Décrivez votre réclamation en détail..."></textarea>
+              <small class="error-message" *ngIf="reclamationForm.get('texteReclamation')?.invalid && reclamationForm.get('texteReclamation')?.touched">
+                La description est requise (minimum 10 caractères)
+              </small>
+            </div>
+
+            <!-- Message d'alerte si réclamation existe déjà -->
+            <div class="alert alert-warning" *ngIf="alreadyHasReclamation">
+              <i class="pi pi-exclamation-triangle"></i>
+              Une réclamation existe déjà pour ce bulletin de soins.
+            </div>
+
+            <!-- Message de succès -->
+            <div class="alert alert-success" *ngIf="successMessage">
+              <i class="pi pi-check-circle"></i>
+              {{ successMessage }}
+            </div>
+
+            <!-- Message d'erreur -->
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              <i class="pi pi-times-circle"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- Bouton de soumission -->
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="reclamationForm.invalid || isSubmitting || alreadyHasReclamation">
+                <i class="pi" [class.pi-spin]="isSubmitting" [class.pi-spinner]="isSubmitting" [class.pi-send]="!isSubmitting"></i>
+                {{ isSubmitting ? 'Envoi en cours...' : 'Enregistrer' }}
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="resetForm()"
+                [disabled]="isSubmitting">
+                <i class="pi pi-refresh"></i>
+                Réinitialiser
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Liste des réclamations -->
+      <div class="reclamations-list-card">
+        <div class="card-header">
+          <h3>
+            <i class="pi pi-list"></i>
+            Historique des réclamations
+            <span class="count-badge" *ngIf="reclamations.length > 0">
+              {{ reclamations.length }}
+            </span>
+          </h3>
+        </div>
+        <div class="card-content">
+          
+          <!-- État vide -->
+          <div class="empty-state" *ngIf="reclamations.length === 0 && !isLoading">
+            <i class="pi pi-inbox"></i>
+            <p>Aucune réclamation pour le moment</p>
+          </div>
+
+          <!-- Chargement -->
+          <div class="loading-state" *ngIf="isLoading">
+            <i class="pi pi-spinner pi-spin"></i>
+            <p>Chargement des réclamations...</p>
+          </div>
+
+          <!-- Tableau des réclamations -->
+          <div class="table-responsive" *ngIf="reclamations.length > 0 && !isLoading">
+            <table class="reclamations-table">
+              <thead>
+                <tr>
+                  <th>N° Bulletin de soins</th>
+                  <th>Titre</th>
+                  <th>Texte Réclamation</th>
+                  <th>Réponse</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let reclamation of reclamations">
+                  <td>
+                    <span class="ref-badge">{{ reclamation.refBsPhys }}</span>
+                  </td>
+                  <td>
+                    <strong>{{ reclamation.titreReclamation }}</strong>
+                  </td>
+                  <td>
+                    <div class="text-cell">
+                      {{ reclamation.texteReclamation }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="response-cell" *ngIf="reclamation.responseRec; else noResponse">
+                      <i class="pi pi-check-circle response-icon"></i>
+                      {{ reclamation.responseRec }}
+                    </div>
+                    <ng-template #noResponse>
+                      <span class="no-response">
+                        <i class="pi pi-clock"></i>
+                        En attente
+                      </span>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <span class="date-cell">{{ formatDate(reclamation.dateCreation) }}</span>
+                  </td>
+                  <td>
+                    <button 
+                      class="btn-icon btn-delete" 
+                      (click)="deleteReclamation(reclamation.numReclamation!)"
+                      title="Supprimer">
+                      <i class="pi pi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<app-client-footer></app-client-footer>

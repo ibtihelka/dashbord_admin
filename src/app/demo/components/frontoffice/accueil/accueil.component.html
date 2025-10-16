@@ -1,19 +1,27 @@
-<div class="accueil-container">
-  <div class="main-content">
-    <div class="image-section">
-      <img src="/assets/layout/images/bs_frontend.png" alt="BS Frontend" class="bs-image">
-    </div>
-    
-    <div class="welcome-section">
-      <h1>Bienvenue chez <span class="highlight">MyBs</span> !</h1>
-      <p>Gérez facilement vos remboursements de santé en toute simplicité. Accédez à votre espace personnel pour consulter l'historique de vos demandes et suivre leur statut en temps réel.</p>
-      
-      <div class="buttons">
-        <button (click)="goToRemboursements()">
-          📋 Consulter mes remboursements
-        </button>
-      
+<div class="page-container" [class.sidebar-open]="true">
+  <div class="page-content">
+    <div class="accueil-container">
+      <div class="main-content">
+        <div class="image-section">
+          <img src="/assets/layout/images/bs_frontend.png" alt="BS Frontend" class="bs-image">
+        </div>
+
+        <div class="welcome-section">
+          <h2>Bienvenue 
+              <span class="user-name">{{ getUserDisplayName() }}</span>
+              
+              chez <span class="highlight">MyBs</span> !</h2>
+          <p>
+            Gérez facilement vos remboursements de santé en toute simplicité. 
+            Accédez à votre espace personnel pour consulter l'historique de vos 
+            demandes et suivre leur statut en temps réel.
+          </p>
+
+        
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<app-client-footer></app-client-footer>

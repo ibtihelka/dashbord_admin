@@ -1,36 +1,31 @@
+<!-- client-navbar.component.html -->
+
+<!-- IMPORTANT: Pour que le contenu ne soit pas caché sous la navbar et le sidebar, ajoutez ces classes au conteneur principal de votre page:
+<div class="page-container">
+  <div class="page-content">
+    Votre contenu ici
+  </div>
+</div>
+-->
 <nav class="client-navbar">
   <div class="navbar-container">
     <!-- Logo/Brand -->
-    <div class="navbar-brand" (click)="navigateToHome()">
-       <img src="assets/layout/images/logo(1).png" alt="Logo" class="logo-img">
+    <div class="navbar-brand">
+      <button class="sidebar-toggle" (click)="toggleSidebar()">
+        <i class="pi pi-bars"></i>
+      </button>
+      <img src="assets/layout/images/logo(1).png" alt="Logo" class="logo-img" (click)="navigateToHome()">
     </div>
 
-    <!-- Navigation Items -->
-    <div class="navbar-nav">
-      <a class="nav-item" (click)="navigateToHome()" [class.active]="isRouteActive('accueil')">
-        <i class="pi pi-home"></i>
-        <span>Accueil</span>
-      </a>
-      
-      <a class="nav-item" (click)="navigateToRemboursements()" [class.active]="isRouteActive('mesRemboursements')">
-        <i class="pi pi-money-bill"></i>
-        <span>Remboursements</span>
-      </a>
-      
-      <a class="nav-item" (click)="navigateToSuggestions()" [class.active]="isRouteActive('suggestions-reclamations')">
-        <i class="pi pi-comments"></i>
-        <span>Suggestions</span>
-      </a>
-      
-      <a class="nav-item" (click)="navigateToChangeRib()" [class.active]="isRouteActive('changement-rib')">
-        <i class="pi pi-credit-card"></i>
-        <span>RIB</span>
-      </a>
-      
-      <a class="nav-item" (click)="navigateToChangePhone()" [class.active]="isRouteActive('changement-tel')">
-        <i class="pi pi-phone"></i>
-        <span>Téléphone</span>
-      </a>
+    <!-- Section centrale: Logo entreprise (Teleperformance) -->
+    <div class="navbar-partner" *ngIf="isTeleperformanceUser">
+      <span class="partner-company-name">Teleperformance</span>
+      <img 
+        src="assets/layout/images/teleperformance.png" 
+        alt="Teleperformance" 
+        class="partner-logo"
+        (click)="openTeleperformanceWebsite()"
+        title="Cliquez pour visiter le site de Teleperformance">
     </div>
 
     <!-- User Profile Dropdown -->
@@ -41,7 +36,6 @@
         </div>
         <div class="profile-info">
           <span class="profile-name">{{ getUserDisplayName() }}</span>
-          <span class="profile-email">{{ getUserEmail() }}</span>
         </div>
         <i class="pi pi-chevron-down dropdown-arrow" [class.rotated]="isProfileDropdownOpen"></i>
       </button>
@@ -55,7 +49,6 @@
             </div>
             <div class="user-details">
               <span class="user-name">{{ getUserDisplayName() }}</span>
-              <span class="user-email">{{ getUserEmail() }}</span>
               <small class="user-id">ID: {{ getUserId() }}</small>
             </div>
           </div>
@@ -64,36 +57,9 @@
         <div class="dropdown-divider"></div>
         
         <div class="dropdown-items">
-          <button class="dropdown-item" (click)="navigateToHome()">
-            <i class="pi pi-home"></i>
-            <span>Accueil</span>
-          </button>
-          
           <button class="dropdown-item" (click)="navigateToProfile()">
             <i class="pi pi-user"></i>
             <span>Mon Profil</span>
-          </button>
-          
-          <button class="dropdown-item" (click)="navigateToRemboursements()">
-            <i class="pi pi-money-bill"></i>
-            <span>Mes Remboursements</span>
-          </button>
-
-          <div class="dropdown-divider"></div>
-          
-          <button class="dropdown-item" (click)="navigateToSuggestions()">
-            <i class="pi pi-comments"></i>
-            <span>Suggestions & Réclamations</span>
-          </button>
-          
-          <button class="dropdown-item" (click)="navigateToChangeRib()">
-            <i class="pi pi-credit-card"></i>
-            <span>Changement RIB</span>
-          </button>
-          
-          <button class="dropdown-item" (click)="navigateToChangePhone()">
-            <i class="pi pi-phone"></i>
-            <span>Changement Téléphone</span>
           </button>
           
           <div class="dropdown-divider"></div>
@@ -106,9 +72,54 @@
       </div>
     </div>
 
-    <!-- Affichage de loading si pas d'utilisateur -->
+    <!-- Loading si pas d'utilisateur -->
     <div class="profile-loading" *ngIf="!currentUser">
       <i class="pi pi-spinner pi-spin"></i>
     </div>
   </div>
 </nav>
+
+<!-- Sidebar -->
+<aside class="sidebar" [class.open]="isSidebarOpen">
+  <div class="sidebar-header">
+    <h3>Menu</h3>
+    <button class="close-sidebar" (click)="toggleSidebar()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-item" (click)="navigateToHome()" [class.active]="isRouteActive('accueil')">
+      <i class="pi pi-home"></i>
+      <span>Accueil</span>
+    </a>
+
+    <a class="sidebar-item" (click)="navigateToProfil()" [class.active]="isRouteActive('profile')">
+      <i class="pi pi-user"></i>
+      <span>Profil</span>
+    </a>
+    
+    <a class="sidebar-item" (click)="navigateToRemboursements()" [class.active]="isRouteActive('mesRemboursements')">
+      <i class="pi pi-money-bill"></i>
+      <span>Remboursements</span>
+    </a>
+    
+    <a class="sidebar-item" (click)="navigateToSuggestions()" [class.active]="isRouteActive('mes-suggestions')">
+      <i class="pi pi-comments"></i>
+      <span>Réclamations</span>
+    </a>
+    
+    <a class="sidebar-item" (click)="navigateToChangeRib()" [class.active]="isRouteActive('changement-rib')">
+      <i class="pi pi-credit-card"></i>
+      <span>RIB</span>
+    </a>
+    
+    <a class="sidebar-item" (click)="navigateToChangePhone()" [class.active]="isRouteActive('changement-tel')">
+      <i class="pi pi-phone"></i>
+      <span>Téléphone</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- Overlay pour fermer le sidebar sur mobile -->
+<div class="sidebar-overlay" [class.show]="isSidebarOpen" (click)="toggleSidebar()"></div>

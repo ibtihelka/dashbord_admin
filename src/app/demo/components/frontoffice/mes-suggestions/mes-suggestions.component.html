@@ -1,0 +1,128 @@
+
+<div class="page-container" [class.sidebar-open]="true">
+  <div class="page-content">
+
+
+<div class="suggestions-container">
+  <p-toast></p-toast>
+
+  <!-- Header -->
+  <div class="suggestions-header">
+    <div class="header-content">
+      <h1>
+        <i class="pi pi-comments"></i>
+        Mes Suggestions & Réclamations
+      </h1>
+      <p>Consultez et créez vos suggestions</p>
+    </div>
+    <button 
+      pButton 
+      label="Nouvelle Suggestion" 
+      icon="pi pi-plus" 
+      class="p-button-success"
+      (click)="openNewSuggestionDialog()">
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <p-progressSpinner></p-progressSpinner>
+    <p>Chargement de vos suggestions...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && suggestions.length === 0">
+    <i class="pi pi-inbox"></i>
+    <h2>Aucune suggestion trouvée</h2>
+    <p>Vous n'avez pas encore créé de suggestions ou réclamations</p>
+    <button 
+      pButton 
+      label="Créer ma première suggestion" 
+      icon="pi pi-plus"
+      (click)="openNewSuggestionDialog()">
+    </button>
+  </div>
+
+  <!-- Suggestions Grid -->
+  <div class="suggestions-grid" *ngIf="!loading && suggestions.length > 0">
+    <div class="suggestion-card" *ngFor="let suggestion of suggestions">
+      <div class="card-header">
+        <h3>{{ suggestion.titreSuggestion }}</h3>
+      
+      </div>
+      
+      <div class="card-body">
+        <p class="suggestion-text">{{ suggestion.texteSuggestion }}</p>
+      </div>
+      
+      <div class="card-footer">
+        <div class="footer-info">
+          <span class="info-item">
+            <i class="pi pi-calendar"></i>
+           {{ formatDate(suggestion.dateCreation || '') }}
+
+          </span>
+          <span class="info-item">
+            <i class="pi pi-hashtag"></i>
+            N° {{ suggestion.numSuggestion }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog pour nouvelle suggestion -->
+  <p-dialog 
+    header="Nouvelle Suggestion" 
+    [(visible)]="displayNewSuggestionDialog"
+    [modal]="true"
+    [style]="{width: '600px'}"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <div class="dialog-content">
+      <div class="form-group">
+        <label for="titre">Titre <span class="required">*</span></label>
+        <input 
+          id="titre"
+          type="text" 
+          pInputText 
+          [(ngModel)]="newSuggestion.titreSuggestion"
+          placeholder="Ex: Amélioration du service"
+          class="w-full" />
+      </div>
+
+      <div class="form-group">
+        <label for="texte">Description <span class="required">*</span></label>
+        <textarea 
+          id="texte"
+          pInputTextarea 
+          [(ngModel)]="newSuggestion.texteSuggestion"
+          placeholder="Décrivez votre suggestion ou réclamation en détail..."
+          rows="6"
+          class="w-full">
+        </textarea>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button 
+        pButton 
+        label="Annuler" 
+        icon="pi pi-times" 
+        class="p-button-text"
+        (click)="closeNewSuggestionDialog()">
+      </button>
+      <button 
+        pButton 
+        label="Soumettre" 
+        icon="pi pi-check"
+        (click)="submitNewSuggestion()">
+      </button>
+    </ng-template>
+  </p-dialog>
+</div>
+</div></div>
+
+
+<app-client-footer></app-client-footer>

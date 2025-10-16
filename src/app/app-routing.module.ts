@@ -11,6 +11,10 @@ import { ClientProfileComponent } from './demo/components/frontoffice/client-pro
 import { AdminProfileComponent } from './admin-profile/admin-profile.component';
 import { RemboursementStatsComponent } from './remboursement-stats/remboursement-stats.component';
 import { UserStatsComponent } from './user-stats/user-stats.component';
+import { MesSuggestionsComponent } from './demo/components/frontoffice/mes-suggestions/mes-suggestions.component';
+import { MesRibsComponent } from './demo/components/frontoffice/mes-ribs/mes-ribs.component';
+import { ReclamationComponent } from './demo/components/frontoffice/reclamation/reclamation.component';
+import { MonTelephoneComponent } from './demo/components/frontoffice/mon-telephone/mon-telephone.component';
 
 @NgModule({
     imports: [
@@ -104,6 +108,25 @@ import { UserStatsComponent } from './user-stats/user-stats.component';
                         path: 'profile', 
                         component: ClientProfileComponent 
                     },
+                    {
+                       path: 'mes-suggestions',
+                       component: MesSuggestionsComponent
+                    },
+                     {
+                       path: 'rib',
+                       component: MesRibsComponent
+                    },
+
+                     {
+                        path: 'reclamations',
+                          component: ReclamationComponent,
+       
+                          },
+                            {
+                        path: 'tel',
+                          component: MonTelephoneComponent,
+       
+                          }
 
 
                     

@@ -231,12 +231,13 @@
                             </td>
                             <td>{{ remb.nomPrenPrest }}</td>
                             <td>{{ remb.datBs | date:'dd/MM/yyyy' }}</td>
-                            <td>{{ formatCurrency(remb.mntBs) }}</td>
-                            <td>
-                                <span class="text-green-500 font-medium">
-                                    {{ formatCurrency(remb.mntBsRemb) }}
-                                </span>
-                            </td>
+                           <td>{{ formatCurrency(remb.mntBs) }}</td>
+                        <td>
+                            <span class="text-green-500 font-medium">
+                            {{ formatCurrency(remb.mntBsRemb) }}
+                             </span>
+                         </td>
+
                             <td>
                                 <span class="px-2 py-1 border-round text-sm font-medium"
                                       [ngClass]="{
