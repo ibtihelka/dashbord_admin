@@ -1,58 +1,157 @@
-<div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-    <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
-        <div class="col-12 mt-5 xl:mt-0 text-left">
-            <img src="assets/layout/images/logo(1).png" alt="Logo" class="mb-10" style="width:81px; height:80px; border-radius: 50%; object-fit: cover;">                
-        </div>
-        <div class="col-12 xl:col-6" style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
-            <div class="h-full w-full m-0 py-7 px-4" style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
-                <div class="text-center mb-5">
-                    <div class="text-900 text-3xl font-medium mb-3">Bienvenue chez MyBs !</div>
-                    <span class="text-600 font-medium">Connectez-vous pour continuer</span>
-                </div>
-
-                <div class="w-full md:w-10 mx-auto">
-                    <label for="persoId" class="block text-900 text-xl font-medium mb-2">Identifiant</label>
-                    <input 
-                        id="persoId" 
-                        type="text" 
-                        placeholder="Votre identifiant" 
-                        pInputText 
-                        class="w-full mb-3" 
-                        style="padding:1rem;" 
-                        [(ngModel)]="persoId"
-                        [disabled]="loading">
-
-                    <label for="password1" class="block text-900 font-medium text-xl mb-2">Mot de passe</label>
-                    <p-password 
-                        id="password1" 
-                        [(ngModel)]="password" 
-                        placeholder="Mot de passe" 
-                        [toggleMask]="true" 
-                        styleClass="w-full mb-3"
-                        inputStyleClass="w-full"
-                        [style]="{'width': '100%'}"
-                        [disabled]="loading">
-                    </p-password>
-
-                    <div class="flex align-items-center justify-content-between mb-5">
-                        <div class="flex align-items-center">
-                            <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
-                            <label for="rememberme1">Se souvenir de moi</label>
+<div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: #ffffff;">
+    <div class="grid justify-content-center align-items-center p-3 lg:p-0" style="max-width: 1200px; width: 100%;">
+        
+        <div class="col-12 xl:col-10">
+            <div class="grid shadow-8" style="border-radius: 24px; overflow: hidden; background: white; border: 1px solid #e5e7eb;">
+                
+                <!-- Panneau gauche avec logo et design -->
+                <div class="col-12 lg:col-5 p-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; min-height: 600px;">
+                    <div class="flex flex-column align-items-center justify-content-center h-full p-6 text-white">
+                        <!-- Logo -->
+                        <div class="mb-5" style="animation: float 3s ease-in-out infinite;">
+                            <img 
+                                src="assets/layout/images/logo(1).png" 
+                                alt="Logo MyBs" 
+                                style="width: 160px; height: 160px; border-radius: 50%; object-fit: contain; background: white; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">                
                         </div>
-                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Mot de passe oublié?</a>
+                        
+                        <!-- Texte de bienvenue -->
+                        <h1 class="text-5xl font-bold mb-3 text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">MyBs</h1>
+                        <p class="text-xl text-center mb-0" style="opacity: 0.95; line-height: 1.6;">
+                          Plateforme de suivi de votre bulletin de soins
+                        </p>
+                        
+                        <!-- Décoration -->
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
                     </div>
-                    
-                    <button 
-                        pButton 
-                        pRipple 
-                        [label]="loading ? 'Connexion...' : 'Se connecter'" 
-                        class="w-full p-3 text-xl" 
-                        (click)="onLogin()"
-                        [disabled]="loading"
-                        [loading]="loading">
-                    </button>
                 </div>
+                
+                <!-- Panneau droit avec formulaire -->
+                <div class="col-12 lg:col-7 p-6 lg:p-7">
+                    <div class="h-full flex flex-column justify-content-center">
+                        <!-- En-tête -->
+                        <div class="mb-6">
+                            <h2 class="text-900 text-4xl font-bold mb-2" style="letter-spacing: -0.5px;">Connexion</h2>
+                            <p class="text-600 text-lg mb-0">Bienvenue ! Connectez-vous à votre compte</p>
+                        </div>
+
+                        <!-- Formulaire -->
+                        <div class="w-full">
+                            <label for="persoId" class="block text-900 font-semibold mb-2" style="font-size: 1rem;">Identifiant</label>
+                            <input 
+                                id="persoId" 
+                                type="text" 
+                                placeholder="Entrez votre identifiant" 
+                                pInputText 
+                                class="w-full mb-4" 
+                                style="padding: 1rem 1.25rem; border-radius: 14px; border: 2px solid #e5e7eb; font-size: 1rem; transition: all 0.3s ease;" 
+                                [(ngModel)]="persoId"
+                                [disabled]="loading">
+
+                            <label for="password1" class="block text-900 font-semibold mb-2" style="font-size: 1rem;">Mot de passe</label>
+                            <p-password 
+                                id="password1" 
+                                [(ngModel)]="password" 
+                                placeholder="Entrez votre mot de passe" 
+                                [toggleMask]="true" 
+                                styleClass="w-full mb-4"
+                                inputStyleClass="w-full"
+                                [style]="{'width': '100%'}"
+                                [inputStyle]="{'border-radius': '14px', 'border': '2px solid #e5e7eb', 'padding': '1rem 1.25rem', 'font-size': '1rem'}"
+                                [disabled]="loading">
+                            </p-password>
+
+                            <div class="flex align-items-center justify-content-between mb-5">
+                                <div class="flex align-items-center">
+                                    <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
+                                    <label for="rememberme1" class="cursor-pointer" style="font-size: 0.95rem; color: #6b7280;">Se souvenir de moi</label>
+                                </div>
+                                <a class="font-semibold no-underline cursor-pointer" style="color: #667eea; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='#764ba2'" onmouseout="this.style.color='#667eea'">Mot de passe oublié?</a>
+                            </div>
+                            
+                            <button 
+                                pButton 
+                                pRipple 
+                                [label]="loading ? 'Connexion en cours...' : 'Se connecter'" 
+                                class="w-full p-3 text-lg font-semibold" 
+                                style="border-radius: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; height: 56px;"
+                                (click)="onLogin()"
+                                [disabled]="loading"
+                                [loading]="loading">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
+        
     </div>
 </div>
+
+<style>
+/* Animation flottante pour le logo */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Amélioration des champs de saisie avec focus */
+input[type="text"]:focus,
+.p-password input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15) !important;
+    outline: none;
+}
+
+/* Effet hover sur le bouton */
+button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(102, 126, 234, 0.5) !important;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Animation d'apparition */
+.grid > div {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .col-12.lg\:col-5 {
+        min-height: 350px !important;
+    }
+    
+    .col-12.lg\:col-5 img {
+        width: 120px !important;
+        height: 120px !important;
+    }
+    
+    .col-12.lg\:col-5 h1 {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Amélioration de la lisibilité */
+label {
+    user-select: none;
+}
+</style>

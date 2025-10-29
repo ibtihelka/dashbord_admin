@@ -1,27 +1,263 @@
-<div class="page-container" [class.sidebar-open]="true">
+<div class="page-container">
   <div class="page-content">
-    <div class="accueil-container">
-      <div class="main-content">
-        <div class="image-section">
-          <img src="/assets/layout/images/bs_frontend.png" alt="BS Frontend" class="bs-image">
+    <!-- Cercle 1 - Bulletins -->
+    <div class="circular-btn-wrapper bulletins-btn">
+      <button class="circular-btn" (click)="goToRemboursements()">
+        <img src="/assets/layout/images/bulletins-icon.png" alt="Bulletins" class="circular-icon">
+      </button>
+      <span class="circle-title">Mes Bulletins</span>
+  
+    </div>
+    
+    <!-- Cercle 2 - Réclamations -->
+   <!-- Cercle 2 - Réclamations -->
+<div class="circular-btn-wrapper reclamations-btn">
+  <button class="circular-btn" (click)="goToReclamations()">
+    <img src="/assets/layout/images/reclamation-icon.png" alt="Réclamations" class="circular-icon larger-icon">
+  </button>
+  <span class="circle-title">Mes Réclamations</span>
+
+</div>
+
+    <!-- Cercle 3 - Modifier Téléphone -->
+    <div class="circular-btn-wrapper tel-btn">
+      <button class="circular-btn" (click)="goToTel()">
+        <img src="/assets/layout/images/modifier_tel.png" alt="Modifier Tel" class="circular-icon">
+      </button>
+      <span class="circle-title">Téléphone</span>
+     
+    </div>
+
+    <!-- Cercle 4 - Modifier RIB -->
+    <div class="circular-btn-wrapper rib-btn">
+      <button class="circular-btn" (click)="goToRib()">
+        <img src="/assets/layout/images/modifier_rib.png" alt="Modifier RIB" class="circular-icon">
+      </button>
+      <span class="circle-title">RIB</span>
+    
+    </div>
+
+    <!-- Cercle 5 - Complément d'Information -->
+    <div class="circular-btn-wrapper complement-btn">
+      <button class="circular-btn" (click)="goToComplementInfo()">
+        <img src="/assets/layout/images/complement-info.png" alt="Complément Info" class="circular-icon">
+      </button>
+      <span class="circle-title">Complément Info</span>
+     
+    </div>
+
+    <!-- Cercle 6 - Prestataires de Service -->
+    <div class="circular-btn-wrapper prestataires-btn">
+      <button class="circular-btn" >
+        <img src="/assets/layout/images/prestataires-icon.png" alt="Prestataires" class="circular-icon">
+      </button>
+      <span class="circle-title">Vos Prestataires</span>
+      
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="bulletin-container">
+      <div class="bulletin-card">
+        <!-- En-tête avec logos -->
+        <div class="bulletin-header">
+          <div class="logo-section">
+            <div class="logo-left">
+              <img src="/assets/layout/images/logo_bh_fr.PNG" alt="BH Assurance" class="logo-img">
+              <div class="coordonnees">
+                <p class="coord-line">Tel: (216) 71 123 456</p>
+                <p class="coord-line">Adresse: Avenue Habib Bourguiba, Tunis</p>
+                <p class="coord-line">Email: contact@bhassurance.tn</p>
+              </div>
+            </div>
+            <div class="logo-center">
+              <img src="/assets/layout/images/logo_ph.PNG" alt="Logo Principal" class="logo-img-center">
+            </div>
+            <div class="logo-right">
+              <img src="/assets/layout/images/logo_bh_arb.PNG" alt="BH تأمين" class="logo-img">
+              <div class="coordonnees-rt" dir="rtl">
+                <p class="coord-line">هاتف: 456 123 71 (216)</p>
+                <p class="coord-line">العنوان: شارع الحبيب بورقيبة، تونس</p>
+                <p class="coord-line">البريد الإلكتروني: contact@bhassurance.tn</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="welcome-section">
-          <h2>Bienvenue 
-              <span class="user-name">{{ getUserDisplayName() }}</span>
-              
-              chez <span class="highlight">MyBs</span> !</h2>
-          <p>
-            Gérez facilement vos remboursements de santé en toute simplicité. 
-            Accédez à votre espace personnel pour consulter l'historique de vos 
-            demandes et suivre leur statut en temps réel.
-          </p>
+        <div class="separator-line"></div>
 
-        
+        <!-- Titre Bulletin de Soins -->
+        <div class="bulletin-title-section">
+          <div class="bulletin-number-left">
+            <label class="numero-label">N°</label>
+            <p-dropdown 
+              [options]="bulletinOptions" 
+              [(ngModel)]="selectedBulletin"
+              optionLabel="label" 
+              optionValue="value"
+              placeholder="Sélectionner num BS"
+              [showClear]="false"
+              styleClass="bulletin-dropdown"
+              (onChange)="onBulletinChange($event)">
+            </p-dropdown>
+          </div>
+ 
+          <div class="title-box">
+            <h1 class="bulletin-title">BULLETIN DE SOINS</h1>
+            <h2 class="bulletin-title-ar">بطاقـة معالجة</h2>
+          </div>
+          <div class="bulletin-number-right"></div>
+        </div>
+
+        <!-- Informations Contractant -->
+        <div class="info-section">
+          <div class="info-row">
+            <label class="info-label">Contractant (c) (Cachet)</label>
+            <label class="info-label-ar">المؤسسة المؤمّنة (ختم وإمضاء)</label>
+          </div>
+          <div class="info-value company-name">
+            <strong>{{ getCompanyName() }}</strong>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-row">
+            <label class="info-label">CONTRAT N°</label>
+            <label class="info-label-ar">رقم العقد</label>
+          </div>
+          <div class="info-value">
+            <strong>{{ numContrat }}</strong>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-row">
+            <label class="info-label">ADHERENT N°</label>
+            <label class="info-label-ar">رقم المنخرط</label>
+          </div>
+          <div class="info-input-line"></div>
+        </div>
+
+        <!-- Partie à remplir par l'adhérent -->
+        <div class="adherent-section">
+          <div class="section-title">
+            PARTIE À REMPLIR PAR L'ADHÉRENT
+          </div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <label class="info-label">Nom et Prénom de l'Adhérent :</label>
+              <label class="info-label-ar">إسم ولقب المنخرط</label>
+            </div>
+            <div class="info-value">
+              <strong>{{ getUserDisplayName() }}</strong>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <label class="info-label">Adresse :</label>
+              <label class="info-label-ar">العنوان</label>
+            </div>
+            <div class="info-value">
+              <strong>{{ getUserAddress() }}</strong>
+            </div>
+          </div>
+
+          <!-- Prestataire checkboxes avec logique interactive -->
+          <div class="checkbox-section">
+            <!-- Prestataire : affiche tous les conjoints et enfants -->
+            <div>
+              <label 
+                class="checkbox-label" 
+                [class.clickable]="hasPrestataires()"
+                [class.disabled]="!hasPrestataires()"
+                (click)="hasPrestataires() && onPrestataireClick()">
+                <span>Prestataire:</span>
+              </label>
+            </div>
+
+            <!-- Adhérent : redirige vers le profil -->
+            <div class="checkbox-group">
+              <label 
+                class="checkbox-label clickable" 
+                (click)="onAdherentClick()">
+                <span>Adhérent</span>
+                <input 
+                  type="checkbox" 
+                  class="checkbox-input"
+                  [checked]="selectedType === 'ADHERENT'"
+                  (click)="$event.stopPropagation()">
+                <span class="checkbox-ar">المنخرط</span>
+              </label>
+            </div>
+
+            <!-- Conjoint : affiche uniquement le conjoint -->
+            <div class="checkbox-group">
+              <label 
+                class="checkbox-label" 
+                [class.clickable]="hasConjoint()"
+                [class.disabled]="!hasConjoint()"
+                (click)="hasConjoint() && onConjointClick()">
+                <span>Conjoint</span>
+                <input 
+                  type="checkbox" 
+                  class="checkbox-input"
+                  [checked]="selectedType === 'CONJOINT'"
+                  [disabled]="!hasConjoint()"
+                  (click)="$event.stopPropagation()">
+                <span class="checkbox-ar">الزوج</span>
+              </label>
+            </div>
+
+            <!-- Enfant : affiche uniquement les enfants -->
+            <div class="checkbox-group">
+              <label 
+                class="checkbox-label" 
+                [class.clickable]="hasEnfants()"
+                [class.disabled]="!hasEnfants()"
+                (click)="hasEnfants() && onEnfantClick()">
+                <span>Enfant</span>
+                <input 
+                  type="checkbox" 
+                  class="checkbox-input"
+                  [checked]="selectedType === 'ENFANT'"
+                  [disabled]="!hasEnfants()"
+                  (click)="$event.stopPropagation()">
+                <span class="checkbox-ar">الأبناء</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="beneficiaire-section" *ngIf="beneficiaireSelected">
+            <label>Bénéficiaire :</label>
+            <strong>{{ beneficiaireSelected }}</strong>
+          </div>
+
+          <!-- Date -->
+          <div class="date-section">
+            <div class="date-field">
+              <label>A</label>
+              <div class="date-line"></div>
+              <label>Le</label>
+              <div class="date-line"></div>
+              <strong>{{ dateSoinSelected }}</strong>
+            </div>
+          </div>
+
+          <!-- Signature -->
+          <div class="signature-section">
+            <div class="signature-box">
+              <label class="signature-label">Signature de l'Adhérent</label>
+              <label class="signature-label-ar">إمضاء المنخرط</label>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Composant pour afficher la liste des prestataires -->
+<app-prestataire-list></app-prestataire-list>
 
 <app-client-footer></app-client-footer>

@@ -1,4 +1,4 @@
-<div class="page-container" [class.sidebar-open]="true">
+<div class="page-container" >
   <div class="page-content">
     
     <div class="reclamation-container">
@@ -8,8 +8,17 @@
           Mes Réclamations
         </h1>
         <p class="page-subtitle">Gérez vos réclamations concernant vos remboursements</p>
-        
-      
+      </div>
+
+      <!-- Messages globaux -->
+      <div class="alert alert-success" *ngIf="successMessage && !showForm">
+        <i class="pi pi-check-circle"></i>
+        {{ successMessage }}
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage && !showForm">
+        <i class="pi pi-times-circle"></i>
+        {{ errorMessage }}
       </div>
 
       <!-- Formulaire de création (conditionnel) -->
@@ -37,8 +46,7 @@
               <select 
                 id="refBsPhys"
                 class="form-control" 
-                formControlName="refBsPhys"
-                (change)="onRemboursementSelect($event)">
+                formControlName="refBsPhys">
                 <option value="">Sélectionnez un bulletin de soins</option>
                 <option *ngFor="let remb of remboursements" [value]="remb.refBsPhys">
                   {{ remb.refBsPhys }} - {{ remb.nomPrenPrest }} ({{ formatDate(remb.datBs) }})
@@ -81,12 +89,6 @@
               </small>
             </div>
 
-            <!-- Message d'alerte si réclamation existe déjà -->
-            <div class="alert alert-warning" *ngIf="alreadyHasReclamation">
-              <i class="pi pi-exclamation-triangle"></i>
-              Une réclamation existe déjà pour ce bulletin de soins.
-            </div>
-
             <!-- Message de succès -->
             <div class="alert alert-success" *ngIf="successMessage">
               <i class="pi pi-check-circle"></i>
@@ -104,7 +106,7 @@
               <button 
                 type="submit" 
                 class="btn btn-primary"
-                [disabled]="reclamationForm.invalid || isSubmitting || alreadyHasReclamation">
+                [disabled]="reclamationForm.invalid || isSubmitting">
                 <i class="pi" [class.pi-spin]="isSubmitting" [class.pi-spinner]="isSubmitting" [class.pi-send]="!isSubmitting"></i>
                 {{ isSubmitting ? 'Envoi en cours...' : 'Enregistrer' }}
               </button>
@@ -155,7 +157,7 @@
                   <th>Titre</th>
                   <th>Texte Réclamation</th>
                   <th>Réponse</th>
-                  <th>Date</th>
+                  <th>Date de création</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -185,15 +187,32 @@
                     </ng-template>
                   </td>
                   <td>
-                    <span class="date-cell">{{ formatDate(reclamation.dateCreation) }}</span>
+                    <span class="date-cell">{{ formatDateTime(reclamation.dateCreation) }}</span>
                   </td>
                   <td>
-                    <button 
-                      class="btn-icon btn-delete" 
-                      (click)="deleteReclamation(reclamation.numReclamation!)"
-                      title="Supprimer">
-                      <i class="pi pi-trash"></i>
-                    </button>
+                    <div class="action-cell">
+                      <button 
+                        class="btn-icon btn-delete" 
+                        [class.btn-disabled]="!canDeleteReclamation(reclamation)"
+                        [disabled]="!canDeleteReclamation(reclamation)"
+                        (click)="deleteReclamation(reclamation.numReclamation!)"
+                        [title]="canDeleteReclamation(reclamation) ? 'Supprimer' : getDeleteDisabledReason(reclamation)">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6"/>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                          <line x1="10" y1="11" x2="10" y2="17"/>
+                          <line x1="14" y1="11" x2="14" y2="17"/>
+                        </svg>
+                      </button>
+                      
+                      <!-- Badge d'avertissement pour les réclamations non supprimables -->
+                      <span class="status-badge badge-locked" 
+                            *ngIf="!canDeleteReclamation(reclamation)"
+                            [title]="getDeleteDisabledReason(reclamation)">
+                        <i class="pi pi-lock"></i>
+                        Verrouillée
+                      </span>
+                    </div>
                   </td>
                 </tr>
               </tbody>

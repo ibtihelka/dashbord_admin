@@ -1,3 +1,5 @@
+import { Prestataire } from "./prestataire.model";
+
 export interface LoginRequest {
     persoId: string;
     persoPassed: string;
@@ -9,7 +11,10 @@ export interface LoginResponse {
     userType: string; // Ajout du champ userType
     user: User | null;
     admin: Admin | null;
+    prestataire: Prestataire | null;
 }
+
+
 
 export interface User {
     persoId: string;

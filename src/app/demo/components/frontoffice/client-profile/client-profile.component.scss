@@ -1,23 +1,16 @@
-// client-profile.component.scss
-.page-container {
-  margin-left: 0;
-  margin-top: 70px;
-  transition: margin-left 0.3s ease;
-  min-height: calc(100vh - 70px);
-  background-color: #e6e9f0;
+// client-profile.component.scss - VERSION SANS SIDEBAR
 
-  &.sidebar-open {
-    margin-left: 280px;
-  }
+.page-container {
+  margin-top: 80px; // Hauteur de la navbar
+  min-height: calc(100vh - 80px); // Hauteur totale moins la navbar
+  background-color: #e6e9f0;
 }
 
 .page-content {
   padding: 2rem;
-}
-
-@media (max-width: 1024px) {
-  .page-container.sidebar-open {
-    margin-left: 0;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
   }
 }
 
@@ -255,7 +248,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 2rem;
+    border-radius: 2rem;
   font-size: 0.875rem;
   font-weight: 500;
   

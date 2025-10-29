@@ -82,6 +82,7 @@
 
     <!-- Cards statistiques principales -->
     <ng-container *ngIf="globalStats && !loading">
+        <!-- Total Adhérents -->
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0 bg-primary">
                 <div class="flex justify-content-between mb-3">
@@ -101,22 +102,29 @@
             </div>
         </div>
 
+        <!-- Total Prestataires -->
         <div class="col-12 lg:col-6 xl:col-3">
             <div class="card mb-0 bg-green-500">
                 <div class="flex justify-content-between mb-3">
                     <div>
-                        <span class="block text-white font-medium mb-3">Nouveaux Adhérents</span>
-                        <div class="text-white font-medium text-4xl">{{ globalStats.nouveaux }}</div>
+                        <span class="block text-white font-medium mb-3">Total Prestataires</span>
+                        <div class="text-white font-medium text-4xl">{{ totalPrestataires }}</div>
                     </div>
                     <div class="flex align-items-center justify-content-center bg-white-alpha-20 border-round" 
                          [ngStyle]="{width: '3rem', height: '3rem'}">
-                        <i class="pi pi-user-plus text-white text-2xl"></i>
+                        <i class="pi pi-users text-white text-2xl"></i>
                     </div>
                 </div>
-                <span class="text-white-alpha-90">Ce mois</span>
+                <span class="text-white-alpha-90" *ngIf="prestataireStats">
+                    {{ prestataireStats.conjoints }} conjoints, {{ prestataireStats.enfants }} enfants
+                </span>
+                <span class="text-white-alpha-90" *ngIf="!prestataireStats">
+                    Conjoints et enfants
+                </span>
             </div>
         </div>
 
+        <!-- Hommes -->
         <div class="col-12 lg:col-6 xl:col-3" *ngIf="detailedStats">
             <div class="card mb-0 bg-blue-500">
                 <div class="flex justify-content-between mb-3">
@@ -137,6 +145,7 @@
             </div>
         </div>
 
+        <!-- Femmes -->
         <div class="col-12 lg:col-6 xl:col-3" *ngIf="detailedStats">
             <div class="card mb-0 bg-pink-500">
                 <div class="flex justify-content-between mb-3">
@@ -180,8 +189,8 @@
                         <div class="col-6">
                             <div class="flex align-items-center">
                                 <div class="w-1rem h-1rem border-round mr-2"
-                                     [ngStyle]="{backgroundColor: sexe === 'M' ? 'var(--blue-500)' : 
-                                                                  sexe === 'F' ? 'var(--pink-500)' : 'var(--gray-500)'}">
+                                     [ngStyle]="{backgroundColor: sexe === 'M' ? '#3B82F6' : 
+                                                                  sexe === 'F' ? '#EC4899' : '#6B7280'}">
                                 </div>
                                 <span class="text-sm">
                                     {{ sexe === 'M' ? 'Hommes' : sexe === 'F' ? 'Femmes' : 'Non défini' }}: 
@@ -244,21 +253,6 @@
                         </div>
                     </li>
                 </ul>
-            </div>
-        </div>
-
-        <!-- Évolution des adhésions -->
-        <div class="col-12" *ngIf="evolutionChartData">
-            <div class="card">
-                <div class="flex justify-content-between align-items-center mb-4">
-                    <h5>Évolution des Nouveaux Adhérents</h5>
-                    <i class="pi pi-chart-line text-2xl text-primary"></i>
-                </div>
-                <p-chart type="line" 
-                         [data]="evolutionChartData" 
-                         [options]="{responsive: true, maintainAspectRatio: false}"
-                         height="250px">
-                </p-chart>
             </div>
         </div>
 

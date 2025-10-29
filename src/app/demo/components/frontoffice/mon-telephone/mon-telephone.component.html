@@ -1,4 +1,4 @@
-<div class="page-container" [class.sidebar-open]="true">
+<div class="page-container" >
   <div class="page-content">
     <div class="ribs-container">
       <p-toast></p-toast>
@@ -8,7 +8,7 @@
         <div class="header-content">
           <h1>
             <i class="pi pi-phone"></i>
-            Mon Numéro de Téléphone
+            Mon Numéro de Téléphone /whatsapp
           </h1>
           <p>Consultez et modifiez votre numéro de téléphone</p>
         </div>
@@ -56,9 +56,8 @@
             <div class="card-footer">
               <div class="footer-info">
                 <span class="info-item" *ngIf="currentContact.dateModification">
-                  <i class="pi pi-calendar"></i>
-                  Modifié le {{ formatDate(currentContact.dateModification) }}
-                </span>
+                 
+              </span>
               </div>
             </div>
           </div>

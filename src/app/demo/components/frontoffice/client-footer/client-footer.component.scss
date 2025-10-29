@@ -1,4 +1,4 @@
-// client-footer.component.scss
+// client-footer.component.scss - VERSION SANS SIDEBAR
 
 .client-footer {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -6,8 +6,6 @@
   padding: 2.5rem 0 1rem;
   margin-top: auto;
   position: relative;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
   
   &::before {
     content: '';
@@ -183,16 +181,6 @@
 }
 
 // ============================================
-// ADAPTATION AU SIDEBAR
-// ============================================
-// Le footer s'ajuste automatiquement au sidebar sur desktop
-@media (min-width: 1024px) {
-  .client-footer {
-    margin-left: 280px; // Largeur du sidebar
-  }
-}
-
-// ============================================
 // RESPONSIVE DESIGN
 // ============================================
 @media (max-width: 992px) {
@@ -211,7 +199,6 @@
 @media (max-width: 768px) {
   .client-footer {
     padding: 2rem 0 1rem;
-    margin-left: 0; // Pas de décalage sur mobile
 
     .footer-container {
       padding: 0 1rem;

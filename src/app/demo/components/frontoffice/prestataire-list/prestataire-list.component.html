@@ -1,0 +1,63 @@
+<p-dialog 
+  [(visible)]="displayModal" 
+  [header]="modalTitle" 
+  [modal]="true" 
+  [style]="{width: '85vw', maxWidth: '1000px'}"
+  [draggable]="false" 
+  [resizable]="false"
+  styleClass="prestataire-modal">
+  
+  <div class="prestataires-container">
+    <div class="prestataires-list" *ngIf="prestataires.length > 0">
+      <div *ngFor="let prestataire of prestataires; let i = index" class="prestataire-item">
+        <div class="member-avatar">
+          <i class="pi pi-user"></i>
+          <span class="member-type-badge" 
+                [class.conjoint]="prestataire.typPrestataire?.toUpperCase() === 'CONJOINT'" 
+                [class.enfant]="prestataire.typPrestataire?.toUpperCase() === 'ENFANT'">
+            {{ getTypePrestataire(prestataire.typPrestataire || '') }}
+          </span>
+        </div>
+        
+        <div class="member-info">
+          <h4 class="member-name">{{ getPrestataireDisplayName(prestataire) || '' }}</h4>
+          
+          <div class="member-details">
+            <div class="detail-item">
+              <i class="pi pi-calendar"></i>
+              <span>{{ formatDate(prestataire.datNais || '') }} ({{ calculateAge(prestataire.datNais|| '')}})</span>
+            </div>
+            
+            <div class="detail-item">
+              <i class="pi pi-venus-mars"></i>
+              <span>{{ getSexeDisplay(prestataire.sexe|| '')}}</span>
+            </div>
+            
+            
+          </div>
+        </div>
+        
+        <div class="member-status" *ngIf="prestataire.situationAdhesion">
+          <span [class]="'status-badge status-' + prestataire.situationAdhesion?.toLowerCase()">
+            <i class="pi" 
+               [class.pi-check-circle]="prestataire.situationAdhesion === 'A'"
+               [class.pi-pause-circle]="prestataire.situationAdhesion === 'S'"
+               [class.pi-times-circle]="prestataire.situationAdhesion === 'R'"
+               [class.pi-clock]="prestataire.situationAdhesion === 'E'"></i>
+            {{ getSituationAdhesion(prestataire.situationAdhesion) }}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="prestataires.length === 0" class="no-data">
+      <i class="pi pi-info-circle"></i>
+      <p>Aucun prestataire trouvé</p>
+      <small>Vous n'avez pas de conjoint ou d'enfants enregistrés</small>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <button type="button" pButton label="Fermer" icon="pi pi-times" (click)="closeModal()" class="p-button-secondary"></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,140 @@
+<div class="complement-info-container">
+  <p-toast></p-toast>
+
+  <div class="card">
+    <!-- Header with back button -->
+    <div class="card-header">
+      <button 
+        pButton 
+        type="button"
+        icon="pi pi-arrow-left" 
+        class="p-button-rounded p-button-text"
+        (click)="router.navigate(['/clients/accueil'])"
+        [disabled]="isLoading">
+      </button>
+      <h2>📄 Complément d'Information</h2>
+      <p class="subtitle">Envoyez vos documents complémentaires en toute sécurité</p>
+    </div>
+
+    <!-- User Info Box -->
+    <div class="user-info-box" *ngIf="currentUser">
+      <div class="info-item">
+        <i class="pi pi-user"></i>
+        <span>{{ currentUser.persoName || 'Utilisateur' }}</span>
+      </div>
+      <div class="info-item">
+        <i class="pi pi-id-card"></i>
+        <span>ID: {{ currentUser.persoId }}</span>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+      <!-- Document Blocks -->
+      <div class="form-field" *ngFor="let block of documentBlocks; let i = index">
+        <label>
+          <i class="pi pi-file"></i>
+          {{ block.label }}
+        </label>
+
+        <!-- Upload Zone -->
+        <div class="upload-zone">
+          <p-fileUpload 
+            mode="basic" 
+            chooseLabel="Sélectionner un ou plusieurs PDF"
+            [multiple]="true"
+            accept="application/pdf"
+            [maxFileSize]="5242880"
+            [disabled]="isLoading"
+            (onSelect)="onFileSelect($event, i)"
+            [auto]="false"
+            chooseIcon="pi pi-upload">
+          </p-fileUpload>
+          
+          <p class="upload-info">
+            <i class="pi pi-info-circle"></i>
+            Format accepté : PDF uniquement • Taille max : 5 MB par fichier
+          </p>
+        </div>
+
+        <!-- Selected Files Display -->
+        <div class="selected-files" *ngIf="block.files.length > 0">
+          <h4>
+            <i class="pi pi-check-circle"></i>
+            Fichier(s) sélectionné(s) ({{ block.files.length }})
+          </h4>
+          
+          <div class="file-list">
+            <div class="file-item" *ngFor="let file of block.files; let j = index">
+              <div class="file-info">
+                <i class="pi pi-file-pdf"></i>
+                <div class="file-details">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ (file.size / 1024 / 1024).toFixed(2) }} MB</span>
+                </div>
+              </div>
+              <button 
+                pButton 
+                type="button"
+                icon="pi pi-trash" 
+                class="p-button-rounded p-button-text p-button-danger"
+                (click)="removeFile(i, j)"
+                [disabled]="isLoading"
+                pTooltip="Supprimer ce fichier"
+                tooltipPosition="left">
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Box -->
+      <div class="summary-box" *ngIf="hasFiles()">
+        <h4>
+          <i class="pi pi-info-circle"></i>
+          Résumé de votre envoi
+        </h4>
+        <div class="summary-content">
+          <div class="summary-item" *ngFor="let block of documentBlocks">
+            <span class="summary-label">{{ block.label }}</span>
+            <span class="summary-value">
+              {{ block.files.length }} fichier(s)
+            </span>
+          </div>
+          <div class="summary-item" style="border-top: 2px solid rgba(33, 150, 243, 0.3); margin-top: 0.5rem; padding-top: 1rem;">
+            <span class="summary-label"><strong>Total</strong></span>
+            <span class="summary-value">
+              <strong>{{ getTotalFiles() }} fichier(s)</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          pButton 
+          type="button"
+          label="Annuler" 
+          icon="pi pi-times" 
+          class="p-button-outlined p-button-secondary"
+          (click)="router.navigate(['/clients/accueil'])"
+          [disabled]="isLoading">
+        </button>
+        
+        <button 
+          pButton 
+          type="button"
+          label="Envoyer les documents" 
+          icon="pi pi-send" 
+          class="p-button-danger"
+          [disabled]="!canSubmit()"
+          [loading]="isLoading"
+          (click)="onSubmit()">
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-client-footer></app-client-footer>

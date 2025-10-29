@@ -1,4 +1,4 @@
-// client-navbar.component.ts
+// client-navbar.component.ts - VERSION NAVBAR SEULEMENT
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -12,7 +12,6 @@ import { AuthService } from 'src/app/demo/service/auth.service';
 })
 export class ClientNavbarComponent implements OnInit, OnDestroy {
   isProfileDropdownOpen = false;
-  isSidebarOpen = false;
   currentUser: User | null = null;
   isTeleperformanceUser: boolean = false;
   teleperformanceUrl: string = 'https://www.tp.com/fr-tn/emplacements/tunisia/';
@@ -29,28 +28,19 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
       user => {
         this.currentUser = user;
         this.checkIfTeleperformanceUser();
+        console.log('👤 User loaded:', user);
       }
     );
-
-    // Ouvrir le sidebar par défaut sur les grands écrans
-    if (window.innerWidth >= 1024) {
-      this.isSidebarOpen = true;
-    }
-
-    // Écouter les changements de taille d'écran
-    window.addEventListener('resize', this.handleResize.bind(this));
   }
 
   ngOnDestroy() {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
-    window.removeEventListener('resize', this.handleResize.bind(this));
   }
 
   checkIfTeleperformanceUser(): void {
     if (this.currentUser && this.currentUser.persoId) {
-      // Vérifier si les 8 premiers caractères sont "SO000008"
       const persoIdPrefix = this.currentUser.persoId.substring(0, 8);
       this.isTeleperformanceUser = persoIdPrefix === 'SO000008';
     }
@@ -58,18 +48,6 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
 
   openTeleperformanceWebsite(): void {
     window.open(this.teleperformanceUrl, '_blank');
-  }
-
-  handleResize() {
-    if (window.innerWidth >= 1024) {
-      this.isSidebarOpen = true;
-    } else {
-      this.isSidebarOpen = false;
-    }
-  }
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
   }
 
   toggleProfileDropdown() {
@@ -84,60 +62,38 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
   navigateToHome() {
     this.router.navigate(['/clients/accueil']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToProfile() {
     this.router.navigate(['/clients/profile']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToRemboursements() {
     this.router.navigate(['/clients/mesRemboursements']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToSuggestions(): void {
     this.router.navigate(['/clients/reclamations']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToChangeRib() {
     this.router.navigate(['/clients/rib']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToChangePhone() {
     this.router.navigate(['/clients/tel']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
   navigateToProfil() {
     this.router.navigate(['/clients/profile']);
     this.closeDropdown();
-    if (window.innerWidth < 1024) {
-      this.isSidebarOpen = false;
-    }
   }
 
-  // Vérifier si une route est active
   isRouteActive(route: string): boolean {
     const routeMap: { [key: string]: string } = {
       'accueil': '/clients/accueil',
@@ -159,7 +115,6 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/auth/login']);
   }
 
-  // Méthodes utilitaires pour l'affichage
   getUserDisplayName(): string {
     if (!this.currentUser) return 'Utilisateur';
     return this.currentUser.persoName 

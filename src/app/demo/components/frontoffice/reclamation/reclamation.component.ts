@@ -23,11 +23,9 @@ export class ReclamationComponent implements OnInit, OnDestroy {
   
   isSubmitting = false;
   isLoading = false;
-  alreadyHasReclamation = false;
   successMessage = '';
   errorMessage = '';
   
-  // Nouvelle propriété pour contrôler l'affichage du formulaire
   showForm = false;
   
   private userSubscription: Subscription = new Subscription();
@@ -44,18 +42,13 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     this.initForm();
     this.loadCurrentUser();
     
-    // Écouter les paramètres de requête pour savoir si on vient de la page remboursements
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       if (params['refBsPhys']) {
-        // Si on a un refBsPhys, afficher le formulaire et le pré-remplir
         this.showForm = true;
         this.reclamationForm.patchValue({
           refBsPhys: params['refBsPhys']
         });
-        // Vérifier si une réclamation existe déjà
-        this.checkIfReclamationExists(params['refBsPhys']);
       } else {
-        // Sinon, afficher seulement la liste
         this.showForm = false;
       }
     });
@@ -112,6 +105,13 @@ export class ReclamationComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.reclamations = data;
         this.isLoading = false;
+        
+        // Debug: afficher le format de la date
+        if (data.length > 0 && data[0].dateCreation) {
+          console.log('📅 Format de date reçu du backend:', data[0].dateCreation);
+          console.log('📅 Type:', typeof data[0].dateCreation);
+          console.log('📅 Date convertie:', new Date(data[0].dateCreation));
+        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des réclamations:', error);
@@ -121,31 +121,8 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     });
   }
 
-  onRemboursementSelect(event: any) {
-    const refBsPhys = event.target.value;
-    if (refBsPhys) {
-      this.checkIfReclamationExists(refBsPhys);
-    } else {
-      this.alreadyHasReclamation = false;
-    }
-  }
-
-  checkIfReclamationExists(refBsPhys: string) {
-    this.reclamationService.hasReclamation(refBsPhys).subscribe({
-      next: (response) => {
-        this.alreadyHasReclamation = response.exists;
-        if (this.alreadyHasReclamation) {
-          this.showError('Une réclamation existe déjà pour ce bulletin de soins');
-        }
-      },
-      error: (error) => {
-        console.error('Erreur lors de la vérification:', error);
-      }
-    });
-  }
-
   onSubmit() {
-    if (this.reclamationForm.invalid || !this.currentUser || this.alreadyHasReclamation) {
+    if (this.reclamationForm.invalid || !this.currentUser) {
       return;
     }
 
@@ -174,7 +151,125 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Vérifie si l'utilisateur peut supprimer une réclamation
+   * Règles:
+   * 1. Si la réclamation a une réponse -> NON
+   * 2. Si la réclamation a été créée le même jour et il est avant 20h00 -> OUI
+   * 3. Sinon -> NON
+   */
+  canDeleteReclamation(reclamation: Reclamation): boolean {
+    // Règle 1: Si la réclamation a une réponse, on ne peut pas la supprimer
+    if (reclamation.responseRec && reclamation.responseRec.trim() !== '') {
+      return false;
+    }
+
+    // Vérifier que dateCreation existe
+    if (!reclamation.dateCreation) {
+      return false;
+    }
+
+    try {
+      // Parser la date de création
+      const dateCreation = new Date(reclamation.dateCreation);
+      const now = new Date();
+      
+      // Vérifier si la date est valide
+      if (isNaN(dateCreation.getTime())) {
+        console.error('Date invalide:', reclamation.dateCreation);
+        return false;
+      }
+      
+      // Comparer les dates (jour, mois, année)
+      const creationDay = dateCreation.getDate();
+      const creationMonth = dateCreation.getMonth();
+      const creationYear = dateCreation.getFullYear();
+      
+      const currentDay = now.getDate();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      // Règle 2: Vérifier si c'est le même jour
+      const isSameDay = creationDay === currentDay &&
+                        creationMonth === currentMonth &&
+                        creationYear === currentYear;
+      
+      if (!isSameDay) {
+        return false;
+      }
+
+      // Vérifier si l'heure actuelle est avant 20h00
+      const currentHour = now.getHours();
+      return currentHour < 20;
+      
+    } catch (error) {
+      console.error('Erreur lors de la vérification de la date:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Retourne un message expliquant pourquoi la suppression n'est pas autorisée
+   */
+  getDeleteDisabledReason(reclamation: Reclamation): string {
+    if (reclamation.responseRec && reclamation.responseRec.trim() !== '') {
+      return 'Impossible de supprimer : une réponse a déjà été fournie';
+    }
+
+    if (!reclamation.dateCreation) {
+      return 'Impossible de supprimer : date de création inconnue';
+    }
+
+    try {
+      const dateCreation = new Date(reclamation.dateCreation);
+      const now = new Date();
+      
+      if (isNaN(dateCreation.getTime())) {
+        return 'Impossible de supprimer : date invalide';
+      }
+      
+      const creationDay = dateCreation.getDate();
+      const creationMonth = dateCreation.getMonth();
+      const creationYear = dateCreation.getFullYear();
+      
+      const currentDay = now.getDate();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      
+      const isSameDay = creationDay === currentDay &&
+                        creationMonth === currentMonth &&
+                        creationYear === currentYear;
+      
+      if (!isSameDay) {
+        return 'Impossible de supprimer : délai de suppression dépassé (même jour avant 20h00)';
+      }
+
+      const currentHour = now.getHours();
+      if (currentHour >= 20) {
+        return 'Impossible de supprimer : il est après 20h00';
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de la date:', error);
+      return 'Impossible de supprimer : date invalide';
+    }
+
+    return '';
+  }
+
   deleteReclamation(numReclamation: number) {
+    const reclamation = this.reclamations.find(r => r.numReclamation === numReclamation);
+    
+    if (!reclamation) {
+      this.showError('Réclamation introuvable');
+      return;
+    }
+
+    if (!this.canDeleteReclamation(reclamation)) {
+      const reason = this.getDeleteDisabledReason(reclamation);
+      this.showError(reason);
+      return;
+    }
+
     if (confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
       this.reclamationService.deleteReclamation(numReclamation).subscribe({
         next: () => {
@@ -191,11 +286,9 @@ export class ReclamationComponent implements OnInit, OnDestroy {
 
   resetForm() {
     this.reclamationForm.reset();
-    this.alreadyHasReclamation = false;
     this.clearMessages();
   }
 
-  // Nouvelle méthode pour afficher le formulaire
   toggleForm() {
     this.showForm = !this.showForm;
     if (!this.showForm) {
@@ -208,6 +301,31 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     try {
       return new Date(date).toLocaleDateString('fr-FR');
     } catch {
+      return 'N/A';
+    }
+  }
+
+  formatDateTime(date: any): string {
+    if (!date) return 'N/A';
+    try {
+      const dateObj = new Date(date);
+      
+      // Vérifier si la date est valide
+      if (isNaN(dateObj.getTime())) {
+        return 'N/A';
+      }
+      
+      // Formater en heure locale française
+      return dateObj.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch (error) {
+      console.error('Erreur formatDateTime:', error, 'pour date:', date);
       return 'N/A';
     }
   }

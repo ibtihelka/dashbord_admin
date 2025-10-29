@@ -1,45 +1,61 @@
+// auth.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from '../service/auth.service';
+import { 
+  CanActivate, 
+  ActivatedRouteSnapshot, 
+  RouterStateSnapshot, 
+  Router 
+} from '@angular/router';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    console.log('AuthGuard: Vérification de l\'accès à', state.url);
-    
-    if (!this.authService.isLoggedIn()) {
-      console.log('AuthGuard: Utilisateur non connecté, redirection vers login');
-      this.router.navigate(['/auth/login']);
-      return false;
-    }
-
-    const requiredRole = route.data['role'];
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): boolean {
     const userType = this.authService.getUserType();
-    
-    console.log('AuthGuard: Type utilisateur actuel:', userType);
-    console.log('AuthGuard: Rôle requis:', requiredRole);
+    const requiredRole = route.data['role'];
 
-    // Vérifier les permissions selon la route
-    if (requiredRole === 'ADMIN' && userType !== 'ADMIN') {
-      console.log('AuthGuard: Accès admin refusé, redirection vers clients');
-      this.router.navigate(['/clients']);
-      return false;
-    }
-    
-    if (requiredRole === 'USER' && userType !== 'USER') {
-      console.log('AuthGuard: Accès user refusé, redirection vers admin');
-      this.router.navigate(['/admin']);
+    // Si l'utilisateur n'est pas connecté
+    if (!userType) {
+      this.router.navigate(['/auth/login'], {
+        queryParams: { returnUrl: state.url }
+      });
       return false;
     }
 
-    console.log('AuthGuard: Accès autorisé');
+    // Vérifier si le rôle correspond
+    if (requiredRole && userType !== requiredRole) {
+      // Rediriger vers le tableau de bord approprié
+      this.redirectToAppropriateRoute(userType);
+      return false;
+    }
+
     return true;
+  }
+
+  private redirectToAppropriateRoute(userType: string): void {
+    switch (userType) {
+      case 'ADMIN':
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case 'USER':
+        this.router.navigate(['/clients/accueil']);
+        break;
+      case 'PRESTATAIRE':
+        this.router.navigate(['/prestataire/mes-rapports']);
+        break;
+      default:
+        this.router.navigate(['/auth/login']);
+    }
   }
 }

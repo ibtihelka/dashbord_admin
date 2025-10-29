@@ -18,6 +18,7 @@ export interface User {
 export interface UserStats {
     total: number;
     nouveaux: number;
+    totalPrestataires?: number;
 }
 
 export interface UserDetailedStats {
@@ -27,6 +28,17 @@ export interface UserDetailedStats {
     repartitionParSituationFamiliale: {
         [key: string]: number;
     };
+    totalPrestataires?: number;
+    repartitionPrestataires?: {
+        conjoints: number;
+        enfants: number;
+    };
+}
+
+export interface PrestataireStats {
+    total: number;
+    conjoints: number;
+    enfants: number;
 }
 
 @Injectable({
@@ -44,8 +56,6 @@ export class UserStatsService {
         return this.http.get<User[]>(this.apiUrl);
     }
 
-    // ========== NOUVELLE MÉTHODE: RÉCUPÉRER LES ENTREPRISES ==========
-    
     /**
      * Récupère la liste de tous les codes d'entreprise
      */
@@ -97,5 +107,35 @@ export class UserStatsService {
      */
     getEvolutionStatsByCompany(codeEntreprise: string): Observable<{[key: string]: number}> {
         return this.http.get<{[key: string]: number}>(`${this.apiUrl}/stats/evolution/company/${codeEntreprise}`);
+    }
+
+    // ========== STATISTIQUES DES PRESTATAIRES ==========
+    
+    /**
+     * Récupère le total des prestataires (toutes entreprises)
+     */
+    getTotalPrestataires(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/stats/prestataires/total`);
+    }
+
+    /**
+     * Récupère le total des prestataires pour une entreprise
+     */
+    getTotalPrestatairesByCompany(codeEntreprise: string): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/stats/prestataires/total/company/${codeEntreprise}`);
+    }
+
+    /**
+     * Récupère les statistiques détaillées des prestataires (global)
+     */
+    getDetailedPrestataireStats(): Observable<PrestataireStats> {
+        return this.http.get<PrestataireStats>(`${this.apiUrl}/stats/prestataires/detailed`);
+    }
+
+    /**
+     * Récupère les statistiques détaillées des prestataires par entreprise
+     */
+    getDetailedPrestataireStatsByCompany(codeEntreprise: string): Observable<PrestataireStats> {
+        return this.http.get<PrestataireStats>(`${this.apiUrl}/stats/prestataires/detailed/company/${codeEntreprise}`);
     }
 }

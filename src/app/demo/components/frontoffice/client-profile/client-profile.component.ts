@@ -63,11 +63,11 @@ export class ClientProfileComponent implements OnInit, OnDestroy {
   }
 
   navigateToChangeRib() {
-    this.router.navigate(['/clients/changement-rib']);
+    this.router.navigate(['/clients/rib']);
   }
 
   navigateToChangePhone() {
-    this.router.navigate(['/clients/changement-tel']);
+    this.router.navigate(['/clients/tel']);
   }
 
   formatDate(dateString: string | undefined): string {
@@ -169,17 +169,30 @@ export class ClientProfileComponent implements OnInit, OnDestroy {
   }
 
   // Filtrer les membres de famille pour exclure la personne elle-même
-  getFilteredFamilyMembers(): any[] {
-    if (!this.currentUser?.familles) {
-      return [];
-    }
-    
-    // Filtrer uniquement les membres qui ne sont pas la personne elle-même
-    // On garde seulement CONJOINT, ENFANT, PERE, MERE (pas la personne principale)
-    return this.currentUser.familles.filter(membre => 
-      membre.typPrestataire && 
-      membre.typPrestataire.toUpperCase() !== 'ADHERENT' &&
-      membre.typPrestataire.toUpperCase() !== 'PRINCIPAL'
-    );
+getFilteredFamilyMembers(): any[] {
+  if (!this.currentUser?.familles) {
+    return [];
   }
+  
+  // Filtrer uniquement les membres qui ne sont pas la personne principale
+  const filtered = this.currentUser.familles.filter(membre => 
+    membre.typPrestataire &&
+    membre.typPrestataire.toUpperCase() !== 'ADHERENT' &&
+    membre.typPrestataire.toUpperCase() !== 'PRINCIPAL'
+  );
+
+  // Trier : conjoint d'abord, puis enfants, puis autres
+  filtered.sort((a, b) => {
+    const typeA = a.typPrestataire?.toUpperCase() || '';
+    const typeB = b.typPrestataire?.toUpperCase() || '';
+    
+    if (typeA === typeB) return 0;
+    if (typeA === 'CONJOINT') return -1;  // conjoint en premier
+    if (typeB === 'CONJOINT') return 1;
+    return 0;
+  });
+
+  return filtered;
+}
+
 }

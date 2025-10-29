@@ -1,0 +1,514 @@
+<div class="creer-rapport">
+  <p-toast></p-toast>
+  
+  <div class="card">
+    <h2 class="text-3xl font-bold mb-4">
+      <i class="pi pi-file-edit mr-2"></i>
+      Créer un Rapport de Contre Visite - {{ prestataire?.role }}
+    </h2>
+
+    <form [formGroup]="rapportForm" (ngSubmit)="onSubmit()">
+      <!-- Sélection Remboursement -->
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">
+          N° du bulletin de soins <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            formControlName="refBsPhys"
+            [options]="remboursements"
+            optionLabel="refBsPhys"
+            optionValue="refBsPhys"
+            placeholder="Sélectionner un remboursement"
+            [filter]="true"
+            filterBy="refBsPhys,nomPrenPrest"
+            (onChange)="onRemboursementChange($event)"
+            [style]="{'width': '100%'}">
+            <ng-template let-remb pTemplate="item">
+              <div>
+                <div class="font-semibold">{{ remb.refBsPhys }}</div>
+                <small class="text-500">{{ remb.nomPrenPrest }} - {{ remb.datBs | date:'dd/MM/yyyy' }}</small>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+
+        <!-- Sélection Bénéficiaire -->
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">
+            Bénéficiaire <span class="text-red-500">*</span>
+          </label>
+          <p-dropdown
+            formControlName="beneficiaireId"
+            [options]="beneficiaires"
+            optionLabel="nom"
+            optionValue="id"
+            placeholder="Sélectionner un bénéficiaire"
+            (onChange)="onBeneficiaireChange($event)"
+            [disabled]="!rapportForm.value.refBsPhys"
+            [style]="{'width': '100%'}">
+            <ng-template let-benef pTemplate="item">
+              <div>
+                <span class="font-semibold">{{ benef.nom }}</span>
+                <p-tag 
+                  [value]="benef.type" 
+                  [severity]="benef.type === 'USER' ? 'success' : 'info'"
+                  class="ml-2">
+                </p-tag>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- Détails du remboursement sélectionné -->
+      <div *ngIf="selectedRemboursement" class="surface-100 p-3 border-round mb-4">
+        <div class="grid">
+          <div class="col-6 md:col-3">
+            <small class="text-500">Montant BS</small>
+            <div class="font-semibold">{{ selectedRemboursement.mntBs | currency:'TND' }}</div>
+          </div>
+          <div class="col-6 md:col-3">
+            <small class="text-500">Montant Remb.</small>
+            <div class="font-semibold">{{ selectedRemboursement.mntBsRemb | currency:'TND' }}</div>
+          </div>
+          <div class="col-6 md:col-3">
+            <small class="text-500">Statut</small>
+            <div><p-tag [value]="selectedRemboursement.statBs"></p-tag></div>
+          </div>
+          <div class="col-6 md:col-3">
+            <small class="text-500">Prestataire</small>
+            <div class="font-semibold">{{ selectedRemboursement.nomPrenPrest }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPLOAD IMAGE -->
+      <div class="mb-4">
+        <h3 class="text-xl font-semibold mb-3">
+          <i class="pi pi-image mr-2"></i>
+          Photo du Rapport (optionnel)
+        </h3>
+        
+        <div class="grid">
+          <div class="col-12">
+            <p-fileUpload 
+              mode="basic"
+              name="image"
+              accept="image/*"
+              [maxFileSize]="maxFileSize"
+              [auto]="true"
+              chooseLabel="Parcourir une image"
+              chooseIcon="pi pi-upload"
+              (onSelect)="onImageSelect($event)"
+              [disabled]="loading"
+              styleClass="w-full">
+            </p-fileUpload>
+            <small class="text-500 block mt-2">
+              <i class="pi pi-info-circle mr-1"></i>
+              Formats acceptés: JPG, PNG, GIF (max 5 MB). L'image sera envoyée par email.
+            </small>
+          </div>
+
+          <!-- Aperçu de l'image -->
+          <div class="col-12" *ngIf="imagePreview">
+            <div class="surface-100 p-3 border-round">
+              <div class="flex justify-content-between align-items-center mb-2">
+                <span class="font-semibold">
+                  <i class="pi pi-check-circle text-green-500 mr-2"></i>
+                  Image sélectionnée: {{ selectedImage?.name }}
+                </span>
+                <button 
+                  pButton 
+                  type="button"
+                  icon="pi pi-times" 
+                  class="p-button-rounded p-button-danger p-button-text"
+                  pTooltip="Supprimer l'image"
+                  (click)="removeImage()">
+                </button>
+              </div>
+              <div class="text-center">
+                <img [src]="imagePreview" 
+                     alt="Aperçu" 
+                     style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 2px solid #dee2e6;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION DENTISTE -->
+      <div *ngIf="isDentiste" class="mb-4">
+        <div class="flex justify-content-between align-items-center mb-3">
+          <h3 class="text-xl font-semibold m-0">Tableau Dentaire</h3>
+          <button 
+            pButton 
+            type="button"
+            icon="pi pi-plus" 
+            label="Ajouter une ligne"
+            class="p-button-success p-button-sm"
+            (click)="addLigneDentaire()"
+            [disabled]="lignesDentaire.length >= 10">
+          </button>
+        </div>
+
+        <div formArrayName="lignesDentaire">
+          <div class="simple-table-container">
+            <table class="simple-dental-table">
+              <thead>
+                <tr>
+                  <th style="width: 15%">Dent</th>
+                  <th style="width: 25%">Code Acte</th>
+                  <th style="width: 20%">Cotation</th>
+                  <th style="width: 30%">Avis Médical</th>
+                  <th style="width: 10%">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ligne of lignesDentaire.controls; let i = index" [formGroupName]="i">
+                  <td>
+                    <input 
+                      pInputText 
+                      formControlName="dent" 
+                      placeholder="Ex: 35"
+                      class="w-full" />
+                  </td>
+                  <td>
+                    <input 
+                      pInputText 
+                      formControlName="codeActe" 
+                      placeholder="Ex: DCHD60010"
+                      class="w-full" />
+                  </td>
+                  <td>
+                    <input 
+                      pInputText 
+                      formControlName="cotation" 
+                      placeholder="Ex: D60+D5x2"
+                      class="w-full" />
+                  </td>
+                  <td>
+                    <input 
+                      pInputText 
+                      formControlName="avisMedical" 
+                      placeholder="Ex: PROTHESE AMOVIBLE"
+                      class="w-full" />
+                  </td>
+                  <td class="text-center">
+                    <button 
+                      pButton 
+                      type="button"
+                      icon="pi pi-trash" 
+                      class="p-button-danger p-button-sm p-button-text"
+                      (click)="removeLigneDentaire(i)"
+                      [disabled]="lignesDentaire.length === 1">
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p-message 
+            *ngIf="lignesDentaire.length === 0" 
+            severity="info" 
+            text="Cliquez sur 'Ajouter une ligne' pour commencer"
+            styleClass="mt-3">
+          </p-message>
+        </div>
+      </div>
+
+      <!-- SECTION OPTICIEN -->
+      <div *ngIf="isOpticien" class="mb-4">
+        <h3 class="text-xl font-semibold mb-3">Informations Optique</h3>
+        
+        <div class="grid">
+          <div class="col-12 md:col-6">
+            <label class="block font-semibold mb-2">Acuité Visuelle OD</label>
+            <input 
+              pInputText 
+              formControlName="acuiteVisuelleOD" 
+              placeholder="Ex: 8/10"
+              class="w-full" />
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label class="block font-semibold mb-2">Acuité Visuelle OG</label>
+            <input 
+              pInputText 
+              formControlName="acuiteVisuelleOG" 
+              placeholder="Ex: 9/10"
+              class="w-full" />
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label class="block font-semibold mb-2">
+              Prix de la Monture (TND) <span class="text-red-500">*</span>
+            </label>
+            <p-inputNumber 
+              formControlName="prixMonture"
+              mode="decimal" 
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              placeholder="0.00"
+              styleClass="w-full">
+            </p-inputNumber>
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label class="block font-semibold mb-2">Nature des Verres</label>
+            <input 
+              pInputText 
+              formControlName="natureVerres" 
+              placeholder="Ex: Progressive, Simple, etc."
+              class="w-full" />
+          </div>
+
+          <div class="col-12 md:col-6">
+            <label class="block font-semibold mb-2">Prix des Verres (TND)</label>
+            <p-inputNumber 
+              formControlName="prixVerres"
+              mode="decimal" 
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              placeholder="0.00"
+              styleClass="w-full">
+            </p-inputNumber>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observation -->
+      <div class="mb-4">
+        <label class="block font-semibold mb-2">
+          Observation <span class="text-red-500">*</span>
+        </label>
+        <textarea 
+          pInputTextarea 
+          formControlName="observation"
+          rows="4"
+          placeholder="Votre observation..."
+          class="w-full">
+        </textarea>
+      </div>
+
+     
+
+      <!-- Buttons -->
+      <div class="flex gap-2">
+        <button 
+          pButton 
+          type="submit"
+          label="Créer le Rapport"
+          icon="pi pi-check"
+          [loading]="loading"
+          [disabled]="rapportForm.invalid || loading">
+        </button>
+
+        <button 
+          pButton 
+          type="button"
+          label="Réinitialiser"
+          icon="pi pi-refresh"
+          class="p-button-secondary"
+          (click)="resetForm()"
+          [disabled]="loading">
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Dialog pour afficher le rapport créé -->
+  <p-dialog 
+    [(visible)]="displayRapportDialog" 
+    [modal]="true"
+    [style]="{width: '90vw', maxWidth: '1200px'}"
+    [draggable]="false"
+    [resizable]="false"
+    styleClass="rapport-dialog">
+    
+    <ng-template pTemplate="header">
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-check-circle text-2xl text-green-500"></i>
+        <span class="font-bold text-xl">Rapport créé avec succès</span>
+      </div>
+    </ng-template>
+
+    <div *ngIf="rapportCree" class="rapport-content" id="printable-rapport">
+      <!-- En-tête du rapport -->
+      <div class="text-center mb-5">
+        <h2 class="text-2xl font-bold mb-2">ASSURANCE#</h2>
+       
+        <h4 class="text-lg font-semibold">Rapport de contre visite</h4>
+       
+      </div>
+
+      <!-- Informations générales -->
+      <div class="mb-4">
+        <p><strong>Prestataire(s):</strong> {{ prestataire?.nom }} {{ prestataire?.prenom }}</p>
+        <p><strong>Adhésion:</strong> {{ rapportCree.refBsPhys }}</p>
+      </div>
+
+      <!-- FORMAT DENTISTE - Tableau -->
+      <div *ngIf="isDentiste && lignesDentaireCree.length > 0" class="mb-5">
+        <table class="rapport-table">
+          <thead>
+            <tr>
+              <th>DENT</th>
+              <th>CODE ACTE</th>
+              <th>COTATION</th>
+              <th>Avis médical</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ligne of lignesDentaireCree">
+              <td>{{ ligne.dent }}</td>
+              <td>{{ ligne.codeActe }}</td>
+              <td>{{ ligne.cotation }}</td>
+              <td>{{ ligne.avisMedical }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Schéma dentaire -->
+        <div class="text-center my-4">
+          <svg width="400" height="200" viewBox="0 0 400 200" class="mx-auto">
+            <ellipse cx="200" cy="70" rx="120" ry="50" 
+                     fill="none" stroke="#666" stroke-width="2"/>
+            <ellipse cx="200" cy="130" rx="120" ry="50" 
+                     fill="none" stroke="#666" stroke-width="2"/>
+            <line x1="200" y1="0" x2="200" y2="200" 
+                  stroke="#999" stroke-width="1" stroke-dasharray="5,5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- FORMAT OPTICIEN - Paragraphes -->
+      <div *ngIf="isOpticien" class="mb-5">
+        <div class="rapport-opticien">
+          <div class="mb-3">
+            <strong>Employeur:</strong> 
+            <span class="dotted-line">................................</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Mr / Mlle:</strong> 
+            <span class="dotted-line">{{ rapportCree.beneficiaireNom }}</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Prestataire(s):</strong> 
+            <span class="dotted-line">{{ prestataire?.nom }} {{ prestataire?.prenom }}</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Adhésion/Matricule:</strong> 
+            <span class="dotted-line">{{ rapportCree.refBsPhys }}</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>N° d'adhérent:</strong> 
+            <span class="dotted-line">................................</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>CIN Prestataire:</strong> 
+            <span class="dotted-line">{{ prestataire?.cin || '................................' }}</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>CONTACT:</strong> 
+            <span class="dotted-line">{{ prestataire?.contact || '................................' }}</span>
+          </div>
+          
+          <div class="grid mb-3">
+            <div class="col-6">
+              <strong>Acuité Visuelle OD:</strong> 
+              <span class="dotted-line">{{ rapportCree.acuiteVisuelleOD || '............' }}</span>
+            </div>
+            <div class="col-6">
+              <strong>OG:</strong> 
+              <span class="dotted-line">{{ rapportCree.acuiteVisuelleOG || '............' }}</span>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Prix de la monture:</strong> 
+            <span class="dotted-line">
+              {{ rapportCree.prixMonture ? (rapportCree.prixMonture + ' TND') : '................................' }}
+            </span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Nature des verres achetés:</strong> 
+            <span class="dotted-line">{{ rapportCree.natureVerres || '................................' }}</span>
+          </div>
+          
+          <div class="mb-3">
+            <strong>Prix des verres achetés:</strong> 
+            <span class="dotted-line">
+              {{ rapportCree.prixVerres ? (rapportCree.prixVerres + ' TND') : '................................' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observation -->
+      <div class="mb-4">
+        <p class="mb-2">
+          <i class="pi pi-circle-fill text-xs mr-2" style="color: #dc3545;"></i>
+          <strong>OBSERVATION:</strong> 
+          <span [class.conforme]="rapportCree && rapportCree.observation && rapportCree.observation.toUpperCase().includes('CONFORME')">
+            {{ rapportCree?.observation }}
+          </span>
+        </p>
+      </div>
+
+      <!-- Coupon Opticien -->
+      <div *ngIf="isOpticien" class="mt-5 pt-4 border-top-1 surface-border">
+        <h5 class="font-bold mb-3">Coupon Opticien</h5>
+        <div class="mb-2">
+          <strong>Référence du BS:</strong> 
+          <span class="dotted-line">{{ rapportCree.refBsPhys }}</span>
+        </div>
+        <div class="mb-2">
+          <small class="text-500">Date de passage pour Contre Visite</small>
+        </div>
+        <div class="mb-4">
+          <strong>CIN:</strong> 
+          <span class="dotted-line">................................</span>
+        </div>
+        <div class="text-right">
+          <p class="font-semibold">Signature Assuré:</p>
+          <div style="height: 60px; border-bottom: 1px solid #666; width: 200px; margin-left: auto;"></div>
+        </div>
+      </div>
+
+      <!-- Signature -->
+      <div class="text-right mt-5">
+        <p class="font-semibold mb-2">{{ prestataire?.nom }} {{ prestataire?.prenom }}</p>
+        <div style="height: 80px; border-bottom: 2px solid #333; width: 250px; margin-left: auto; margin-bottom: 10px;"></div>
+        <p class="text-sm text-500">Signature et Cachet</p>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button 
+        pButton 
+        type="button"
+        label="Imprimer" 
+        icon="pi pi-print"
+        class="p-button-success"
+        (click)="imprimerRapport()">
+      </button>
+      <button 
+        pButton 
+        type="button"
+        label="Fermer" 
+        icon="pi pi-times"
+        class="p-button-secondary"
+        (click)="closeRapportDialog()">
+      </button>
+    </ng-template>
+  </p-dialog>
+</div>

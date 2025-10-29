@@ -1,0 +1,232 @@
+::ng-deep .prestataire-modal {
+  .p-dialog-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+  
+  .p-dialog-content {
+    padding: 1.5rem;
+    background: #f8f9fa;
+  }
+
+  .p-dialog-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #dee2e6;
+  }
+}
+
+.prestataires-container {
+  min-height: 200px;
+}
+
+.prestataires-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prestataire-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12);
+    border-color: #667eea;
+  }
+}
+
+.member-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  color: white;
+  font-size: 2rem;
+  
+  .pi {
+    font-size: 2rem;
+  }
+  
+  .member-type-badge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    
+    &.conjoint {
+      color: #764ba2;
+      border: 2px solid #764ba2;
+    }
+    
+    &.enfant {
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+  }
+}
+
+.member-info {
+  flex: 1;
+  min-width: 0;
+  
+  .member-name {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+  
+  .member-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.95rem;
+    
+    .pi {
+      color: #667eea;
+      font-size: 1rem;
+    }
+    
+    span {
+      font-weight: 500;
+    }
+  }
+}
+
+.member-status {
+  display: flex;
+  align-items: center;
+  
+  .status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .pi {
+      font-size: 1rem;
+    }
+    
+    &.status-a {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    &.status-s {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    &.status-r {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    
+    &.status-e {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+  
+  .pi {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+    color: #667eea;
+  }
+  
+  p {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 500;
+    color: #666;
+  }
+  
+  small {
+    color: #999;
+    font-size: 0.95rem;
+  }
+}
+
+// Animation d'entrée
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.prestataire-item {
+  animation: slideInUp 0.4s ease-out forwards;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+      opacity: 0;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .prestataire-item {
+    flex-direction: column;
+    text-align: center;
+    
+    .member-info {
+      .member-details {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  }
+  
+  .member-status {
+    width: 100%;
+    justify-content: center;
+  }
+}

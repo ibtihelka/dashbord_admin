@@ -1,3 +1,4 @@
+// landing.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
@@ -32,8 +33,8 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
             }
 
         #hero > div > p {
-                max-width: 450px;
-            }
+            max-width: 450px;
+        }
         }
 
         @media screen and (max-width: 1300px){
@@ -59,5 +60,16 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
     `]
 })
 export class LandingComponent {
+
     constructor(public layoutService: LayoutService, public router: Router) { }
+
+    // Méthode pour rediriger vers la page de login
+    navigateToLogin() {
+        this.router.navigate(['/auth/login']);
+    }
+
+    // Méthode pour rediriger vers la page d'inscription
+    navigateToRegister() {
+        this.router.navigate(['/auth/singup']);
+    }
 }

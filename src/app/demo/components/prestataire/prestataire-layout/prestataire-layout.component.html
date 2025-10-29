@@ -1,0 +1,47 @@
+
+<div class="prestataire-layout min-h-screen flex flex-column">
+  <!-- Top Bar -->
+  <div class="top-bar surface-card shadow-2 px-4 py-3 flex align-items-center justify-content-between">
+    <div class="flex align-items-center gap-3">
+      <button 
+        pButton 
+        icon="pi pi-bars" 
+        class="p-button-text p-button-rounded lg:hidden"
+        (click)="toggleSidebar()">
+      </button>
+      <i class="pi pi-heartbeat text-4xl text-primary"></i>
+      <h2 class="m-0 text-2xl font-bold text-primary">Espace Prestataire</h2>
+    </div>
+    
+    <div class="flex align-items-center gap-3">
+      <div class="text-right hidden md:block">
+        <p class="m-0 font-semibold">{{ prestataire?.nom }}</p>
+        <p class="m-0 text-sm text-500">{{ prestataire?.role }}</p>
+      </div>
+      <button 
+        pButton 
+        icon="pi pi-sign-out" 
+        label="Déconnexion"
+        class="p-button-danger p-button-text"
+        (click)="logout()">
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-1">
+    <!-- Sidebar Desktop -->
+    <div class="sidebar surface-section shadow-2 hidden lg:block" style="width: 280px;">
+      <p-menu [model]="menuItems" styleClass="w-full border-none"></p-menu>
+    </div>
+
+    <!-- Sidebar Mobile -->
+    <p-sidebar [(visible)]="sidebarVisible" [style]="{width: '280px'}">
+      <p-menu [model]="menuItems" styleClass="w-full border-none"></p-menu>
+    </p-sidebar>
+
+    <!-- Content -->
+    <div class="flex-1 p-4 surface-ground">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

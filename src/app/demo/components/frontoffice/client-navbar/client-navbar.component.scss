@@ -1,4 +1,4 @@
-// client-navbar.component.scss
+// client-navbar.component.scss - VERSION AVEC IMAGE TÉLÉPERFORMANCE
 
 // ============================================
 // NAVBAR STYLES
@@ -11,7 +11,8 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  height: 70px;
+  height: 80px;
+  padding: 0.5rem 0;
   
   .navbar-container {
     display: flex;
@@ -22,45 +23,97 @@
     max-width: 100%;
   }
 
-  .navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    
-    .sidebar-toggle {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 10px;
-      width: 45px;
-      height: 45px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+  // Logo rond
+  .logo-section {
+    .round-logo {
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      border: 2px solid rgba(255, 255, 255, 0.3);
       transition: all 0.3s ease;
       
-      i {
-        color: white;
-        font-size: 1.3rem;
-      }
-      
       &:hover {
-        background: rgba(255, 255, 255, 0.3);
         transform: scale(1.05);
+        filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.2));
       }
     }
+  }
+
+  // Section centrale
+  .center-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
     
-    .logo-img {
-      height: 50px !important;
-      width: auto !important;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-radius: 50px;
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+    // Section Teleperformance avec logo
+    .teleperformance-section {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.3rem;
       
-      &:hover {
-        transform: scale(1.05);
-        filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.3));
+      .teleperformance-logo {
+        height: 30px;
+        width: auto;
+        cursor: pointer;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+
+        &:hover {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+      }
+      
+      .teleperformance-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 0.5px;
+        line-height: 1;
+      }
+    }
+
+    // Navigation centrée sous Teleperformance
+    .center-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0.1rem 0.2rem;
+        border-radius: 3px;
+        letter-spacing: 0.3px;
+        
+        &:hover {
+          color: white;
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateY(-1px);
+        }
+        
+        &.active {
+          color: white;
+          font-weight: 600;
+          background: rgba(255, 255, 255, 0.15);
+        }
+      }
+      
+      .nav-separator {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.7rem;
+        font-weight: 300;
       }
     }
   }
@@ -291,181 +344,62 @@
 }
 
 // ============================================
-// SIDEBAR STYLES
-// ============================================
-.sidebar {
-  position: fixed;
-  left: -280px;
-  top: 70px;
-  width: 280px;
-  height: calc(100vh - 70px);
-  background: white;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  transition: left 0.3s ease;
-  z-index: 999;
-  overflow-y: auto;
-  overflow-x: hidden;
-  
-  &.open {
-    left: 0;
-  }
-  
-  // Sur desktop, sidebar toujours visible
-  @media (min-width: 1024px) {
-    left: 0;
-  }
-  
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #1f2937;
-      font-weight: 700;
-    }
-    
-    .close-sidebar {
-      background: #f3f4f6;
-      border: none;
-      border-radius: 8px;
-      width: 35px;
-      height: 35px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      
-      i {
-        color: #6b7280;
-        font-size: 1.2rem;
-      }
-      
-      &:hover {
-        background: #e5e7eb;
-        transform: scale(1.05);
-      }
-    }
-  }
-  
-  .sidebar-nav {
-    padding: 1rem;
-    
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.25rem;
-      margin-bottom: 0.5rem;
-      color: #6b7280;
-      text-decoration: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 500;
-      font-size: 0.95rem;
-      position: relative;
-      
-      i {
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-        transition: all 0.3s ease;
-      }
-      
-      &:hover {
-        background: #f3f4f6;
-        color: #667eea;
-        transform: translateX(5px);
-        
-        i {
-          transform: scale(1.1);
-        }
-      }
-      
-      &.active {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        
-        i {
-          color: white;
-        }
-        
-        &::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 4px;
-          height: 70%;
-          background: white;
-          border-radius: 0 4px 4px 0;
-        }
-      }
-    }
-  }
-}
-
-// Overlay pour mobile
-.sidebar-overlay {
-  position: fixed;
-  top: 70px;
-  left: 0;
-  width: 100%;
-  height: calc(100vh - 70px);
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  z-index: 998;
-  
-  &.show {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-// ============================================
-// LAYOUT HELPERS - À ajouter dans votre styles globaux
-// ============================================
-// Ajoutez ces classes dans votre fichier global styles.scss
-
-/* 
-.page-container {
-  margin-left: 0;
-  margin-top: 70px;
-  transition: margin-left 0.3s ease;
-  min-height: calc(100vh - 70px);
-  
-  &.sidebar-open {
-    margin-left: 280px;
-  }
-}
-
-.page-content {
-  padding: 2rem;
-}
-*/
-
-// ============================================
 // RESPONSIVE DESIGN
 // ============================================
+@media (max-width: 1024px) {
+  .client-navbar {
+    .center-section {
+      .teleperformance-section {
+        .teleperformance-name {
+          font-size: 1.1rem;
+        }
+        
+        .teleperformance-logo {
+          height: 25px;
+        }
+      }
+      
+      .center-nav {
+        .nav-link {
+          font-size: 0.7rem;
+        }
+        
+        .nav-separator {
+          font-size: 0.6rem;
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .client-navbar {
+    height: 70px;
+    
     .navbar-container {
       padding: 0 1rem;
     }
     
-    .navbar-brand {
-      .logo-img {
-        height: 40px !important;
+    .logo-section {
+      .round-logo {
+        height: 40px;
+        width: 40px;
+      }
+    }
+    
+    .center-section {
+      .teleperformance-section {
+        .teleperformance-name {
+          font-size: 1rem;
+        }
+        
+        .teleperformance-logo {
+          height: 22px;
+        }
+      }
+      
+      .center-nav {
+        display: none; // Cacher la navigation sur mobile
       }
     }
     
@@ -480,111 +414,30 @@
       }
     }
   }
-  
-  .sidebar {
-    .sidebar-header {
-      .close-sidebar {
-        display: flex;
+}
+
+@media (max-width: 480px) {
+  .client-navbar {
+    .center-section {
+      .teleperformance-section {
+        .teleperformance-name {
+          font-size: 0.9rem;
+        }
+        
+        .teleperformance-logo {
+          height: 20px;
+        }
       }
     }
   }
-  
-  // Sur mobile, ne pas décaler le contenu
-  .page-container.sidebar-open {
-    margin-left: 0;
-  }
 }
 
-@media (min-width: 1024px) {
-  // Option: Sidebar toujours visible sur grand écran
-  .sidebar {
-    left: 0;
-  }
-  
-  .page-container {
-    margin-left: 280px;
-  }
-  
-  .sidebar-overlay {
-    display: none;
-  }
-  
-  .navbar-brand .sidebar-toggle {
-    display: none;
-  }
-}
-
-@media (max-width: 1024px) {
-  .page-container.sidebar-open {
-    margin-left: 0;
-  }
-}
-
-
-// Ajoutez ces styles à votre client-navbar.component.scss
-
-// Section partenaire dans la navbar
-.navbar-partner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  
-  .partner-company-name {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2c3e50;
-    letter-spacing: 0.5px;
-  }
-
-  .partner-logo {
-    height: 35px;
-    width: auto;
-    cursor: pointer;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      opacity: 0.8;
-    }
-  }
-
-  // Responsive
-  @media (max-width: 768px) {
-    position: static;
-    transform: none;
-    flex: 1;
-    justify-content: center;
-    margin: 0 10px;
-    
-    .partner-company-name {
-      font-size: 0.9rem;
-    }
-
-    .partner-logo {
-      height: 28px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .partner-company-name {
-      display: none; // Masquer le texte sur très petits écrans
-    }
-
-    .partner-logo {
-      height: 25px;
-    }
-  }
-}
-
-// Ajustement de la navbar-container pour accommoder le logo partenaire
+// Position relative pour navbar-container
 .navbar-container {
-  position: relative; // Important pour le positionnement absolu du logo partenaire
+  position: relative;
 }
 
-// Responsive: Assurer que le profil reste à droite
+// Profil toujours à droite
 .profile-dropdown {
   margin-left: auto;
 }

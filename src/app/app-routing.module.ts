@@ -15,126 +15,84 @@ import { MesSuggestionsComponent } from './demo/components/frontoffice/mes-sugge
 import { MesRibsComponent } from './demo/components/frontoffice/mes-ribs/mes-ribs.component';
 import { ReclamationComponent } from './demo/components/frontoffice/reclamation/reclamation.component';
 import { MonTelephoneComponent } from './demo/components/frontoffice/mon-telephone/mon-telephone.component';
+import { ComplementInformationComponent } from './demo/components/frontoffice/complement-information/complement-information.component';
+import { PrestataireLayoutComponent } from './demo/components/prestataire/prestataire-layout/prestataire-layout.component';
+import { CreerRapportComponent } from './demo/components/prestataire/creer-rapport/creer-rapport.component';
+import { MesRapportsComponent } from './demo/components/prestataire/mes-rapports/mes-rapports.component';
+import { PrestataireProfilComponent } from './demo/components/prestataire/prestataire-profil/prestataire-profil.component';
+
 
 @NgModule({
     imports: [
         RouterModule.forRoot([
-            // Route de redirection par défaut vers auth/login
             { 
                 path: '', 
-                redirectTo: '/auth/login', 
+                redirectTo: '/home', 
                 pathMatch: 'full' 
             },
             
-            // Routes protégées avec AuthGuard
+            // ROUTES ADMIN
             {
                 path: 'admin', 
                 component: AppLayoutComponent,
                 canActivate: [AuthGuard],
                 data: { role: 'ADMIN' },
                 children: [
-                    // Redirection par défaut vers dashboard pour les admins
-                    { 
-                        path: '', 
-                        redirectTo: 'dashboard', 
-                        pathMatch: 'full' 
-                    },
-                    { 
-                        path: 'dashboard', 
-                        loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) 
-                    },
-
-                     { 
-                         path: 'remboursement-stats', 
-                        component: RemboursementStatsComponent 
-                    },
-
-                    {
-                path: 'user-stats', // NOUVELLE ROUTE
-                component: UserStatsComponent
-            },
-
-                    { 
-                        path: 'uikit', 
-                        loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UikitModule) 
-                    },
-                    { 
-                        path: 'utilities', 
-                        loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) 
-                    },
-                    { 
-                        path: 'documentation', 
-                        loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) 
-                    },
-                    { 
-                        path: 'blocks', 
-                        loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) 
-                    },
-                    { 
-                        path: 'pages', 
-                        loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) 
-                    },
-                    { 
-                        path: 'mydashboard', 
-                        component: MydashboardComponent 
-                    }, { 
-                        path: 'adminProfil', 
-                        component: AdminProfileComponent 
-                    },
-
+                    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+                    { path: 'dashboard', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
+                    { path: 'remboursement-stats', component: RemboursementStatsComponent },
+                    { path: 'user-stats', component: UserStatsComponent },
+                    { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UikitModule) },
+                    { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
+                    { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
+                    { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
+                    { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
+                    { path: 'mydashboard', component: MydashboardComponent },
+                    { path: 'adminProfil', component: AdminProfileComponent },
                 ],
             },
             
+            // ROUTES CLIENTS
             {
                 path: 'clients',
                 component: ClientLayoutComponent,
                 canActivate: [AuthGuard],
                 data: { role: 'USER' },
                 children: [
-                    { 
-                        path: '', 
-                        redirectTo: 'accueil', 
-                        pathMatch: 'full' 
-                    },
-                    { 
-                        path: 'accueil', 
-                        component: AccueilComponent 
-                    },
-                    { 
-                        path: 'mesRemboursements', 
-                        component: MesRemboursementsComponent 
-                    },
-                     { 
-                        path: 'profile', 
-                        component: ClientProfileComponent 
-                    },
-                    {
-                       path: 'mes-suggestions',
-                       component: MesSuggestionsComponent
-                    },
-                     {
-                       path: 'rib',
-                       component: MesRibsComponent
-                    },
+                    { path: '', redirectTo: 'accueil', pathMatch: 'full' },
+                    { path: 'accueil', component: AccueilComponent },
+                    { path: 'mesRemboursements', component: MesRemboursementsComponent },
+                    { path: 'profile', component: ClientProfileComponent },
+                    { path: 'mes-suggestions', component: MesSuggestionsComponent },
+                    { path: 'rib', component: MesRibsComponent },
+                    { path: 'complement-information', component: ComplementInformationComponent },
+                    { path: 'reclamations', component: ReclamationComponent },
+                    { path: 'tel', component: MonTelephoneComponent }
+                ]
+            },
 
-                     {
-                        path: 'reclamations',
-                          component: ReclamationComponent,
-       
-                          },
-                            {
-                        path: 'tel',
-                          component: MonTelephoneComponent,
-       
-                          }
-
-
-                    
-                    // Ajoutez vos autres routes clients ici
-                    // { path: 'profile', component: ProfileComponent },
-                    // { path: 'suggestions-reclamations', component: SuggestionsReclamationsComponent },
-                    // { path: 'changement-rib', component: ChangementRibComponent },
-                    // { path: 'changement-tel', component: ChangementTelComponent },
+            // ROUTES PRESTATAIRE (NOUVEAU)
+            {
+                path: 'prestataire',
+                component: PrestataireLayoutComponent,
+                canActivate: [AuthGuard],
+                data: { role: 'PRESTATAIRE' },
+                children: [
+                    { path: '', redirectTo: 'mes-rapports', pathMatch: 'full' },
+                  
+                    { 
+                        path: 'creer-rapport', 
+                        component: CreerRapportComponent 
+                    },
+                    { 
+                        path: 'mes-rapports', 
+                        component: MesRapportsComponent 
+                    },
+                      { 
+                        path: 'profil', 
+                        component: PrestataireProfilComponent 
+                    },
+                   
                 ]
             },
             
@@ -154,7 +112,7 @@ import { MonTelephoneComponent } from './demo/components/frontoffice/mon-telepho
                 component: NotfoundComponent 
             },
             
-            // Route catch-all - doit être la dernière
+            // Route catch-all
             { 
                 path: '**', 
                 redirectTo: 'pages/notfound' 

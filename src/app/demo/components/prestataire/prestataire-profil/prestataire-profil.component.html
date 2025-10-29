@@ -1,0 +1,213 @@
+
+<div class="prestataire-profil">
+  <p-toast></p-toast>
+  
+  <div class="card">
+    <div class="flex justify-content-between align-items-center mb-4">
+      <h2 class="text-3xl font-bold m-0">
+        <i class="pi pi-user mr-2"></i>
+        Mon Profil
+      </h2>
+      <div class="flex gap-2">
+        <button 
+          *ngIf="!editMode"
+          pButton 
+          label="Modifier" 
+          icon="pi pi-pencil"
+          class="p-button-outlined"
+          (click)="toggleEditMode()">
+        </button>
+        <button 
+          *ngIf="editMode"
+          pButton 
+          label="Annuler" 
+          icon="pi pi-times"
+          class="p-button-outlined p-button-secondary"
+          (click)="toggleEditMode()">
+        </button>
+      </div>
+    </div>
+
+    <!-- Informations de compte -->
+    <div class="surface-100 p-4 border-round mb-4">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <div class="flex align-items-center gap-3 mb-3">
+            <div class="bg-primary text-white border-circle p-3">
+              <i class="pi pi-user text-2xl"></i>
+            </div>
+            <div>
+              <small class="text-500">Identifiant</small>
+              <div class="font-semibold text-lg">{{ prestataire?.persoId }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 md:col-6">
+          <div class="flex align-items-center gap-3 mb-3">
+            <div class="bg-primary text-white border-circle p-3">
+              <i class="pi pi-briefcase text-2xl"></i>
+            </div>
+            <div>
+              <small class="text-500">Rôle</small>
+              <div>
+                <p-tag 
+                 [value]="prestataire?.role || ''"
+
+                  [severity]="prestataire?.role === 'DENTISTE' ? 'warning' : 'primary'"
+                  class="text-lg">
+                </p-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire de profil -->
+    <form [formGroup]="profilForm" (ngSubmit)="onSubmitProfil()">
+      <div class="grid">
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">
+            Nom complet <span class="text-red-500">*</span>
+          </label>
+          <input 
+            pInputText 
+            formControlName="nom" 
+            class="w-full" 
+            placeholder="Nom complet" />
+        </div>
+
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">
+            Email <span class="text-red-500">*</span>
+          </label>
+          <input 
+            pInputText 
+            type="email"
+            formControlName="email" 
+            class="w-full" 
+            placeholder="email@example.com" />
+        </div>
+
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">
+            Téléphone <span class="text-red-500">*</span>
+          </label>
+          <input 
+            pInputText 
+            formControlName="contact" 
+            class="w-full" 
+            placeholder="Numéro de téléphone" />
+        </div>
+
+        <div class="col-12 md:col-6">
+          <label class="block font-semibold mb-2">Adresse</label>
+          <input 
+            pInputText 
+            formControlName="adresse" 
+            class="w-full" 
+            placeholder="Adresse complète" />
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-4" *ngIf="editMode">
+        <button 
+          pButton 
+          type="submit"
+          label="Enregistrer"
+          icon="pi pi-check"
+          [loading]="loading"
+          [disabled]="profilForm.invalid || loading">
+        </button>
+      </div>
+    </form>
+
+    <!-- Section mot de passe -->
+    <p-divider></p-divider>
+
+    <div class="mt-4">
+      <h3 class="text-xl font-semibold mb-3">Sécurité</h3>
+      <button 
+        pButton 
+        label="Changer le mot de passe"
+        icon="pi pi-lock"
+        class="p-button-outlined"
+        (click)="openPasswordDialog()">
+      </button>
+    </div>
+  </div>
+
+  <!-- Dialog changement mot de passe -->
+  <p-dialog 
+    [(visible)]="showPasswordDialog"
+    [modal]="true"
+    [style]="{width: '450px'}"
+    header="Changer le mot de passe"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()">
+      <div class="mb-3">
+        <label class="block font-semibold mb-2">
+          Mot de passe actuel <span class="text-red-500">*</span>
+        </label>
+        <p-password 
+          formControlName="currentPassword"
+          [toggleMask]="true"
+          [feedback]="false"
+          styleClass="w-full"
+          inputStyleClass="w-full">
+        </p-password>
+      </div>
+
+      <div class="mb-3">
+        <label class="block font-semibold mb-2">
+          Nouveau mot de passe <span class="text-red-500">*</span>
+        </label>
+        <p-password 
+          formControlName="newPassword"
+          [toggleMask]="true"
+          [feedback]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full">
+        </p-password>
+        <small class="text-500">Minimum 6 caractères</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="block font-semibold mb-2">
+          Confirmer le mot de passe <span class="text-red-500">*</span>
+        </label>
+        <p-password 
+          formControlName="confirmPassword"
+          [toggleMask]="true"
+          [feedback]="false"
+          styleClass="w-full"
+          inputStyleClass="w-full">
+        </p-password>
+        <small 
+          *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched"
+          class="text-red-500">
+          Les mots de passe ne correspondent pas
+        </small>
+      </div>
+
+      <div class="flex gap-2 justify-content-end">
+        <button 
+          pButton 
+          type="button"
+          label="Annuler"
+          class="p-button-text"
+          (click)="showPasswordDialog = false">
+        </button>
+        <button 
+          pButton 
+          type="submit"
+          label="Enregistrer"
+          [loading]="loading"
+          [disabled]="passwordForm.invalid || loading">
+        </button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

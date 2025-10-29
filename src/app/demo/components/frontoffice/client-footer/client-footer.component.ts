@@ -12,16 +12,23 @@ export class ClientFooterComponent {
 
   // Liens utiles
   usefulLinks = [
-    { 
-      label: 'BH Assurance', 
-      url: 'https://bh-assurance.com/',
-      icon: 'pi-shield'
-    },
-    { 
-      label: 'Retrouver une pharmacie', 
-      url: 'https://cnopt.tn/fr/pharmacie-de-garde.html',
-      icon: 'pi-map-marker'
-    }
+   
+   { 
+  label: 'pharmacie', 
+  url: 'https://cnopt.tn/fr/pharmacie-de-garde.html',
+  icon: 'pi-pill'  // icône pour pharmacie
+},
+{ 
+  label: 'medecin', 
+  url: 'https://www.med.tn',
+  icon: 'pi-user-md'  // icône pour médecin
+},
+{ 
+  label: 'stafim', 
+  url: 'https://www.peugeottunisie.com/',
+  icon: 'pi-car'  // icône pour automobile
+}
+
   ];
 
   openLink(url: string): void {

@@ -49,12 +49,38 @@ import { MesTelephonesComponent } from './demo/components/frontoffice/mes-teleph
 import { ClientFooterComponent } from './demo/components/frontoffice/client-footer/client-footer.component';
 import { ReclamationComponent } from './demo/components/frontoffice/reclamation/reclamation.component';
 import { MonTelephoneComponent } from './demo/components/frontoffice/mon-telephone/mon-telephone.component';
+import { PrestataireListComponent } from './demo/components/frontoffice/prestataire-list/prestataire-list.component';
+import { ComplementInformationComponent } from './demo/components/frontoffice/complement-information/complement-information.component';
+import { FileUploadModule } from 'primeng/fileupload';
+import { PrestataireLayoutComponent } from './demo/components/prestataire/prestataire-layout/prestataire-layout.component';
+import { MenuModule } from 'primeng/menu';
+import { SidebarModule } from 'primeng/sidebar';
+import { CreerRapportComponent } from './demo/components/prestataire/creer-rapport/creer-rapport.component';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { MessageModule } from 'primeng/message';
+import { MesRapportsComponent } from './demo/components/prestataire/mes-rapports/mes-rapports.component';
+import { PrestataireProfilComponent } from './demo/components/prestataire/prestataire-profil/prestataire-profil.component';
+import { DividerModule } from 'primeng/divider';
+import { PasswordModule } from 'primeng/password';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent, MesSuggestionsComponent, MesRibsComponent, MesTelephonesComponent, ClientFooterComponent, ReclamationComponent, MonTelephoneComponent
+        AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent, MesSuggestionsComponent, MesRibsComponent, MesTelephonesComponent, ClientFooterComponent, ReclamationComponent, MonTelephoneComponent, PrestataireListComponent, ComplementInformationComponent, PrestataireLayoutComponent, CreerRapportComponent, MesRapportsComponent, PrestataireProfilComponent
     ],
-    imports: [  TagModule,
+    imports: [  
+ DividerModule,
+    PasswordModule,
+
+       
+
+
+        FileUploadModule,
+         MenuModule ,
+          MessageModule,      // <-- pour <p-message>
+    InputNumberModule,  // <-- pour <p-inputNumber>
+    ButtonModule ,
+          SidebarModule,
+         TagModule,
     DialogModule,
     ToastModule, 
         AppRoutingModule,
