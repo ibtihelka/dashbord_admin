@@ -12,6 +12,7 @@ export interface Prestataire {
   specialite?: string;
   persoPassed?: string; // Mot de passe
   persoLogin?: string; // Login/Username
+   sexe?: string;
 }
 
 export interface RapportContreVisite {

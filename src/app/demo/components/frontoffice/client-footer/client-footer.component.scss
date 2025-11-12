@@ -1,4 +1,4 @@
-// client-footer.component.scss - VERSION SANS SIDEBAR
+// client-footer.component.scss - VERSION OPTIMISÉE
 
 .client-footer {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -29,9 +29,10 @@
 
   .footer-main {
     display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr;
+    grid-template-columns: 2fr 1.5fr 2fr;
     gap: 3rem;
     margin-bottom: 2rem;
+    align-items: start;
   }
 
   .footer-column {
@@ -43,36 +44,40 @@
       margin-bottom: 0.5rem;
       
       .footer-logo-img {
-        height: 60px;
+        height: 65px;
         width: auto;
-        border-radius: 10px;
+        border-radius: 12px;
         filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+        background: white;
+        padding: 8px;
       }
     }
 
     .footer-description {
-      font-size: 0.9rem;
-      line-height: 1.6;
-      opacity: 0.9;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      opacity: 0.95;
       margin: 0;
       max-width: 350px;
+      font-weight: 300;
     }
 
     .footer-title {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      margin: 0 0 0.5rem;
+      margin: 0 0 1rem;
       position: relative;
       padding-bottom: 0.75rem;
+      letter-spacing: 0.5px;
       
       &::after {
         content: '';
         position: absolute;
         left: 0;
         bottom: 0;
-        width: 40px;
+        width: 50px;
         height: 3px;
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.6);
         border-radius: 2px;
       }
     }
@@ -83,23 +88,25 @@
       margin: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.85rem;
 
       li {
         .footer-link {
-          color: rgba(255, 255, 255, 0.9);
+          color: rgba(255, 255, 255, 0.95);
           text-decoration: none;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
           transition: all 0.3s ease;
-          padding: 0.25rem 0;
+          padding: 0.4rem 0;
           cursor: pointer;
+          font-weight: 300;
           
           i {
-            font-size: 0.85rem;
-            opacity: 0.8;
+            font-size: 1rem;
+            opacity: 0.85;
+            transition: all 0.3s ease;
           }
 
           &:hover {
@@ -109,6 +116,7 @@
             
             i {
               opacity: 1;
+              transform: scale(1.1);
             }
           }
         }
@@ -127,14 +135,14 @@
         display: flex;
         align-items: flex-start;
         gap: 0.75rem;
-        font-size: 0.9rem;
-        opacity: 0.9;
+        font-size: 0.95rem;
+        opacity: 0.95;
         
         i {
-          font-size: 1rem;
+          font-size: 1.1rem;
           width: 20px;
           text-align: center;
-          opacity: 0.8;
+          opacity: 0.85;
           margin-top: 2px;
         }
 
@@ -142,6 +150,7 @@
           cursor: pointer;
           transition: all 0.3s ease;
           padding: 0.25rem 0;
+          margin-bottom: 0.5rem;
 
           &:hover {
             opacity: 1;
@@ -155,27 +164,87 @@
         }
       }
     }
+
+    // Carte Google Maps dans le footer
+    .footer-map {
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        height: 160px;
+      }
+    }
   }
 
   .footer-divider {
     height: 1px;
     background: linear-gradient(90deg, 
       transparent, 
-      rgba(255, 255, 255, 0.3), 
+      rgba(255, 255, 255, 0.4), 
       transparent
     );
-    margin: 1.5rem 0 1rem;
+    margin: 2rem 0 1.5rem;
   }
 
   .footer-bottom {
     text-align: center;
-    padding-top: 1rem;
+    padding-top: 0.5rem;
+
+    // Section "Propulsé par Lifeservs"
+    .footer-powered-by {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0.6rem 1.2rem;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.05);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(1.03);
+
+        .lifeservs-logo {
+          transform: scale(1.08);
+          filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+      }
+
+      .powered-text {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        font-weight: 400;
+      }
+
+      .lifeservs-logo {
+        height: 35px;
+        width: auto;
+        transition: all 0.3s ease;
+        filter: brightness(0) invert(1);
+      }
+    }
 
     .copyright {
       font-size: 0.85rem;
       opacity: 0.85;
       margin: 0;
-      line-height: 1.5;
+      line-height: 1.6;
+      font-weight: 300;
     }
   }
 }
@@ -187,10 +256,24 @@
   .client-footer {
     .footer-main {
       grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      gap: 2.5rem;
 
       .footer-column:first-child {
         grid-column: 1 / -1;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .footer-column:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .footer-column {
+      .footer-map {
+        iframe {
+          height: 140px;
+        }
       }
     }
   }
@@ -201,7 +284,7 @@
     padding: 2rem 0 1rem;
 
     .footer-container {
-      padding: 0 1rem;
+      padding: 0 1.5rem;
     }
 
     .footer-main {
@@ -210,6 +293,11 @@
 
       .footer-column:first-child {
         grid-column: 1;
+        max-width: 100%;
+      }
+
+      .footer-column:last-child {
+        grid-column: 1;
       }
     }
 
@@ -217,9 +305,27 @@
       .footer-description {
         max-width: 100%;
       }
+
+      .footer-map {
+        iframe {
+          height: 130px;
+        }
+      }
     }
 
     .footer-bottom {
+      .footer-powered-by {
+        padding: 0.5rem 1rem;
+
+        .powered-text {
+          font-size: 0.9rem;
+        }
+
+        .lifeservs-logo {
+          height: 30px;
+        }
+      }
+
       .copyright {
         font-size: 0.8rem;
       }
@@ -231,12 +337,116 @@
   .client-footer {
     padding: 1.5rem 0 0.75rem;
 
+    .footer-container {
+      padding: 0 1rem;
+    }
+
+    .footer-main {
+      gap: 1.5rem;
+    }
+
     .footer-column {
+      gap: 0.75rem;
+
       .footer-logo {
         .footer-logo-img {
-          height: 50px;
+          height: 55px;
+        }
+      }
+
+      .footer-title {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .footer-links {
+        gap: 0.7rem;
+
+        li .footer-link {
+          font-size: 0.9rem;
+          gap: 0.6rem;
+        }
+      }
+
+      .footer-map {
+        iframe {
+          height: 120px;
+        }
+      }
+    }
+
+    .footer-bottom {
+      .footer-powered-by {
+        padding: 0.4rem 0.8rem;
+        gap: 0.6rem;
+
+        .powered-text {
+          font-size: 0.85rem;
+        }
+
+        .lifeservs-logo {
+          height: 28px;
         }
       }
     }
   }
+}
+
+// ============================================
+// ANIMATIONS SUPPLÉMENTAIRES
+// ============================================
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.client-footer {
+  .footer-column {
+    animation: fadeInUp 0.6s ease-out;
+    
+    &:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.copyright {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.lifeservs-logo-inline {
+  height: 24px;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.lifeservs-logo-inline:hover {
+  transform: scale(1.1);
 }

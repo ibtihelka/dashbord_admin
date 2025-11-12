@@ -1,0 +1,26 @@
+<ul class="layout-menu">
+    <ng-container *ngFor="let item of model">
+        <li class="layout-menuitem-category">
+            <div class="layout-menuitem-root-text">{{ item.label }}</div>
+            <ul>
+                <li *ngFor="let child of item.items">
+                    <a [routerLink]="child.routerLink" 
+                       *ngIf="child.routerLink"
+                       routerLinkActive="active-menuitem"
+                       [routerLinkActiveOptions]="{exact: false}"
+                       class="p-ripple">
+                        <i [class]="child.icon"></i>
+                        <span class="layout-menuitem-text">{{ child.label }}</span>
+                    </a>
+                    <a (click)="child.command && child.command()" 
+                       *ngIf="!child.routerLink"
+                       class="p-ripple"
+                       style="cursor: pointer;">
+                        <i [class]="child.icon"></i>
+                        <span class="layout-menuitem-text">{{ child.label }}</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ng-container>
+</ul>

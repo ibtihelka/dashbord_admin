@@ -1,0 +1,51 @@
+<!-- src/app/demo/components/backoffice_admin/societe-profil/societe-profil.component.html -->
+<div class="card">
+    <h3 class="mb-4">
+        <i class="pi pi-user mr-2"></i>
+        Mon Profil Société
+    </h3>
+
+    <div class="grid" *ngIf="societe">
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label class="font-semibold text-600">Identifiant</label>
+                <p class="mt-2 text-900">{{ societe.persoId }}</p>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label class="font-semibold text-600">Nom de la société</label>
+                <p class="mt-2 text-900">{{ societe.persoName || 'Non renseigné' }}</p>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label class="font-semibold text-600">Contact</label>
+                <p class="mt-2 text-900">{{ societe.contact || 'Non renseigné' }}</p>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label class="font-semibold text-600">Email</label>
+                <p class="mt-2 text-900">{{ societe.email || 'Non renseigné' }}</p>
+            </div>
+        </div>
+
+        <div class="col-12 md:col-6">
+            <div class="field">
+                <label class="font-semibold text-600">Rôle</label>
+                <p class="mt-2">
+                    <p-tag value="SOCIÉTÉ" severity="info"></p-tag>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!societe" class="text-center py-6">
+        <i class="pi pi-exclamation-triangle text-4xl text-orange-500 mb-3"></i>
+        <p class="text-600">Aucune information de société disponible</p>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<!-- src/app/demo/components/backoffice_admin/societe-topbar/societe-topbar.component.html -->
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="/societe">
+        <img src="assets/layout/images/logo(1).png" alt="logo">
+        <span class="ml-2 font-semibold text-xl">{{ societeNom }}</span>
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" 
+            (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" 
+            (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" 
+         [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        
+        <button class="p-link layout-topbar-button" [routerLink]="'/societe/profil'">
+            <i class="pi pi-user"></i>
+            <span>Profil</span>
+        </button>
+
+        <button class="p-link layout-topbar-button" (click)="logout()">
+            <i class="pi pi-sign-out"></i>
+            <span>Déconnexion</span>
+        </button>
+    </div>
+</div>

@@ -21,7 +21,7 @@ export class MesRemboursementsComponent implements OnInit, OnDestroy {
   constructor(
     private remboursementService: RemboursementService,
     private authService: AuthService,
-    private router: Router
+    public router: Router
   ) {}
 
   ngOnInit() {
@@ -178,5 +178,10 @@ export class MesRemboursementsComponent implements OnInit, OnDestroy {
   this.router.navigate(['/clients/reclamations'], {
     queryParams: { refBsPhys: remboursement.refBsPhys }
   });
+}
+
+
+goToAccueil() {
+  this.router.navigate(['/clients/accueil']);
 }
 }

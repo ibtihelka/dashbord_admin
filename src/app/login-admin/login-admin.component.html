@@ -1,0 +1,97 @@
+<div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden" style="background: #ffffff;">
+    <div class="grid justify-content-center align-items-center p-3 lg:p-0" style="max-width: 1200px; width: 100%;">
+        
+        <div class="col-12 xl:col-10">
+            <div class="grid shadow-8" style="border-radius: 24px; overflow: hidden; background: white; border: 1px solid #e5e7eb;">
+                
+                <!-- Panneau gauche avec logo et design -->
+                <div class="col-12 lg:col-5 p-0" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); position: relative; min-height: 600px;">
+                    <div class="flex flex-column align-items-center justify-content-center h-full p-6 text-white">
+                        <!-- Logo -->
+                        <div class="mb-5" style="animation: float 3s ease-in-out infinite;">
+                            <img 
+                                src="assets/layout/images/logo(1).png" 
+                                alt="Logo MyBs" 
+                                style="width: 160px; height: 160px; border-radius: 50%; object-fit: contain; background: white; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">                
+                        </div>
+                        
+                        <!-- Texte de bienvenue -->
+                        <h1 class="text-5xl font-bold mb-3 text-center" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">MyBs </h1>
+                        <p class="text-xl text-center mb-0" style="opacity: 0.95; line-height: 1.6;">
+                          Plateforme d'administration et de gestion
+                        </p>
+                        
+                        <!-- Décoration -->
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+                    </div>
+                </div>
+                
+                <!-- Panneau droit avec formulaire -->
+                <div class="col-12 lg:col-7 p-6 lg:p-7">
+                    <div class="h-full flex flex-column justify-content-center">
+                        <!-- En-tête -->
+                        <div class="mb-6">
+                            <h2 class="text-900 text-4xl font-bold mb-2" style="letter-spacing: -0.5px;">Connexion </h2>
+                            <p class="text-600 text-lg mb-0">Bienvenue ! Connectez-vous à votre compte</p>
+                        </div>
+
+                        <!-- Formulaire -->
+                        <div class="w-full">
+                            <label for="adminId" class="block text-900 font-semibold mb-2" style="font-size: 1rem;">Identifiant Administrateur</label>
+                            <input 
+                                id="adminId" 
+                                type="text" 
+                                placeholder="Entrez votre identifiant admin" 
+                                pInputText 
+                                class="w-full mb-4" 
+                                style="padding: 1rem 1.25rem; border-radius: 14px; border: 2px solid #e5e7eb; font-size: 1rem; transition: all 0.3s ease;" 
+                                [(ngModel)]="adminId"
+                                [disabled]="loading">
+
+                            <label for="password1" class="block text-900 font-semibold mb-2" style="font-size: 1rem;">Mot de passe</label>
+                            <p-password 
+                                id="password1" 
+                                [(ngModel)]="password" 
+                                placeholder="Entrez votre mot de passe" 
+                                [toggleMask]="true" 
+                                styleClass="w-full mb-4"
+                                inputStyleClass="w-full"
+                                [style]="{'width': '100%'}"
+                                [inputStyle]="{'border-radius': '14px', 'border': '2px solid #e5e7eb', 'padding': '1rem 1.25rem', 'font-size': '1rem'}"
+                                [disabled]="loading">
+                            </p-password>
+
+                            <div class="flex align-items-center justify-content-between mb-5">
+                                <div class="flex align-items-center">
+                                    <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
+                                    <label for="rememberme1" class="cursor-pointer" style="font-size: 0.95rem; color: #6b7280;">Se souvenir de moi</label>
+                                </div>
+                                <a class="font-semibold no-underline cursor-pointer" style="color: #f093fb; font-size: 0.95rem; transition: color 0.2s;">Mot de passe oublié?</a>
+                            </div>
+                            
+                            <button 
+                                pButton 
+                                pRipple 
+                                [label]="loading ? 'Connexion en cours...' : 'Se connecter'" 
+                                class="w-full p-3 text-lg font-semibold" 
+                                style="border-radius: 14px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border: none; box-shadow: 0 8px 20px rgba(240, 147, 251, 0.4); transition: all 0.3s ease; height: 56px;"
+                                (click)="onLoginAdmin()"
+                                [disabled]="loading"
+                                [loading]="loading">
+                            </button>
+
+                            <!-- Lien retour -->
+                            <div class="text-center mt-4">
+                                <a (click)="goBack()" class="text-600 no-underline cursor-pointer" style="font-size: 0.95rem;">
+                                    <i class="pi pi-arrow-left mr-2"></i>Retour à la sélection
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>

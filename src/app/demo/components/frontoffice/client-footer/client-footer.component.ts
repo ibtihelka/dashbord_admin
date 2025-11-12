@@ -12,24 +12,25 @@ export class ClientFooterComponent {
 
   // Liens utiles
   usefulLinks = [
-   
-   { 
-  label: 'pharmacie', 
-  url: 'https://cnopt.tn/fr/pharmacie-de-garde.html',
-  icon: 'pi-pill'  // icône pour pharmacie
-},
-{ 
-  label: 'medecin', 
-  url: 'https://www.med.tn',
-  icon: 'pi-user-md'  // icône pour médecin
-},
-{ 
-  label: 'stafim', 
-  url: 'https://www.peugeottunisie.com/',
-  icon: 'pi-car'  // icône pour automobile
-}
-
+    { 
+      label: 'Pharmacie ', 
+      url: 'https://cnopt.tn/fr/pharmacie-de-garde.html',
+      icon: 'pi-heart-fill'  // Changé l'icône
+    },
+    { 
+      label: 'Médecin', 
+      url: 'https://www.med.tn',
+      icon: 'pi-shield'  // Changé l'icône
+    },
+    { 
+      label: 'Stafim', 
+      url: 'https://www.peugeottunisie.com/',
+      icon: 'pi-car'
+    }
   ];
+
+  // URL Lifeservs
+  lifeservsUrl: string = 'https://lifeservs.com/';
 
   openLink(url: string): void {
     window.open(url, '_blank');
@@ -37,5 +38,9 @@ export class ClientFooterComponent {
 
   openAssuranceBHLocation(): void {
     window.open(this.assuranceBHLocation, '_blank');
+  }
+
+  openLifeservs(): void {
+    window.open(this.lifeservsUrl, '_blank');
   }
 }

@@ -1,16 +1,38 @@
-<div class="page-container" >
+<div class="page-container">
   <div class="page-content">
+    <!-- Bouton Home -->
+    <div class="header-content">
+      <button class="btn-back-circle" (click)="goToAccueil()" title="Retour à l'accueil">
+        <i class="pi pi-home"></i>
+      </button>
+    </div>
     
     <div class="reclamation-container">
+      
+      <!-- En-tête avec bouton toggle -->
       <div class="page-header">
-        <h1 class="page-title">
-          <i class="pi pi-exclamation-circle"></i>
-          Mes Réclamations
-        </h1>
-        <p class="page-subtitle">Gérez vos réclamations concernant vos remboursements</p>
+        <div class="header-left">
+          <h1 class="page-title">
+            <i class="pi pi-exclamation-circle"></i>
+            Mes Réclamations
+          </h1>
+          <p class="page-subtitle">Gérez vos réclamations concernant vos remboursements</p>
+        </div>
+        
+        <!-- ✅ BOUTON POUR AFFICHER/MASQUER LE FORMULAIRE -->
+        <div class="header-right">
+          <button 
+            class="btn btn-toggle-form"
+            [class.btn-active]="showForm"
+            (click)="toggleForm()"
+            title="{{ showForm ? 'Masquer le formulaire' : 'Afficher le formulaire' }}">
+            <i class="pi" [class.pi-plus-circle]="!showForm" [class.pi-times]="showForm"></i>
+            {{ showForm ? 'Masquer le formulaire' : 'Nouvelle Réclamation' }}
+          </button>
+        </div>
       </div>
 
-      <!-- Messages globaux -->
+      <!-- Messages globaux (visibles uniquement si le formulaire est masqué) -->
       <div class="alert alert-success" *ngIf="successMessage && !showForm">
         <i class="pi pi-check-circle"></i>
         {{ successMessage }}
@@ -21,105 +43,106 @@
         {{ errorMessage }}
       </div>
 
-      <!-- Formulaire de création (conditionnel) -->
-      <div class="reclamation-form-card" *ngIf="showForm">
-        <div class="card-header">
-          <h3>
-            <i class="pi pi-plus-circle"></i>
-            Nouvelle Réclamation
-          </h3>
-          <button 
-            class="btn-close"
-            (click)="toggleForm()"
-            title="Fermer">
-            <i class="pi pi-times"></i>
-          </button>
-        </div>
-        <div class="card-content">
-          <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
-            
-            <!-- Sélection du numéro de BS -->
-            <div class="form-group">
-              <label for="refBsPhys">
-                Numéro du BS <span class="required">*</span>
-              </label>
-              <select 
-                id="refBsPhys"
-                class="form-control" 
-                formControlName="refBsPhys">
-                <option value="">Sélectionnez un bulletin de soins</option>
-                <option *ngFor="let remb of remboursements" [value]="remb.refBsPhys">
-                  {{ remb.refBsPhys }} - {{ remb.nomPrenPrest }} ({{ formatDate(remb.datBs) }})
-                </option>
-              </select>
-              <small class="error-message" *ngIf="reclamationForm.get('refBsPhys')?.invalid && reclamationForm.get('refBsPhys')?.touched">
-                Veuillez sélectionner un bulletin de soins
-              </small>
-            </div>
+      <!-- ✅ FORMULAIRE AVEC ANIMATION DE SLIDE -->
+      <div class="form-slide-container" [class.form-visible]="showForm">
+        <div class="reclamation-form-card">
+          <div class="card-header">
+            <h3>
+              <i class="pi pi-plus-circle"></i>
+              Nouvelle Réclamation
+            </h3>
+            <button 
+              class="btn-close"
+              (click)="toggleForm()"
+              title="Fermer">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+          <div class="card-content">
+            <form [formGroup]="reclamationForm" (ngSubmit)="onSubmit()">
+              
+              <!-- Sélection du numéro de BS -->
+              <div class="form-group">
+                <label for="refBsPhys">
+                  Numéro du BS <span class="required">*</span>
+                </label>
+                <select 
+                  id="refBsPhys"
+                  class="form-control" 
+                  formControlName="refBsPhys">
+                  <option value="">Sélectionnez un bulletin de soins</option>
+                  <option *ngFor="let remb of remboursements" [value]="remb.refBsPhys">
+                    {{ remb.refBsPhys }} - {{ remb.nomPrenPrest }} ({{ formatDate(remb.datBs) }})
+                  </option>
+                </select>
+                <small class="error-message" *ngIf="reclamationForm.get('refBsPhys')?.invalid && reclamationForm.get('refBsPhys')?.touched">
+                  Veuillez sélectionner un bulletin de soins
+                </small>
+                
+                <!-- Compteur de réclamations -->
+                
+              </div>
 
-            <!-- Titre de la réclamation -->
-            <div class="form-group">
-              <label for="titreReclamation">
-                Titre <span class="required">*</span>
-              </label>
-              <input 
-                type="text"
-                id="titreReclamation"
-                class="form-control" 
-                formControlName="titreReclamation"
-                placeholder="Ex: Remboursement incomplet">
-              <small class="error-message" *ngIf="reclamationForm.get('titreReclamation')?.invalid && reclamationForm.get('titreReclamation')?.touched">
-                Le titre est requis
-              </small>
-            </div>
+              <!-- Message d'avertissement -->
+              <div class="alert alert-warning" *ngIf="warningMessage">
+               
+                {{ warningMessage }}
+              </div>
 
-            <!-- Description -->
-            <div class="form-group">
-              <label for="texteReclamation">
-                Description <span class="required">*</span>
-              </label>
-              <textarea 
-                id="texteReclamation"
-                class="form-control" 
-                formControlName="texteReclamation"
-                rows="5"
-                placeholder="Décrivez votre réclamation en détail..."></textarea>
-              <small class="error-message" *ngIf="reclamationForm.get('texteReclamation')?.invalid && reclamationForm.get('texteReclamation')?.touched">
-                La description est requise (minimum 10 caractères)
-              </small>
-            </div>
+           
 
-            <!-- Message de succès -->
-            <div class="alert alert-success" *ngIf="successMessage">
-              <i class="pi pi-check-circle"></i>
-              {{ successMessage }}
-            </div>
+              <!-- Description -->
+              <div class="form-group">
+                <label for="texteReclamation">
+                  Description <span class="required">*</span>
+                </label>
+                <textarea 
+                  id="texteReclamation"
+                  class="form-control" 
+                  formControlName="texteReclamation"
+                  rows="5"
+                  placeholder="Décrivez votre réclamation en détail..."
+                 [disabled]="!selectedRefBsPhysCount?.canCreate"
+></textarea>
+                <small class="error-message" *ngIf="reclamationForm.get('texteReclamation')?.invalid && reclamationForm.get('texteReclamation')?.touched">
+                  La description est requise (minimum 10 caractères)
+                </small>
+              </div>
 
-            <!-- Message d'erreur -->
-            <div class="alert alert-danger" *ngIf="errorMessage">
-              <i class="pi pi-times-circle"></i>
-              {{ errorMessage }}
-            </div>
+              <!-- Message de succès -->
+              <div class="alert alert-success" *ngIf="successMessage">
+                <i class="pi pi-check-circle"></i>
+                {{ successMessage }}
+              </div>
 
-            <!-- Bouton de soumission -->
-            <div class="form-actions">
-              <button 
-                type="submit" 
-                class="btn btn-primary"
-                [disabled]="reclamationForm.invalid || isSubmitting">
-                <i class="pi" [class.pi-spin]="isSubmitting" [class.pi-spinner]="isSubmitting" [class.pi-send]="!isSubmitting"></i>
-                {{ isSubmitting ? 'Envoi en cours...' : 'Enregistrer' }}
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-secondary"
-                (click)="resetForm()"
-                [disabled]="isSubmitting">
-                <i class="pi pi-refresh"></i>
-                Réinitialiser
-              </button>
-            </div>
-          </form>
+              <!-- Message d'erreur -->
+              <div class="alert alert-danger" *ngIf="errorMessage">
+                <i class="pi pi-times-circle"></i>
+                {{ errorMessage }}
+              </div>
+
+              <!-- Boutons d'action -->
+              <div class="form-actions">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="isSubmitDisabled()">
+                  <i class="pi" [class.pi-spin]="isSubmitting" [class.pi-spinner]="isSubmitting" [class.pi-send]="!isSubmitting"></i>
+                  {{ isSubmitting ? 'Envoi en cours...' : 'Enregistrer' }}
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-secondary"
+                  (click)="resetForm()"
+                  [disabled]="isSubmitting">
+                  <i class="pi pi-refresh"></i>
+                  Réinitialiser
+                </button>
+              </div>
+
+           
+            </form>
+          </div>
         </div>
       </div>
 
@@ -154,7 +177,7 @@
               <thead>
                 <tr>
                   <th>N° Bulletin de soins</th>
-                  <th>Titre</th>
+                 
                   <th>Texte Réclamation</th>
                   <th>Réponse</th>
                   <th>Date de création</th>
@@ -166,9 +189,8 @@
                   <td>
                     <span class="ref-badge">{{ reclamation.refBsPhys }}</span>
                   </td>
-                  <td>
-                    <strong>{{ reclamation.titreReclamation }}</strong>
-                  </td>
+                 
+
                   <td>
                     <div class="text-cell">
                       {{ reclamation.texteReclamation }}
@@ -205,7 +227,6 @@
                         </svg>
                       </button>
                       
-                      <!-- Badge d'avertissement pour les réclamations non supprimables -->
                       <span class="status-badge badge-locked" 
                             *ngIf="!canDeleteReclamation(reclamation)"
                             [title]="getDeleteDisabledReason(reclamation)">
@@ -227,3 +248,127 @@
 </div>
 
 <app-client-footer></app-client-footer>
+
+<style>
+/* ✅ STYLES POUR LE HEADER */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+/* Bouton toggle pour le formulaire */
+.btn-toggle-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
+}
+
+.btn-toggle-form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.35);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-toggle-form:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.25);
+}
+
+.btn-toggle-form.btn-active {
+  background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+}
+
+.btn-toggle-form.btn-active:hover {
+  background: linear-gradient(135deg, #e91e63 0%, #f44336 100%);
+}
+
+.btn-toggle-form i {
+  font-size: 1.2rem;
+}
+
+/* ✅ ANIMATION DE SLIDE POUR LE FORMULAIRE */
+.form-slide-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out, margin 0.5s ease-out;
+  margin-bottom: 0;
+}
+
+.form-slide-container.form-visible {
+  max-height: 2000px;
+  margin-bottom: 30px;
+  transition: max-height 0.5s ease-in, margin 0.5s ease-in;
+}
+
+/* Compteur de réclamations */
+.reclamation-counter {
+  margin-top: 10px;
+}
+
+.counter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  background-color: #e3f2fd;
+  border-left: 4px solid #2196F3;
+  font-size: 0.9rem;
+}
+
+.counter-info.counter-warning {
+  background-color: #fff3e0;
+  border-left-color: #ff9800;
+  color: #e65100;
+}
+
+.counter-info.counter-danger {
+  background-color: #ffebee;
+  border-left-color: #f44336;
+  color: #c62828;
+}
+
+.counter-info i {
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-right {
+    width: 100%;
+  }
+
+  .btn-toggle-form {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>

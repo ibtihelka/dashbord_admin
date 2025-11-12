@@ -1,0 +1,18 @@
+/* src/app/demo/components/backoffice_admin/societe-topbar/societe-topbar.component.scss */
+
+.layout-topbar-logo img {
+    width: 65px;
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.layout-topbar-logo img:hover {
+    transform: scale(1.1);
+}
+
+.layout-topbar-logo {
+    display: flex;
+    align-items: center;
+}

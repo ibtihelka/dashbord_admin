@@ -6,12 +6,14 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    message: string;
-    success: boolean;
-    userType: string; // Ajout du champ userType
-    user: User | null;
-    admin: Admin | null;
-    prestataire: Prestataire | null;
+  message: string;
+  success: boolean;
+  userType?: string;
+  role?: string; // ✅ Ajouter le champ role
+  user?: User;
+  admin?: Admin;
+  prestataire?: Prestataire;
+  usersSociete?: UsersSociete; // ✅ Ajouter UsersSociete
 }
 
 
@@ -47,4 +49,9 @@ export interface Admin {
     site: string;
     type: string;
     codeEntite: string;
+}
+
+export interface UsersSociete {
+  persoId: string;
+  persoPassed: string;
 }

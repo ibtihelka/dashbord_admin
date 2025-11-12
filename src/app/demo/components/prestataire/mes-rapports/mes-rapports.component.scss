@@ -1,0 +1,337 @@
+.mes-rapports {
+  padding: 1rem;
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  // Style du tableau
+  ::ng-deep .p-datatable {
+    .p-datatable-header {
+      background: transparent;
+      border: none;
+      padding: 1rem 0;
+    }
+
+    .p-datatable-thead > tr > th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+      padding: 1rem;
+      border: none;
+      
+      &:first-child {
+        border-top-left-radius: 8px;
+      }
+      
+      &:last-child {
+        border-top-right-radius: 8px;
+      }
+
+      .p-sortable-column-icon {
+        color: white;
+      }
+    }
+
+    .p-datatable-tbody > tr {
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: var(--surface-50) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--surface-200);
+        vertical-align: middle;
+
+        .pi {
+          font-size: 0.875rem;
+        }
+      }
+
+      &.p-highlight {
+        background: var(--primary-50);
+      }
+    }
+
+    // Style pour les lignes alternées
+    &.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+      background: var(--surface-50);
+    }
+
+    // Message vide
+    .p-datatable-emptymessage {
+      td {
+        padding: 3rem 1rem;
+      }
+    }
+  }
+
+  // Style des tags
+  ::ng-deep .p-tag {
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+
+    &.p-tag-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    &.p-tag-info {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    &.p-tag-warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    &.p-tag-secondary {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+    }
+  }
+
+  // Style du dialog
+  ::ng-deep .rapport-details-dialog {
+    .p-dialog-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      padding: 1.5rem;
+
+      .p-dialog-title {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .p-dialog-header-icon {
+        color: white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+
+    .p-dialog-content {
+      padding: 1.5rem;
+      max-height: 70vh;
+      overflow-y: auto;
+
+      // Scrollbar personnalisé
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: var(--surface-100);
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--primary-300);
+        border-radius: 4px;
+
+        &:hover {
+          background: var(--primary-400);
+        }
+      }
+    }
+
+    .p-dialog-footer {
+      border-top: 1px solid var(--surface-200);
+      padding: 1rem 1.5rem;
+    }
+
+    // Tableau dans le dialog
+    .p-datatable {
+      .p-datatable-thead > tr > th {
+        background: var(--primary-color);
+        font-size: 0.9rem;
+      }
+
+      .p-datatable-tbody > tr {
+        &:hover {
+          background: var(--surface-50);
+        }
+      }
+    }
+  }
+
+  // Contenu du rapport
+  .rapport-details-content {
+    animation: slideIn 0.4s ease-out;
+
+    h4 {
+      color: var(--text-color);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+
+      i {
+        font-size: 1rem;
+      }
+    }
+
+    .surface-50,
+    .surface-100 {
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+  }
+
+  // Animation
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Barre de recherche
+  ::ng-deep .p-input-icon-left {
+    i {
+      color: var(--primary-color);
+    }
+
+    input {
+      border-radius: 8px;
+      border: 2px solid var(--surface-300);
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+    }
+  }
+
+  // Boutons
+  ::ng-deep .p-button {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-weight: 600;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &.p-button-sm {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  // Paginator
+  ::ng-deep .p-paginator {
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+
+    .p-paginator-current {
+      color: var(--text-color);
+      font-weight: 500;
+    }
+
+    .p-paginator-pages .p-paginator-page {
+      &.p-highlight {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+    }
+  }
+
+  // Toast messages
+  ::ng-deep .p-toast {
+    .p-toast-message {
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+      &.p-toast-message-success {
+        border-left: 4px solid #10b981;
+      }
+
+      &.p-toast-message-error {
+        border-left: 4px solid #ef4444;
+      }
+
+      &.p-toast-message-warn {
+        border-left: 4px solid #f59e0b;
+      }
+
+      &.p-toast-message-info {
+        border-left: 4px solid #3b82f6;
+      }
+    }
+  }
+
+  // Responsive
+  @media (max-width: 1024px) {
+    .card {
+      padding: 1rem;
+    }
+
+    ::ng-deep .p-datatable {
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+
+    ::ng-deep .rapport-details-dialog {
+      .p-dialog {
+        width: 95vw !important;
+      }
+    }
+
+    .grid > [class*="col-"] {
+      width: 100%;
+      padding: 0.5rem;
+    }
+  }
+}
+
+// Effet de survol pour les lignes
+.text-overflow-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: help;
+}
+
+// Icônes colorées
+.pi {
+  &.text-500 {
+    color: var(--text-color-secondary);
+  }
+
+  &.text-primary {
+    color: var(--primary-color);
+  }
+}

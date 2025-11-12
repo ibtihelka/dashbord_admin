@@ -1,43 +1,28 @@
 <div class="mes-rapports">
   <p-toast></p-toast>
-  
+
   <div class="card">
     <div class="flex justify-content-between align-items-center mb-4">
       <h2 class="text-3xl font-bold m-0">
-        <i class="pi pi-list mr-2"></i>
-        Mes Rapports de Contre Visite
+        <i class="pi pi-list mr-2"></i>Mes Rapports de Contre Visite
       </h2>
-      <button 
-        pButton 
-        icon="pi pi-refresh" 
-        label="Actualiser"
-        class="p-button-outlined"
-        (click)="loadRapports()"
-        [loading]="loading">
-      </button>
+      <button pButton icon="pi pi-refresh" label="Actualiser" class="p-button-outlined" (click)="loadRapports()" [loading]="loading"></button>
     </div>
 
     <p-table #dt
-      [value]="rapports" 
+      [value]="rapports"
+      [paginator]="true" [rows]="10"
+      [showCurrentPageReport]="true" currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} rapports"
+      [rowsPerPageOptions]="[10,25,50]"
+      [globalFilterFields]="['refBsPhys','beneficiaireNom','typeRapport']"
       [loading]="loading"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} rapports"
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [globalFilterFields]="['refBsPhys', 'beneficiaireNom', 'typeRapport']"
       styleClass="p-datatable-gridlines">
-      
+
       <ng-template pTemplate="caption">
         <div class="flex">
           <span class="p-input-icon-left w-full">
             <i class="pi pi-search"></i>
-            <input 
-              pInputText 
-              type="text" 
-              (input)="dt.filterGlobal($any($event.target).value, 'contains')" 
-              placeholder="Rechercher..." 
-              class="w-full" />
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value,'contains')" placeholder="Rechercher..." class="w-full"/>
           </span>
         </div>
       </ng-template>
@@ -48,7 +33,6 @@
           <th pSortableColumn="refBsPhys">N° Remboursement <p-sortIcon field="refBsPhys"></p-sortIcon></th>
           <th pSortableColumn="beneficiaireNom">Bénéficiaire <p-sortIcon field="beneficiaireNom"></p-sortIcon></th>
           <th>Type</th>
-          <th pSortableColumn="typeRapport">Rapport <p-sortIcon field="typeRapport"></p-sortIcon></th>
           <th>Observation</th>
           <th>Actions</th>
         </tr>
@@ -57,13 +41,10 @@
       <ng-template pTemplate="body" let-rapport>
         <tr>
           <td>{{ rapport.dateRapport | date:'dd/MM/yyyy HH:mm' }}</td>
-          <td><span class="font-semibold">{{ rapport.refBsPhys }}</span></td>
+          <td>{{ rapport.refBsPhys }}</td>
           <td>{{ rapport.beneficiaireNom }}</td>
           <td>
             <p-tag [value]="rapport.typeBeneficiaire ?? '-'" [severity]="getSeverity(rapport.typeBeneficiaire)"></p-tag>
-          </td>
-          <td>
-            <p-tag [value]="rapport.typeRapport" [severity]="rapport.typeRapport === 'DENTISTE' ? 'warning' : 'primary'"></p-tag>
           </td>
           <td>
             <div class="text-overflow-ellipsis overflow-hidden" style="max-width: 200px;">
@@ -78,7 +59,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="7" class="text-center">
+          <td colspan="6" class="text-center">
             <i class="pi pi-inbox text-4xl text-400 mb-3"></i>
             <p class="text-500">Aucun rapport trouvé</p>
           </td>
@@ -87,23 +68,21 @@
     </p-table>
   </div>
 
-  <!-- Dialog Détails -->
-  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{width: '800px'}" [draggable]="false" [resizable]="false">
+  <!-- Dialog détails -->
+  <p-dialog [(visible)]="displayDialog" [modal]="true" [style]="{width:'800px'}" [draggable]="false" [resizable]="false">
     <ng-template pTemplate="header">
       <h3 class="m-0"><i class="pi pi-file mr-2"></i>Détails du Rapport</h3>
     </ng-template>
 
     <div *ngIf="selectedRapport">
-      <div class="surface-100 p-3 border-round mb-3">
-        <div class="grid">
-          <div class="col-6"><small class="text-500">N° Remboursement</small><div class="font-semibold">{{ selectedRapport.refBsPhys }}</div></div>
-          <div class="col-6"><small class="text-500">Date du rapport</small><div class="font-semibold">{{ selectedRapport.dateRapport | date:'dd/MM/yyyy HH:mm' }}</div></div>
-          <div class="col-6"><small class="text-500">Bénéficiaire</small><div class="font-semibold">{{ selectedRapport.beneficiaireNom }}</div></div>
-          <div class="col-6"><small class="text-500">Type Bénéficiaire</small><div><p-tag [value]="selectedRapport.typeBeneficiaire ?? '-'" [severity]="getSeverity(selectedRapport.typeBeneficiaire)"></p-tag></div></div>
-        </div>
+      <div class="surface-100 p-3 border-round mb-3 grid">
+        <div class="col-6"><small class="text-500">N° Remboursement</small><div class="font-semibold">{{ selectedRapport.refBsPhys }}</div></div>
+        <div class="col-6"><small class="text-500">Date du rapport</small><div class="font-semibold">{{ selectedRapport.dateRapport | date:'dd/MM/yyyy HH:mm' }}</div></div>
+        <div class="col-6"><small class="text-500">Bénéficiaire</small><div class="font-semibold">{{ selectedRapport.beneficiaireNom }}</div></div>
+        <div class="col-6"><small class="text-500">Type Bénéficiaire</small><div><p-tag [value]="selectedRapport.typeBeneficiaire ?? '-'" [severity]="getSeverity(selectedRapport.typeBeneficiaire)"></p-tag></div></div>
       </div>
 
-      <div *ngIf="selectedRapport.typeRapport === 'DENTISTE' && selectedRapport.lignesDentaire" class="mb-3">
+      <div *ngIf="selectedRapport.typeRapport === 'DENTISTE' && selectedRapport.lignesDentaire">
         <h4 class="mb-2">Tableau Dentaire</h4>
         <p-table [value]="parseLignesDentaire(selectedRapport.lignesDentaire)">
           <ng-template pTemplate="header">
@@ -125,27 +104,25 @@
         </p-table>
       </div>
 
-      <div *ngIf="selectedRapport.typeRapport === 'OPTICIEN'" class="mb-3">
+      <div *ngIf="selectedRapport.typeRapport === 'OPTICIEN'">
         <h4 class="mb-2">Informations Optique</h4>
         <div class="grid">
           <div class="col-6"><small class="text-500">Acuité Visuelle OD</small><div class="font-semibold">{{ selectedRapport.acuiteVisuelleOD ?? '-' }}</div></div>
           <div class="col-6"><small class="text-500">Acuité Visuelle OG</small><div class="font-semibold">{{ selectedRapport.acuiteVisuelleOG ?? '-' }}</div></div>
           <div class="col-6"><small class="text-500">Prix Monture</small><div class="font-semibold text-primary">{{ formatCurrency(selectedRapport.prixMonture) }}</div></div>
-          <div class="col-6"><small class="text-500">Nature des Verres</small><div class="font-semibold">{{ selectedRapport.natureVerres ?? '-' }}</div></div>
-          <div class="col-6"><small class="text-500">Prix des Verres</small><div class="font-semibold text-primary">{{ formatCurrency(selectedRapport.prixVerres) }}</div></div>
+          <div class="col-6"><small class="text-500">Nature Verres</small><div class="font-semibold">{{ selectedRapport.natureVerres ?? '-' }}</div></div>
+          <div class="col-6"><small class="text-500">Prix Verres</small><div class="font-semibold text-primary">{{ formatCurrency(selectedRapport.prixVerres) }}</div></div>
         </div>
       </div>
 
       <div>
         <h4 class="mb-2">Observation</h4>
-        <div class="surface-100 p-3 border-round">
-          {{ selectedRapport.observation ?? '-' }}
-        </div>
+        <div class="surface-100 p-3 border-round">{{ selectedRapport.observation ?? '-' }}</div>
       </div>
     </div>
 
     <ng-template pTemplate="footer">
-      <button pButton label="Fermer" icon="pi pi-times" class="p-button-text" (click)="displayDialog = false"></button>
+      <button pButton label="Fermer" icon="pi pi-times" class="p-button-text" (click)="displayDialog=false"></button>
     </ng-template>
   </p-dialog>
 </div>

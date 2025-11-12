@@ -73,8 +73,8 @@
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    border: 3px solid #f0f0f0;
-    background: #ffffff;
+    border: 3px solid  #E8E8EC ;
+    background: #E8E8EC ;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     transition: all 0.4s ease;
@@ -89,7 +89,7 @@
       transform: scale(1.15);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       border-color: #c41e3a;
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      background: linear-gradient(135deg,  #E8E8EC  0%, #E8E8EC 100%);
     }
 
     &:active {
@@ -261,7 +261,7 @@
 
 .complement-btn {
   bottom: 12%;
-   top: 61%;
+   
   left: 7%;
   
   .tooltip-text {
@@ -366,6 +366,7 @@
 
 /* TOUT LE RESTE DU CSS POUR LE BULLETIN RESTE INCHANGÉ */
 .bulletin-header {
+  position: relative;
   margin-bottom: 1rem;
 
   .logo-section {
@@ -377,6 +378,7 @@
   }
 
   .logo-left,
+
   .logo-right {
     display: flex;
     flex-direction: column;
@@ -450,7 +452,8 @@
       color: #333;
     }
 
-    ::ng-deep .bulletin-dropdown {
+   .bulletin-dropdown {
+     min-width: 200px;
       .p-dropdown {
         border: 2px solid #333;
         border-radius: 4px;
@@ -655,6 +658,28 @@
       width: 120px;
       height: 1px;
     }
+
+    .date-value-wrapper {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 120px;
+
+      .date-value {
+        font-size: 0.9rem;
+        color: #c41e3a;
+        padding-bottom: 2px;
+        white-space: nowrap;
+      }
+
+      .date-underline {
+        width: 100%;
+        height: 1px;
+        background-color: #333;
+        margin-top: 2px;
+      }
+    }
   }
 }
 
@@ -680,4 +705,92 @@
       color: #666;
     }
   }
+}
+
+.bulletin-number-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .reset-bulletin-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: #d32f2f;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+}
+// Bouton BS Vierge en haut à droite
+  .download-bs-btn-header {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+    color: #333;
+    border: 2px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    z-index: 10;
+
+    &:hover {
+      background: linear-gradient(135deg, #dd5a5a 0%, #dd5a5a 100%);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35);
+      border-color: #c41e3a;
+    }
+
+    &:active {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    i {
+      font-size: 1rem;
+    }
+
+    span {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+  }
+
+
+.logo-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

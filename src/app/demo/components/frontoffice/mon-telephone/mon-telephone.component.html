@@ -1,138 +1,148 @@
-<div class="page-container" >
+<div class="page-container">
   <div class="page-content">
-    <div class="ribs-container">
-      <p-toast></p-toast>
+    <!-- Bouton Home -->
+    <div class="header-content">
+      <button class="btn-back-circle" (click)="goToAccueil()" title="Retour à l'accueil">
+        <i class="pi pi-home"></i>
+      </button>
+    </div>
 
-      <!-- Header -->
-      <div class="ribs-header">
-        <div class="header-content">
-          <h1>
-            <i class="pi pi-phone"></i>
-            Mon Numéro de Téléphone /whatsapp
-          </h1>
-          <p>Consultez et modifiez votre numéro de téléphone</p>
-        </div>
-      </div>
+    <!-- Conteneur blanc principal -->
+    <div class="white-container">
+      <div class="ribs-container">
+        <p-toast></p-toast>
 
-      <!-- Loading -->
-      <div class="loading-container" *ngIf="loading">
-        <p-progressSpinner></p-progressSpinner>
-        <p>Chargement de votre numéro...</p>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="!loading && !currentContact">
-        <i class="pi pi-phone"></i>
-        <h2>Aucun numéro trouvé</h2>
-        <p>Vous n'avez pas encore enregistré de numéro de téléphone</p>
-      </div>
-
-      <!-- Contact Display -->
-      <div class="ribs-grid" *ngIf="!loading && currentContact">
-        <div class="rib-card">
-          <div class="card-icon">
-            <i class="pi pi-phone"></i>
+        <!-- Header -->
+        <div class="ribs-header">
+          <div class="header-content-inner">
+            <h1>
+              <i class="pi pi-phone"></i>
+              Mon Numéro de Téléphone /whatsapp
+            </h1>
+            <p>Consultez et modifiez votre numéro de téléphone</p>
           </div>
-          
-          <div class="card-content">
-            <div class="card-header">
-              <h3>Mon Numéro actuel</h3>
-              <button 
-                pButton 
-                label="Modifier" 
-                icon="pi pi-pencil" 
-                class="p-button-outlined p-button-success"
-                (click)="openModifyContactDialog()">
-              </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loading">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Chargement de votre numéro...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!loading && !currentContact">
+          <i class="pi pi-phone"></i>
+          <h2>Aucun numéro trouvé</h2>
+          <p>Vous n'avez pas encore enregistré de numéro de téléphone</p>
+        </div>
+
+        <!-- Contact Display -->
+        <div class="ribs-grid" *ngIf="!loading && currentContact">
+          <div class="rib-card">
+            <div class="card-icon">
+              <i class="pi pi-phone"></i>
             </div>
             
-            <div class="card-body">
-              <div class="rib-display">
-                <label>Téléphone:</label>
-                <span class="rib-number">{{ formatPhoneDisplay(currentContact.contact) }}</span>
+            <div class="card-content">
+              <div class="card-header">
+                <h3>Mon Numéro actuel</h3>
+                <button 
+                  pButton 
+                  label="Modifier" 
+                  icon="pi pi-pencil" 
+                  class="p-button-outlined p-button-success"
+                  (click)="openModifyContactDialog()">
+                </button>
               </div>
-            </div>
-            
-            <div class="card-footer">
-              <div class="footer-info">
-                <span class="info-item" *ngIf="currentContact.dateModification">
+              
+              <div class="card-body">
+                <div class="rib-display">
+                  <label>Téléphone:</label>
+                  <span class="rib-number">{{ formatPhoneDisplay(currentContact.contact) }}</span>
+                </div>
+              </div>
+              
+              <div class="card-footer">
+                <div class="footer-info">
+                  <span class="info-item" *ngIf="currentContact.dateModification">
                  
-              </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Dialog pour modifier le téléphone -->
+        <p-dialog 
+          header="Modifier votre Numéro de Téléphone" 
+          [(visible)]="displayModifyContactDialog"
+          [modal]="true"
+          [style]="{width: '550px'}"
+          [draggable]="false"
+          [resizable]="false">
+          
+          <div class="dialog-content">
+            <div class="info-message">
+              <i class="pi pi-info-circle"></i>
+              <p>Pour modifier votre numéro de téléphone, veuillez saisir le nouveau numéro et le confirmer</p>
+            </div>
+
+            <div class="form-group">
+              <label for="ancienTel">Ancien Tél <span class="required">*</span></label>
+              <input 
+                id="ancienTel"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyContactForm.ancienTel"
+                [disabled]="true"
+                class="w-full rib-input" />
+            </div>
+
+            <div class="form-group">
+              <label for="nouveauTel">Nouveau Tél <span class="required">*</span></label>
+              <input 
+                id="nouveauTel"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyContactForm.nouveauTel"
+                placeholder="Ex: 12345678 ou +216 12345678"
+                maxlength="20"
+                class="w-full rib-input" />
+              <small class="help-text">Format: 8 chiffres ou +216 suivi de 8 chiffres</small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmerTel">Confirmer votre nouveau Tél <span class="required">*</span></label>
+              <input 
+                id="confirmerTel"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyContactForm.confirmerTel"
+                placeholder="Saisissez à nouveau le nouveau numéro"
+                maxlength="20"
+                class="w-full rib-input" />
+            </div>
+          </div>
+
+          <ng-template pTemplate="footer">
+            <button 
+              pButton 
+              label="Annuler" 
+              icon="pi pi-times" 
+              class="p-button-text"
+              (click)="closeModifyContactDialog()">
+            </button>
+            <button 
+              pButton 
+              label="Envoyer" 
+              icon="pi pi-check"
+              class="p-button-success"
+              (click)="submitModifyContact()">
+            </button>
+          </ng-template>
+        </p-dialog>
       </div>
-
-      <!-- Dialog pour modifier le téléphone -->
-      <p-dialog 
-        header="Modifier votre Numéro de Téléphone" 
-        [(visible)]="displayModifyContactDialog"
-        [modal]="true"
-        [style]="{width: '550px'}"
-        [draggable]="false"
-        [resizable]="false">
-        
-        <div class="dialog-content">
-          <div class="info-message">
-            <i class="pi pi-info-circle"></i>
-            <p>Pour modifier votre numéro de téléphone, veuillez saisir le nouveau numéro et le confirmer</p>
-          </div>
-
-          <div class="form-group">
-            <label for="ancienTel">Ancien Tél <span class="required">*</span></label>
-            <input 
-              id="ancienTel"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyContactForm.ancienTel"
-              [disabled]="true"
-              class="w-full rib-input" />
-          </div>
-
-          <div class="form-group">
-            <label for="nouveauTel">Nouveau Tél <span class="required">*</span></label>
-            <input 
-              id="nouveauTel"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyContactForm.nouveauTel"
-              placeholder="Ex: 12345678 ou +216 12345678"
-              maxlength="20"
-              class="w-full rib-input" />
-            <small class="help-text">Format: 8 chiffres ou +216 suivi de 8 chiffres</small>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmerTel">Confirmer votre nouveau Tél <span class="required">*</span></label>
-            <input 
-              id="confirmerTel"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyContactForm.confirmerTel"
-              placeholder="Saisissez à nouveau le nouveau numéro"
-              maxlength="20"
-              class="w-full rib-input" />
-          </div>
-        </div>
-
-        <ng-template pTemplate="footer">
-          <button 
-            pButton 
-            label="Annuler" 
-            icon="pi pi-times" 
-            class="p-button-text"
-            (click)="closeModifyContactDialog()">
-          </button>
-          <button 
-            pButton 
-            label="Envoyer" 
-            icon="pi pi-check"
-            class="p-button-success"
-            (click)="submitModifyContact()">
-          </button>
-        </ng-template>
-      </p-dialog>
     </div>
   </div>
 </div>

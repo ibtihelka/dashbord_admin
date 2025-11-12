@@ -20,6 +20,14 @@ import { PrestataireLayoutComponent } from './demo/components/prestataire/presta
 import { CreerRapportComponent } from './demo/components/prestataire/creer-rapport/creer-rapport.component';
 import { MesRapportsComponent } from './demo/components/prestataire/mes-rapports/mes-rapports.component';
 import { PrestataireProfilComponent } from './demo/components/prestataire/prestataire-profil/prestataire-profil.component';
+import { SpaceSelectionComponent } from './space-selection/space-selection.component';
+import { LoginComponent } from './demo/components/auth/login/login.component';
+import { LoginAdminComponent } from './login-admin/login-admin.component';
+import { LoginPrestataireComponent } from './login-prestataire/login-prestataire.component';
+import { SocieteBordereauxComponent } from './demo/components/backoffice_admin/societe-bordereaux/societe-bordereaux.component';
+import { SocieteLayoutComponent } from './demo/components/backoffice_admin/societe-layout/societe-layout.component';
+import { SocieteDashboardComponent } from './demo/components/backoffice_admin/societe-dashboard/societe-dashboard.component';
+import { SocieteProfilComponent } from './demo/components/backoffice_admin/societe-profil/societe-profil.component';
 
 
 @NgModule({
@@ -27,8 +35,20 @@ import { PrestataireProfilComponent } from './demo/components/prestataire/presta
         RouterModule.forRoot([
             { 
                 path: '', 
-                redirectTo: '/home', 
+                redirectTo: '/accueil', 
                 pathMatch: 'full' 
+            },
+            {
+                path: 'societe',
+                component: SocieteLayoutComponent,
+                canActivate: [AuthGuard],
+                data: { role: 'SOCIETE' },
+                children: [
+                    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+                    { path: 'dashboard', component: SocieteDashboardComponent },
+                    { path: 'bordereaux', component: SocieteBordereauxComponent },
+                    { path: 'profil', component: SocieteProfilComponent }
+                ]
             },
             
             // ROUTES ADMIN
@@ -102,9 +122,34 @@ import { PrestataireProfilComponent } from './demo/components/prestataire/presta
                 loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) 
             },
             { 
-                path: 'home', 
+                path: 'home1', 
                 loadChildren: () => import('./demo/components/landing/landing.module').then(m => m.LandingModule) 
             },
+
+
+
+
+ 
+  {
+    path: 'accueil',
+    component: SpaceSelectionComponent
+  },
+  {
+    path: 'login-adherent',
+    component: LoginComponent
+  },
+  {
+    path: 'login-admin',
+    component: LoginAdminComponent
+  },
+  {
+    path: 'login-prestataire',
+    component: LoginPrestataireComponent
+  }
+,
+
+
+
             
             // Pages d'erreur
             { 

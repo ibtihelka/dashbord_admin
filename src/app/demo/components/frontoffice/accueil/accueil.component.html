@@ -1,5 +1,6 @@
 <div class="page-container">
   <div class="page-content">
+    
     <!-- Cercle 1 - Bulletins -->
     <div class="circular-btn-wrapper bulletins-btn">
       <button class="circular-btn" (click)="goToRemboursements()">
@@ -24,7 +25,7 @@
       <button class="circular-btn" (click)="goToTel()">
         <img src="/assets/layout/images/modifier_tel.png" alt="Modifier Tel" class="circular-icon">
       </button>
-      <span class="circle-title">Téléphone</span>
+      <span class="circle-title">Modifier Téléphone</span>
      
     </div>
 
@@ -33,14 +34,14 @@
       <button class="circular-btn" (click)="goToRib()">
         <img src="/assets/layout/images/modifier_rib.png" alt="Modifier RIB" class="circular-icon">
       </button>
-      <span class="circle-title">RIB</span>
+      <span class="circle-title">Modifier RIB</span>
     
     </div>
 
     <!-- Cercle 5 - Complément d'Information -->
     <div class="circular-btn-wrapper complement-btn">
       <button class="circular-btn" (click)="goToComplementInfo()">
-        <img src="/assets/layout/images/complement-info.png" alt="Complément Info" class="circular-icon">
+        <img src="/assets/layout/images/complement_info.png" alt="Complément Info" class="circular-icon">
       </button>
       <span class="circle-title">Complément Info</span>
      
@@ -49,7 +50,7 @@
     <!-- Cercle 6 - Prestataires de Service -->
     <div class="circular-btn-wrapper prestataires-btn">
       <button class="circular-btn" >
-        <img src="/assets/layout/images/prestataires-icon.png" alt="Prestataires" class="circular-icon">
+        <img src="/assets/layout/images/prestataire.png" alt="Prestataires" class="circular-icon">
       </button>
       <span class="circle-title">Vos Prestataires</span>
       
@@ -70,8 +71,10 @@
               </div>
             </div>
             <div class="logo-center">
-              <img src="/assets/layout/images/logo_ph.PNG" alt="Logo Principal" class="logo-img-center">
-            </div>
+  <a href="https://bh-assurance.com/" target="_blank" rel="noopener noreferrer" class="logo-link">
+    <img src="/assets/layout/images/logo_ph.PNG" alt="Logo Principal" class="logo-img-center">
+  </a>
+</div>
             <div class="logo-right">
               <img src="/assets/layout/images/logo_bh_arb.PNG" alt="BH تأمين" class="logo-img">
               <div class="coordonnees-rt" dir="rtl">
@@ -81,32 +84,55 @@
               </div>
             </div>
           </div>
+          <button 
+    type="button"
+    class="download-bs-btn-header"
+    (click)="downloadBSVierge()"
+    title="Télécharger un bulletin vierge">
+    <i class="pi pi-download"></i>
+    
+  </button>
+ 
         </div>
+        
 
         <div class="separator-line"></div>
 
         <!-- Titre Bulletin de Soins -->
         <div class="bulletin-title-section">
-          <div class="bulletin-number-left">
-            <label class="numero-label">N°</label>
-            <p-dropdown 
-              [options]="bulletinOptions" 
-              [(ngModel)]="selectedBulletin"
-              optionLabel="label" 
-              optionValue="value"
-              placeholder="Sélectionner num BS"
-              [showClear]="false"
-              styleClass="bulletin-dropdown"
-              (onChange)="onBulletinChange($event)">
-            </p-dropdown>
-          </div>
+  <div class="bulletin-number-left">
+  <label class="numero-label">N°</label>
+  
+  <!-- Dropdown avec recherche/saisie manuelle -->
+  <p-dropdown 
+    [options]="bulletinOptions" 
+    [(ngModel)]="selectedBulletin"
+    optionLabel="label" 
+    optionValue="value"
+    placeholder="Saisir ou sélectionner"
+    [showClear]="true"
+    [filter]="true"
+    [editable]="true"
+    filterBy="label,value"
+    styleClass="bulletin-dropdown"
+    (onChange)="onBulletinChange($event)"
+    (onFilter)="onFilterBulletin($event)">
+  </p-dropdown>
+
+  <!-- Bouton de réinitialisation -->
  
-          <div class="title-box">
-            <h1 class="bulletin-title">BULLETIN DE SOINS</h1>
-            <h2 class="bulletin-title-ar">بطاقـة معالجة</h2>
-          </div>
-          <div class="bulletin-number-right"></div>
-        </div>
+</div>
+
+
+  <div class="title-box">
+    <h1 class="bulletin-title">BULLETIN DE SOINS</h1>
+    <h2 class="bulletin-title-ar">بطاقـة معالجة</h2>
+  </div>
+  
+  <div class="bulletin-number-right"></div>
+</div>
+
+
 
         <!-- Informations Contractant -->
         <div class="info-section">
@@ -124,9 +150,9 @@
             <label class="info-label">CONTRAT N°</label>
             <label class="info-label-ar">رقم العقد</label>
           </div>
-          <div class="info-value">
-            <strong>{{ numContrat }}</strong>
-          </div>
+         <div class="info-value">
+     <strong>{{ numContrat }}</strong>
+   </div>
         </div>
 
         <div class="info-section">
@@ -180,7 +206,10 @@
             <div class="checkbox-group">
               <label 
                 class="checkbox-label clickable" 
-                (click)="onAdherentClick()">
+                (click)="onAdherentClick()"
+                   [title]="hasConjoint() ? 'Afficher mon profil' : ''"
+    >
+                
                 <span>Adhérent</span>
                 <input 
                   type="checkbox" 
@@ -197,6 +226,8 @@
                 class="checkbox-label" 
                 [class.clickable]="hasConjoint()"
                 [class.disabled]="!hasConjoint()"
+                   [title]="hasConjoint() ? 'Afficher le conjoint' : ''"
+    
                 (click)="hasConjoint() && onConjointClick()">
                 <span>Conjoint</span>
                 <input 
@@ -215,6 +246,8 @@
                 class="checkbox-label" 
                 [class.clickable]="hasEnfants()"
                 [class.disabled]="!hasEnfants()"
+                 [title]="hasEnfants() ? 'Afficher la liste des enfants' : ''"
+    
                 (click)="hasEnfants() && onEnfantClick()">
                 <span>Enfant</span>
                 <input 
@@ -228,21 +261,28 @@
             </div>
           </div>
 
-          <div class="beneficiaire-section" *ngIf="beneficiaireSelected">
-            <label>Bénéficiaire :</label>
-            <strong>{{ beneficiaireSelected }}</strong>
-          </div>
+         <!-- Affichage des informations du bénéficiaire -->
+<div class="beneficiaire-info" *ngIf="beneficiaireSelected">
+ 
+  <div class="info-row">
+    <span class="info-label">Bénéficiaire :</span>
+    <span class="info-value">{{ beneficiaireSelected }}</span>
+  </div>
 
-          <!-- Date -->
-          <div class="date-section">
-            <div class="date-field">
-              <label>A</label>
-              <div class="date-line"></div>
-              <label>Le</label>
-              <div class="date-line"></div>
-              <strong>{{ dateSoinSelected }}</strong>
-            </div>
-          </div>
+</div>
+
+<!-- Date -->
+<div class="date-section">
+  <div class="date-field">
+    <label>A</label>
+    <div class="date-line"></div>
+    <label>Le</label>
+    <div class="date-value-wrapper">
+      <strong class="date-value">{{ dateSoinSelected }}</strong>
+      <div class="date-underline" *ngIf="!dateSoinSelected"></div>
+    </div>
+  </div>
+</div>
 
           <!-- Signature -->
           <div class="signature-section">
@@ -261,3 +301,68 @@
 <app-prestataire-list></app-prestataire-list>
 
 <app-client-footer></app-client-footer>
+<style>
+  .bulletin-dropdown {
+    min-width: 200px;
+  }
+  
+  .bulletin-dropdown input {
+    text-transform: uppercase;
+  }
+
+  .beneficiaire-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .info-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+  }
+
+  .info-value {
+    color: #212529;
+  }
+
+  .type-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+  }
+
+  .type-adherent {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .type-conjoint {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .type-enfant {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .type-prestataire {
+    background-color: #e2e3e5;
+    color: #383d41;
+  }
+</style>

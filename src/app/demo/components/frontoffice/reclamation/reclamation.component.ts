@@ -2,9 +2,9 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ReclamationService } from 'src/app/demo/service/reclamation.service';
+import { ReclamationService, ReclamationCount } from 'src/app/demo/service/reclamation.service';
 import { AuthService } from 'src/app/demo/service/auth.service';
 import { Reclamation, CreateReclamationRequest } from 'src/app/demo/api/reclamation.model';
 import { User } from 'src/app/demo/api/login.model';
@@ -25,8 +25,12 @@ export class ReclamationComponent implements OnInit, OnDestroy {
   isLoading = false;
   successMessage = '';
   errorMessage = '';
+  warningMessage = ''; // ✅ NOUVEAU : Pour afficher l'avertissement
   
   showForm = false;
+  
+  // ✅ NOUVEAU : Variables pour le comptage des réclamations
+  selectedRefBsPhysCount: ReclamationCount | null = null;
   
   private userSubscription: Subscription = new Subscription();
   private routeSubscription: Subscription = new Subscription();
@@ -35,21 +39,35 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private reclamationService: ReclamationService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.initForm();
     this.loadCurrentUser();
     
+    // ✅ MODIFICATION : Afficher toujours le formulaire par défaut
+    this.showForm = true;
+    
     this.routeSubscription = this.route.queryParams.subscribe(params => {
       if (params['refBsPhys']) {
-        this.showForm = true;
+        // Si refBsPhys est passé en paramètre, pré-remplir le champ
         this.reclamationForm.patchValue({
           refBsPhys: params['refBsPhys']
         });
+        this.checkReclamationLimit(params['refBsPhys']);
+      }
+      // Sinon, le formulaire reste vide et ouvert
+    });
+
+    // ✅ NOUVEAU : Écouter les changements de sélection du BS
+    this.reclamationForm.get('refBsPhys')?.valueChanges.subscribe(refBsPhys => {
+      if (refBsPhys) {
+        this.checkReclamationLimit(refBsPhys);
       } else {
-        this.showForm = false;
+        this.selectedRefBsPhysCount = null;
+        this.warningMessage = '';
       }
     });
   }
@@ -66,7 +84,7 @@ export class ReclamationComponent implements OnInit, OnDestroy {
   initForm() {
     this.reclamationForm = this.fb.group({
       refBsPhys: ['', Validators.required],
-      titreReclamation: ['', Validators.required],
+   
       texteReclamation: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
@@ -105,13 +123,6 @@ export class ReclamationComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.reclamations = data;
         this.isLoading = false;
-        
-        // Debug: afficher le format de la date
-        if (data.length > 0 && data[0].dateCreation) {
-          console.log('📅 Format de date reçu du backend:', data[0].dateCreation);
-          console.log('📅 Type:', typeof data[0].dateCreation);
-          console.log('📅 Date convertie:', new Date(data[0].dateCreation));
-        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des réclamations:', error);
@@ -121,8 +132,41 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     });
   }
 
+  // ✅ NOUVELLE MÉTHODE : Vérifier la limite de réclamations
+  checkReclamationLimit(refBsPhys: string) {
+    this.reclamationService.getReclamationCount(refBsPhys).subscribe({
+      next: (count) => {
+        this.selectedRefBsPhysCount = count;
+        
+        if (count.count === 1) {
+          this.showWarning(`⚠️ Attention : Vous avez déjà créé 1 réclamation pour ce remboursement. Il vous reste ${count.remaining} réclamation possible.`);
+        } else if (count.count >= 2) {
+          this.showWarning('🚫 Vous avez atteint la limite de 2 réclamations pour ce remboursement. Veuillez consulter votre responsable RH.');
+        } else {
+          this.warningMessage = '';
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la vérification du nombre de réclamations:', error);
+      }
+    });
+  }
+
+  // ✅ MÉTHODE MISE À JOUR : Vérifier si le bouton submit doit être désactivé
+  isSubmitDisabled(): boolean {
+    return this.reclamationForm.invalid || 
+           this.isSubmitting || 
+           (this.selectedRefBsPhysCount !== null && !this.selectedRefBsPhysCount.canCreate);
+  }
+
   onSubmit() {
     if (this.reclamationForm.invalid || !this.currentUser) {
+      return;
+    }
+
+    // ✅ NOUVELLE VÉRIFICATION : Bloquer si la limite est atteinte
+    if (this.selectedRefBsPhysCount && !this.selectedRefBsPhysCount.canCreate) {
+      this.showError('Vous avez atteint la limite de réclamations pour ce remboursement. Veuillez consulter votre responsable RH.');
       return;
     }
 
@@ -142,45 +186,47 @@ export class ReclamationComponent implements OnInit, OnDestroy {
         this.resetForm();
         this.loadReclamations();
         this.isSubmitting = false;
+        
+        // Recharger le compteur
+        if (this.reclamationForm.value.refBsPhys) {
+          this.checkReclamationLimit(this.reclamationForm.value.refBsPhys);
+        }
       },
       error: (error) => {
         console.error('Erreur lors de la création de la réclamation:', error);
-        this.showError(error.error?.error || 'Une erreur est survenue lors de l\'enregistrement');
+        
+        // ✅ GESTION SPÉCIALE : Si c'est l'erreur de limite
+        if (error.status === 403 || error.error?.error?.includes('LIMITE_ATTEINTE')) {
+          const message = error.error?.error?.replace('LIMITE_ATTEINTE:', '') || 
+                         'Vous avez atteint la limite de réclamations pour ce remboursement. Veuillez consulter votre responsable RH.';
+          this.showError(message);
+        } else {
+          this.showError(error.error?.error || 'Une erreur est survenue lors de l\'enregistrement');
+        }
+        
         this.isSubmitting = false;
       }
     });
   }
 
-  /**
-   * Vérifie si l'utilisateur peut supprimer une réclamation
-   * Règles:
-   * 1. Si la réclamation a une réponse -> NON
-   * 2. Si la réclamation a été créée le même jour et il est avant 20h00 -> OUI
-   * 3. Sinon -> NON
-   */
   canDeleteReclamation(reclamation: Reclamation): boolean {
-    // Règle 1: Si la réclamation a une réponse, on ne peut pas la supprimer
     if (reclamation.responseRec && reclamation.responseRec.trim() !== '') {
       return false;
     }
 
-    // Vérifier que dateCreation existe
     if (!reclamation.dateCreation) {
       return false;
     }
 
     try {
-      // Parser la date de création
       const dateCreation = new Date(reclamation.dateCreation);
       const now = new Date();
       
-      // Vérifier si la date est valide
       if (isNaN(dateCreation.getTime())) {
         console.error('Date invalide:', reclamation.dateCreation);
         return false;
       }
       
-      // Comparer les dates (jour, mois, année)
       const creationDay = dateCreation.getDate();
       const creationMonth = dateCreation.getMonth();
       const creationYear = dateCreation.getFullYear();
@@ -189,7 +235,6 @@ export class ReclamationComponent implements OnInit, OnDestroy {
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
       
-      // Règle 2: Vérifier si c'est le même jour
       const isSameDay = creationDay === currentDay &&
                         creationMonth === currentMonth &&
                         creationYear === currentYear;
@@ -198,7 +243,6 @@ export class ReclamationComponent implements OnInit, OnDestroy {
         return false;
       }
 
-      // Vérifier si l'heure actuelle est avant 20h00
       const currentHour = now.getHours();
       return currentHour < 20;
       
@@ -208,9 +252,6 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Retourne un message expliquant pourquoi la suppression n'est pas autorisée
-   */
   getDeleteDisabledReason(reclamation: Reclamation): string {
     if (reclamation.responseRec && reclamation.responseRec.trim() !== '') {
       return 'Impossible de supprimer : une réponse a déjà été fournie';
@@ -275,6 +316,12 @@ export class ReclamationComponent implements OnInit, OnDestroy {
         next: () => {
           this.showSuccess('Réclamation supprimée avec succès');
           this.loadReclamations();
+          
+          // Recharger le compteur si un BS est sélectionné
+          const refBsPhys = this.reclamationForm.value.refBsPhys;
+          if (refBsPhys) {
+            this.checkReclamationLimit(refBsPhys);
+          }
         },
         error: (error) => {
           console.error('Erreur lors de la suppression:', error);
@@ -287,6 +334,7 @@ export class ReclamationComponent implements OnInit, OnDestroy {
   resetForm() {
     this.reclamationForm.reset();
     this.clearMessages();
+    this.selectedRefBsPhysCount = null;
   }
 
   toggleForm() {
@@ -310,12 +358,10 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     try {
       const dateObj = new Date(date);
       
-      // Vérifier si la date est valide
       if (isNaN(dateObj.getTime())) {
         return 'N/A';
       }
       
-      // Formater en heure locale française
       return dateObj.toLocaleString('fr-FR', {
         day: '2-digit',
         month: '2-digit',
@@ -333,6 +379,7 @@ export class ReclamationComponent implements OnInit, OnDestroy {
   showSuccess(message: string) {
     this.successMessage = message;
     this.errorMessage = '';
+    this.warningMessage = '';
     setTimeout(() => {
       this.successMessage = '';
     }, 5000);
@@ -346,8 +393,20 @@ export class ReclamationComponent implements OnInit, OnDestroy {
     }, 5000);
   }
 
+  // ✅ NOUVELLE MÉTHODE : Afficher un avertissement
+  showWarning(message: string) {
+    this.warningMessage = message;
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
   clearMessages() {
     this.successMessage = '';
     this.errorMessage = '';
+    this.warningMessage = '';
+  }
+
+  goToAccueil() {
+    this.router.navigate(['/clients/accueil']);
   }
 }

@@ -1,0 +1,162 @@
+<div class="card">
+    <div class="flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="m-0">Liste des Bordereaux</h3>
+            <p class="text-600 mt-2">Société: <strong>{{ societePrefix }}</strong></p>
+        </div>
+        <p-button 
+            icon="pi pi-refresh" 
+            label="Actualiser" 
+            (onClick)="loadBordereaux()"
+            [loading]="loading">
+        </p-button>
+    </div>
+
+    <!-- Liste des bordereaux groupés -->
+    <div *ngIf="!loading && bordereaux.length > 0" class="bordereaux-list">
+        <p-accordion [multiple]="true">
+            <p-accordionTab *ngFor="let bordereau of bordereaux" 
+                            [header]="'Bordereau Numéro: ' + bordereau.refBordereau">
+                <ng-template pTemplate="header">
+                    <div class="flex justify-content-between align-items-center w-full pr-3">
+                        <div class="flex align-items-center gap-3">
+                            <span class="text-primary font-semibold">{{ bordereau.refBordereau }}</span>
+                            <span class="text-500">• Date: {{ formatDate(bordereau.dateBordereau) }}</span>
+                        </div>
+                        <p-button 
+                            label="Détail Bordereau" 
+                            icon="pi pi-eye"
+                            size="small"
+                            (onClick)="viewDetails(bordereau.refBordereau); $event.stopPropagation()">
+                        </p-button>
+                    </div>
+                </ng-template>
+
+                <!-- Tableau des remboursements -->
+                <p-table 
+                    [value]="bordereau.remboursements || []" 
+                    [scrollable]="true"
+                    [style]="{'min-width': '100%'}"
+                    styleClass="p-datatable-sm">
+                    
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="min-width: 130px;">N° Bulletin</th>
+                            <th style="min-width: 120px;">Date réception</th>
+                            <th style="min-width: 150px;">Adhérent</th>
+                            <th style="min-width: 150px;">Bénéficiaire</th>
+                            <th style="min-width: 120px;" class="text-right">Montant dépensé</th>
+                            <th style="min-width: 130px;" class="text-right">Montant remboursé</th>
+                            <th style="min-width: 150px;">Statut</th>
+                            <th style="min-width: 150px;">Observation</th>
+                            <th style="min-width: 120px;">Réclamations</th>
+                            <th style="min-width: 100px;">Détails</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-remb>
+                        <tr>
+                            <td>{{ remb.numBulletin || remb.refBsPhys }}</td>
+                            <td>{{ formatDate(remb.dateReception || remb.datBs) }}</td>
+                            <td>{{ remb.adherent || remb.persoId }}</td>
+                            <td>{{ remb.beneficiaire || remb.nomPrenPrest }}</td>
+                            <td class="text-right">{{ formatCurrency(remb.montantDepense || remb.mntBs) }}</td>
+                            <td class="text-right font-semibold text-primary">
+                                {{ formatCurrency(remb.montantRembourse || remb.mntBsRemb) }}
+                            </td>
+                            <td>
+                                <p-tag 
+                                    [value]="remb.statut || remb.statBs" 
+                                    [severity]="(remb.statut || remb.statBs) === 'En cours de règlement' ? 'warning' : 'success'">
+                                </p-tag>
+                            </td>
+                            <td>{{ remb.observation || '-' }}</td>
+                            <td class="text-center">
+                                <button 
+                                    *ngIf="remb.reclamations"
+                                    pButton
+                                    type="button"
+                                    icon="pi pi-comment" 
+                                    class="p-button-rounded p-button-info p-button-outlined"
+                                    pTooltip="Voir réclamations">
+                                </button>
+                                <span *ngIf="!remb.reclamations">-</span>
+                            </td>
+                            <td class="text-center">
+                                <p-button 
+                                    label="Consulter" 
+                                    icon="pi pi-search"
+                                    size="small"
+                                    severity="secondary">
+                                </p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="10" class="text-center py-4">
+                                <i class="pi pi-info-circle text-4xl text-400 mb-3"></i>
+                                <p class="text-600">Aucun remboursement trouvé pour ce bordereau</p>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="summary" *ngIf="bordereau.remboursements && bordereau.remboursements.length > 0">
+                        <div class="flex justify-content-end gap-5 font-semibold">
+                            <div>
+                                Total dépensé: 
+                                <span class="text-primary ml-2">
+                                    {{ formatCurrency(getTotalDepense(bordereau.remboursements)) }}
+                                </span>
+                            </div>
+                            <div>
+                                Total remboursé: 
+                                <span class="text-green-600 ml-2">
+                                    {{ formatCurrency(getTotalRembourse(bordereau.remboursements)) }}
+                                </span>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-table>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+
+    <!-- État de chargement -->
+    <div *ngIf="loading" class="text-center py-6">
+        <p-progressSpinner></p-progressSpinner>
+        <p class="text-600 mt-3">Chargement des bordereaux...</p>
+    </div>
+
+    <!-- Message si aucun bordereau -->
+    <div *ngIf="!loading && bordereaux.length === 0" class="text-center py-6">
+        <i class="pi pi-inbox text-6xl text-400 mb-3"></i>
+        <h4 class="text-600">Aucun bordereau trouvé</h4>
+        <p class="text-500">Aucun bordereau disponible pour le préfixe "{{ societePrefix }}"</p>
+    </div>
+</div>
+
+<style>
+.bordereaux-list {
+    margin-top: 1rem;
+}
+
+:host ::ng-deep .p-accordion-header-link {
+    padding: 1rem 1.5rem;
+}
+
+:host ::ng-deep .p-accordion-content {
+    padding: 0;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 1rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    padding: 1rem;
+    background: #f8f9fa;
+    font-weight: 600;
+}
+</style>

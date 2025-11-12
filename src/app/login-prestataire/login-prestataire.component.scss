@@ -1,0 +1,64 @@
+/* Animation flottante pour le logo */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Amélioration des champs de saisie avec focus */
+input[type="text"]:focus,
+::ng-deep .p-password input:focus {
+    border-color: #4facfe !important;
+    box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.15) !important;
+    outline: none;
+}
+
+/* Effet hover sur le bouton */
+button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(79, 172, 254, 0.5) !important;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Animation d'apparition */
+.grid > div {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .col-12.lg\:col-5 {
+        min-height: 350px !important;
+    }
+    
+    .col-12.lg\:col-5 img {
+        width: 120px !important;
+        height: 120px !important;
+    }
+    
+    .col-12.lg\:col-5 h1 {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* Amélioration de la lisibilité */
+label {
+    user-select: none;
+}

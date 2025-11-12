@@ -205,4 +205,9 @@ export class MonTelephoneComponent implements OnInit {
       minute: '2-digit'
     });
   }
+
+
+  goToAccueil() {
+  this.router.navigate(['/clients/accueil']);
+}
 }

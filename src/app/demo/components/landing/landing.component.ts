@@ -63,10 +63,11 @@ export class LandingComponent {
 
     constructor(public layoutService: LayoutService, public router: Router) { }
 
-    // Méthode pour rediriger vers la page de login
-    navigateToLogin() {
-        this.router.navigate(['/auth/login']);
-    }
+   
+
+     navigateToLogin() {
+    this.router.navigate(['/space-selection']);
+  }
 
     // Méthode pour rediriger vers la page d'inscription
     navigateToRegister() {

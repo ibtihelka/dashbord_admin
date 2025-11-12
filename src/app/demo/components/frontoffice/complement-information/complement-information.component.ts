@@ -117,4 +117,9 @@ export class ComplementInformationComponent implements OnInit {
       }
     });
   }
+
+  goToAccueil() {
+  this.router.navigate(['/clients/accueil']);
+}
+
 }

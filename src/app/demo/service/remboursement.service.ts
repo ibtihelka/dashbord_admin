@@ -12,7 +12,8 @@ export interface Remboursement {
   mntBs: number;
   mntBsRemb: number;
   statBs: string;
-  refBorderau: string;
+ 
+   refBordereau?: string; 
   site: string;
   desSit: string;
   codeEntreprise: string;

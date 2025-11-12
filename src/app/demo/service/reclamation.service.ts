@@ -1,10 +1,17 @@
-// src/app/demo/service/reclamation.service.ts
+
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Reclamation, CreateReclamationRequest } from '../api/reclamation.model';
 import { Remboursement } from './remboursement.service';
+
+export interface ReclamationCount {
+  count: number;
+  maxAllowed: number;
+  canCreate: boolean;
+  remaining: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +32,11 @@ export class ReclamationService {
     return this.http.post<Reclamation>(this.apiUrl, reclamation, {
       headers: this.getHeaders()
     });
+  }
+
+  // ✅ NOUVELLE MÉTHODE : Récupérer le nombre de réclamations pour un remboursement
+  getReclamationCount(refBsPhys: string): Observable<ReclamationCount> {
+    return this.http.get<ReclamationCount>(`${this.apiUrl}/count/${refBsPhys}`);
   }
 
   // Récupérer toutes les réclamations d'un utilisateur

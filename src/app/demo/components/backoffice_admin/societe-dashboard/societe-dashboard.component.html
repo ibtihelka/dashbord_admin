@@ -1,0 +1,319 @@
+<div class="grid">
+  
+  <!-- ========== SECTION 1: STATISTIQUES GLOBALES ========== -->
+  <div class="col-12">
+    <h3 class="mb-4">📊 Vue d'ensemble des Bordereaux</h3>
+  </div>
+
+  <!-- Carte: Total Bordereaux -->
+  <div class="col-12 lg:col-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Total Bordereaux</span>
+          <div class="text-900 font-medium text-xl">
+            <p-skeleton *ngIf="loadingGlobal" width="100px" height="2rem"></p-skeleton>
+            <span *ngIf="!loadingGlobal">{{ totalBordereaux }}</span>
+          </div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-file text-blue-500 text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte: Montant Total Dépensé -->
+  <div class="col-12 lg:col-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Montant Total Dépensé</span>
+          <div class="text-900 font-medium text-xl">
+            <p-skeleton *ngIf="loadingGlobal" width="150px" height="2rem"></p-skeleton>
+            <span *ngIf="!loadingGlobal">{{ formatCurrency(totalDepense) }}</span>
+          </div>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-shopping-cart text-orange-500 text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte: Montant Total Remboursé -->
+  <div class="col-12 lg:col-4">
+    <div class="card mb-0">
+      <div class="flex justify-content-between mb-3">
+        <div>
+          <span class="block text-500 font-medium mb-3">Montant Total Remboursé</span>
+          <div class="text-900 font-medium text-xl">
+            <p-skeleton *ngIf="loadingGlobal" width="150px" height="2rem"></p-skeleton>
+            <span *ngIf="!loadingGlobal">{{ formatCurrency(totalRembourse) }}</span>
+          </div>
+          <span class="text-green-500 font-medium" *ngIf="!loadingGlobal">
+            {{ formatPercentage(getTauxRemboursementGlobal()) }}
+          </span>
+        </div>
+        <div class="flex align-items-center justify-content-center bg-green-100 border-round" style="width:2.5rem;height:2.5rem">
+          <i class="pi pi-money-bill text-green-500 text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SECTION 2: LISTE DES BORDEREAUX ========== -->
+  <div class="col-12 mt-4">
+    <div class="card">
+      <h5 class="mb-3">📋 Liste des Bordereaux</h5>
+      
+      <p-skeleton *ngIf="loadingGlobal" width="100%" height="2rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton *ngIf="loadingGlobal" width="100%" height="2rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton *ngIf="loadingGlobal" width="100%" height="2rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton *ngIf="loadingGlobal" width="100%" height="2rem" styleClass="mb-2"></p-skeleton>
+      <p-skeleton *ngIf="loadingGlobal" width="100%" height="2rem"></p-skeleton>
+
+      <p-table *ngIf="!loadingGlobal" 
+               [value]="bordereaux" 
+               [paginator]="true" 
+               [rows]="10"
+               [rowHover]="true"
+               [responsive]="true"
+               styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Réf Bordereau</th>
+            <th>Date</th>
+            <th>Nb Remboursements</th>
+            <th>Montant Dépensé</th>
+            <th>Montant Remboursé</th>
+            <th>Taux</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-bordereau>
+          <tr [class.bg-blue-50]="selectedBordereau === bordereau.refBordereau">
+            <td><strong>{{ bordereau.refBordereau }}</strong></td>
+            <td>{{ bordereau.dateBordereau | date:'dd/MM/yyyy' }}</td>
+            <td>{{ bordereau.nombreRemboursements }}</td>
+            <td>{{ formatCurrency(bordereau.montantDepense) }}</td>
+            <td>{{ formatCurrency(bordereau.montantRembourse) }}</td>
+            <td>
+              <span class="text-green-500 font-medium">
+                {{ formatPercentage(bordereau.tauxRemboursement) }}
+              </span>
+            </td>
+            <td>
+              <button pButton 
+                      type="button" 
+                      [label]="selectedBordereau === bordereau.refBordereau ? 'Masquer' : 'Détails'"
+                      [icon]="selectedBordereau === bordereau.refBordereau ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                      class="p-button-sm p-button-rounded"
+                      [class.p-button-outlined]="selectedBordereau !== bordereau.refBordereau"
+                      (click)="selectBordereau(bordereau.refBordereau)">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">
+              <span class="text-500">Aucun bordereau trouvé</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- ========== SECTION 3: STATISTIQUES DÉTAILLÉES DU BORDEREAU SÉLECTIONNÉ ========== -->
+  <div class="col-12 mt-4" *ngIf="selectedBordereau">
+    <h3 class="mb-4">🔍 Détails du Bordereau: {{ selectedBordereau }}</h3>
+  </div>
+
+  <!-- Statistiques de base -->
+  <div class="col-12 lg:col-3" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card mb-0">
+      <span class="block text-500 font-medium mb-3">Total Remboursements</span>
+      <div class="text-900 font-medium text-xl">{{ bordereauStats.totalRemboursements }}</div>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-3" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card mb-0">
+      <span class="block text-500 font-medium mb-3">Montant Moyen</span>
+      <div class="text-900 font-medium text-xl">
+        {{ formatCurrency(bordereauStats.montantMoyenRemboursement) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-3" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card mb-0">
+      <span class="block text-500 font-medium mb-3">Montant Max</span>
+      <div class="text-900 font-medium text-xl text-green-500">
+        {{ formatCurrency(bordereauStats.montantMaxRemboursement) }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 lg:col-3" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card mb-0">
+      <span class="block text-500 font-medium mb-3">Taux Remboursement</span>
+      <div class="text-900 font-medium text-xl text-blue-500">
+        {{ formatPercentage(bordereauStats.tauxRemboursementMoyen) }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Répartition des bénéficiaires -->
+  <div class="col-12 lg:col-6" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card">
+      <h5>👥 Répartition des Bénéficiaires</h5>
+     <p-chart
+  *ngIf="bordereauStats && getBeneficiairesChartData()"
+  type="doughnut"
+  [data]="getBeneficiairesChartData()"
+  [options]="chartOptions"
+  [style]="{'height': '300px'}">
+</p-chart>
+
+      <div class="mt-3">
+        <div class="flex justify-content-between mb-2">
+          <span>Adhérents:</span>
+          <strong>{{ bordereauStats.nombreAdherents }}</strong>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span>Conjoints:</span>
+          <strong>{{ bordereauStats.nombreConjoints }}</strong>
+        </div>
+        <div class="flex justify-content-between mb-2">
+          <span>Enfants:</span>
+          <strong>{{ bordereauStats.nombreEnfants }}</strong>
+        </div>
+        <div class="flex justify-content-between">
+          <span>Parents:</span>
+          <strong>{{ bordereauStats.nombreParents }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Montants par type de bénéficiaire -->
+  <div class="col-12 lg:col-6" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card">
+      <h5>💰 Montants Remboursés par Type</h5>
+      <p-chart type="bar" 
+               [data]="getMontantsParTypeChartData()" 
+              [options]="chartOptions"
+
+               [style]="{'height': '300px'}">
+      </p-chart>
+    </div>
+  </div>
+
+  <!-- Répartition par statut -->
+  <div class="col-12 lg:col-6" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card">
+      <h5>📊 Répartition par Statut</h5>
+      <p-chart type="pie" 
+               [data]="getStatutChartData()" 
+               [options]="chartOptions"
+               [style]="{'height': '300px'}">
+      </p-chart>
+    </div>
+  </div>
+
+  <!-- Statistiques démographiques -->
+  <div class="col-12 lg:col-6" *ngIf="selectedBordereau && !loadingDetails && bordereauStats">
+    <div class="card">
+      <h5>👨‍👩‍👧‍👦 Statistiques Démographiques</h5>
+      
+      <div class="mb-4">
+        <span class="block text-500 font-medium mb-2">Âge Moyen:</span>
+        <div class="text-900 font-medium text-2xl">{{ bordereauStats.moyenneAge }} ans</div>
+      </div>
+
+      <h6>Répartition par Tranche d'Âge</h6>
+      <p-chart type="bar" 
+               [data]="getTrancheAgeChartData()" 
+              [options]="chartOptions"
+
+               [style]="{'height': '200px'}">
+      </p-chart>
+
+      <h6 class="mt-4">Répartition par Sexe</h6>
+      <div *ngIf="bordereauStats.repartitionParSexe">
+        <div *ngFor="let item of bordereauStats.repartitionParSexe | keyvalue">
+          <div class="flex justify-content-between mb-2">
+            <span>{{ item.key }}:</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!bordereauStats.repartitionParSexe || (bordereauStats.repartitionParSexe | keyvalue).length === 0">
+        <span class="text-500">Aucune donnée disponible</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 5 des adhérents -->
+  <div class="col-12" *ngIf="selectedBordereau && !loadingDetails && bordereauStats && bordereauStats.topAdherents && bordereauStats.topAdherents.length > 0">
+    <div class="card">
+      <h5>🏆 Top 5 des Adhérents (par montant remboursé)</h5>
+      <p-table [value]="bordereauStats.topAdherents" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Position</th>
+            <th>Nom Prénom</th>
+            <th>Nombre de Remboursements</th>
+            <th>Montant Total</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-adherent let-i="rowIndex">
+          <tr>
+            <td>
+              <span class="font-bold" 
+                    [class.text-yellow-500]="i === 0"
+                    [class.text-gray-500]="i === 1"
+                    [class.text-orange-500]="i === 2">
+                #{{ i + 1 }}
+              </span>
+            </td>
+            <td><strong>{{ adherent.nomPrenPrest }}</strong></td>
+            <td>{{ adherent.nombreRemboursements }}</td>
+            <td class="text-green-600 font-bold">{{ formatCurrency(adherent.montantTotal) }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Loading des détails -->
+  <div class="col-12" *ngIf="selectedBordereau && loadingDetails">
+    <div class="card">
+      <div class="flex flex-column gap-3">
+        <p-skeleton width="100%" height="2rem"></p-skeleton>
+        <p-skeleton width="100%" height="2rem"></p-skeleton>
+        <p-skeleton width="100%" height="15rem"></p-skeleton>
+        <p-skeleton width="100%" height="2rem"></p-skeleton>
+        <p-skeleton width="100%" height="2rem"></p-skeleton>
+        <p-skeleton width="100%" height="15rem"></p-skeleton>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message si aucun bordereau sélectionné -->
+  <div class="col-12 mt-4" *ngIf="!selectedBordereau && !loadingGlobal">
+    <div class="card bg-blue-50">
+      <div class="flex align-items-center gap-3">
+        <i class="pi pi-info-circle text-blue-500" style="font-size: 2rem"></i>
+        <div>
+          <h5 class="m-0 mb-2">Sélectionnez un bordereau</h5>
+          <p class="m-0 text-600">Cliquez sur "Détails" dans le tableau ci-dessus pour voir les statistiques détaillées d'un bordereau spécifique.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

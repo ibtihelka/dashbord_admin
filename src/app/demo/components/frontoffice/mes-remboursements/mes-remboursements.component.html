@@ -1,5 +1,14 @@
 <div class="page-container">
   <div class="page-content">
+<div class="header-content">
+<button class="btn-back-circle" (click)="goToAccueil()" title="Retour à l'accueil">
+  <i class="pi pi-home"></i>
+</button>
+
+
+</div>
+
+
 
     <div class="remboursements-container">
       <div class="header">
@@ -53,7 +62,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let remb of remboursements; trackBy: trackByRefBs" class="table-row">
-                <td>{{ remb.refBorderau || '-' }}</td>
+                <td>{{ remb.refBordereau || '-' }}</td>
                 <td>{{ remb.refBsPhys }}</td>
                 <td>{{ formatDate(remb.datBs) }}</td>
                 <td>{{ remb.nomPrenPrest || '-' }}</td>
@@ -65,17 +74,24 @@
                   </span>
                 </td>
                 <td class="observation">{{ remb.observation || '-' }}</td>
-                <td class="actions">
-                  <button class="action-icon-button" (click)="onConsulter(remb)" title="Consulter les détails">
-                    👁️
-                  </button>
-                  <button class="action-icon-button" (click)="onReclamation(remb)" title="Faire une réclamation">
-                    📝
-                  </button>
-                  <button class="action-icon-button" title="Vos prestataires de services">
-                    👥
-                  </button>
-                </td>
+               <td class="actions">
+  <!-- Détails -->
+  <button class="action-icon-button details" (click)="onConsulter(remb)" title="Consulter les détails">
+    <i class="pi pi-eye"></i>
+  </button>
+
+  <!-- Réclamation -->
+  <button class="action-icon-button reclamation" (click)="onReclamation(remb)" title="Faire une réclamation">
+<i class="pi pi-pencil"></i>
+  </button>
+
+  <!-- Prestataires -->
+  <button class="action-icon-button medecins" title="Vos prestataires de services">
+    <i class="pi pi-users"></i>
+  </button>
+</td>
+
+
               </tr>
             </tbody>
           </table>

@@ -94,6 +94,14 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
     this.closeDropdown();
   }
 
+
+  navigateTotabpres() {
+    this.router.navigate(['/clients/profile']);
+    this.closeDropdown();
+  }
+
+  
+
   isRouteActive(route: string): boolean {
     const routeMap: { [key: string]: string } = {
       'accueil': '/clients/accueil',
@@ -112,7 +120,7 @@ export class ClientNavbarComponent implements OnInit, OnDestroy {
     console.log('Déconnexion...');
     this.closeDropdown();
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/accueil']);
   }
 
   getUserDisplayName(): string {

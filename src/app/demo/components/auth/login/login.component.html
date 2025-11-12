@@ -66,7 +66,7 @@
                                     <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
                                     <label for="rememberme1" class="cursor-pointer" style="font-size: 0.95rem; color: #6b7280;">Se souvenir de moi</label>
                                 </div>
-                                <a class="font-semibold no-underline cursor-pointer" style="color: #667eea; font-size: 0.95rem; transition: color 0.2s;" onmouseover="this.style.color='#764ba2'" onmouseout="this.style.color='#667eea'">Mot de passe oublié?</a>
+                                <a class="font-semibold no-underline cursor-pointer" style="color: #667eea; font-size: 0.95rem; transition: color 0.2s;">Mot de passe oublié?</a>
                             </div>
                             
                             <button 
@@ -79,6 +79,13 @@
                                 [disabled]="loading"
                                 [loading]="loading">
                             </button>
+
+                            <!-- Lien retour -->
+                            <div class="text-center mt-4">
+                                <a (click)="goBack()" class="text-600 no-underline cursor-pointer" style="font-size: 0.95rem;">
+                                    <i class="pi pi-arrow-left mr-2"></i>Retour à la sélection
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -88,8 +95,9 @@
         
     </div>
 </div>
-
 <style>
+
+
 /* Animation flottante pour le logo */
 @keyframes float {
     0%, 100% {
@@ -102,7 +110,7 @@
 
 /* Amélioration des champs de saisie avec focus */
 input[type="text"]:focus,
-.p-password input:focus {
+::ng-deep .p-password input:focus {
     border-color: #667eea !important;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15) !important;
     outline: none;
@@ -154,4 +162,5 @@ button:active:not(:disabled) {
 label {
     user-select: none;
 }
+
 </style>

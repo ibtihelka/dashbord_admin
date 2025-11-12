@@ -62,18 +62,39 @@ import { MesRapportsComponent } from './demo/components/prestataire/mes-rapports
 import { PrestataireProfilComponent } from './demo/components/prestataire/prestataire-profil/prestataire-profil.component';
 import { DividerModule } from 'primeng/divider';
 import { PasswordModule } from 'primeng/password';
+import { BadgeModule } from 'primeng/badge';
+import { SpaceSelectionComponent } from './space-selection/space-selection.component';
+import { LoginAdminComponent } from './login-admin/login-admin.component';
+import { LoginPrestataireComponent } from './login-prestataire/login-prestataire.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SocieteBordereauxComponent } from './demo/components/backoffice_admin/societe-bordereaux/societe-bordereaux.component';
+import { AccordionModule } from 'primeng/accordion';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SocieteLayoutComponent } from './demo/components/backoffice_admin/societe-layout/societe-layout.component';
+import { SocieteTopbarComponent } from './demo/components/backoffice_admin/societe-topbar/societe-topbar.component';
+import { SocieteSidebarComponent } from './demo/components/backoffice_admin/societe-sidebar/societe-sidebar.component';
+import { SocieteMenuComponent } from './demo/components/backoffice_admin/societe-menu/societe-menu.component';
+import { SocieteDashboardComponent } from './demo/components/backoffice_admin/societe-dashboard/societe-dashboard.component';
+import { SocieteProfilComponent } from './demo/components/backoffice_admin/societe-profil/societe-profil.component';
+import { SkeletonModule } from 'primeng/skeleton';
+import { SocieteMenuitemComponent } from './demo/components/backoffice_admin/societe-menuitem.component';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent, MesSuggestionsComponent, MesRibsComponent, MesTelephonesComponent, ClientFooterComponent, ReclamationComponent, MonTelephoneComponent, PrestataireListComponent, ComplementInformationComponent, PrestataireLayoutComponent, CreerRapportComponent, MesRapportsComponent, PrestataireProfilComponent
+       SocieteMenuitemComponent, AppComponent, NotfoundComponent, MydashboardComponent, MesRemboursementsComponent, ClientNavbarComponent, ClientLayoutComponent, DebugRemboursementsComponent, AccueilComponent, ClientProfileComponent, AdminProfileComponent, RemboursementStatsComponent, UserStatsComponent, MesSuggestionsComponent, MesRibsComponent, MesTelephonesComponent, ClientFooterComponent, ReclamationComponent, MonTelephoneComponent, PrestataireListComponent, ComplementInformationComponent, PrestataireLayoutComponent, CreerRapportComponent, MesRapportsComponent, PrestataireProfilComponent, SpaceSelectionComponent, LoginAdminComponent, LoginPrestataireComponent, SocieteBordereauxComponent, SocieteLayoutComponent, SocieteTopbarComponent, SocieteSidebarComponent, SocieteMenuComponent, SocieteDashboardComponent, SocieteProfilComponent
     ],
     imports: [  
+         
  DividerModule,
     PasswordModule,
+    
+BrowserAnimationsModule,
 
-       
-
-
+       CheckboxModule,
+ BadgeModule,
+  AccordionModule, // ← nécessaire pour p-accordion et p-accordionTab
+    ButtonModule,    
+ SkeletonModule,
         FileUploadModule,
          MenuModule ,
           MessageModule,      // <-- pour <p-message>

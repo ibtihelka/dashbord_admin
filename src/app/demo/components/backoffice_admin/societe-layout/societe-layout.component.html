@@ -1,0 +1,15 @@
+<!-- src/app/demo/components/backoffice_admin/societe-layout/societe-layout.component.html -->
+<div class="layout-wrapper" [ngClass]="containerClass">
+    <app-societe-topbar></app-societe-topbar>
+    <div class="layout-sidebar">
+        <app-societe-sidebar></app-societe-sidebar>
+    </div>
+    <div class="layout-main-container">
+        <div class="layout-main">
+            <router-outlet></router-outlet>
+        </div>
+      
+    </div>
+ 
+    <div class="layout-mask"></div>
+</div>

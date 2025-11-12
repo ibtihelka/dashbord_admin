@@ -45,17 +45,19 @@ export class AccueilComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.userSubscription = this.authService.currentUser$.subscribe(
-      user => {
-        this.currentUser = user;
-        if (user) {
-          this.checkCompany();
-          this.loadBulletins();
-          this.loadNumContrat();
-        }
+  this.userSubscription = this.authService.currentUser$.subscribe(
+    user => {
+      this.currentUser = user;
+      if (user) {
+        this.checkCompany();
+        this.loadBulletins();
+        this.loadNumContrat();
       }
-    );
-  }
+    }
+  );
+  
+
+}
 
   ngOnDestroy() {
     if (this.userSubscription) {
@@ -98,173 +100,193 @@ export class AccueilComponent implements OnInit, OnDestroy {
   }
 
   populateBulletinOptions(): void {
-    console.log('🚀 populateBulletinOptions appelée');
-    console.log('📊 Nombre de remboursements:', this.remboursements.length);
-    
-    this.bulletinOptions = this.remboursements.map(remb => ({
-      label: `${remb.refBsPhys} `,
-      value: remb.refBsPhys
-    }));
+  console.log('🚀 populateBulletinOptions appelée');
+  console.log('📊 Nombre de remboursements:', this.remboursements.length);
+  
+  this.bulletinOptions = this.remboursements.map(remb => ({
+    label: `${remb.refBsPhys}`,
+    value: remb.refBsPhys
+  }));
 
-    console.log('📋 Options de bulletin créées:', this.bulletinOptions);
+  console.log('📋 Options de bulletin créées:', this.bulletinOptions);
 
-    if (this.bulletinOptions.length > 0) {
-      this.selectedBulletin = this.bulletinOptions[0].value;
-      console.log('✅ Bulletin par défaut sélectionné:', this.selectedBulletin);
-      
-      // ✅ Sélectionner automatiquement le type au chargement initial
-      setTimeout(() => {
-        console.log('⏰ Appel de updateSelectedTypeFromBulletin après timeout');
-        this.updateSelectedTypeFromBulletin(this.selectedBulletin);
-      }, 100);
-    } else {
-      console.log('⚠️ Aucune option de bulletin disponible');
-    }
+  // ✅ MODIFICATION : Ne pas sélectionner automatiquement le premier bulletin
+  // Le dropdown reste vide par défaut
+  if (this.bulletinOptions.length === 0) {
+    console.log('⚠️ Aucune option de bulletin disponible');
+  } else {
+    console.log('✅ Bulletins chargés - Dropdown vide par défaut');
+  }
+}
+
+ typeBeneficiaireSelected: string = '';
+
+updateSelectedTypeFromBulletin(refBsPhys: string): void {
+  const remboursement = this.remboursements.find(r => r.refBsPhys === refBsPhys);
+  
+  if (!remboursement) {
+    console.log('❌ Remboursement non trouvé pour:', refBsPhys);
+    this.selectedType = null;
+    this.typeBeneficiaireSelected = '';
+    return;
   }
 
-  /**
-   * ✅ NOUVELLE MÉTHODE : Déterminer et sélectionner le type de prestataire
-   * en fonction du remboursement sélectionné
-   */
-  updateSelectedTypeFromBulletin(refBsPhys: string): void {
-    // Trouver le remboursement correspondant
-    const remboursement = this.remboursements.find(r => r.refBsPhys === refBsPhys);
+  console.log('═══════════════════════════════════════════');
+  console.log('🔍 ANALYSE DU REMBOURSEMENT', refBsPhys);
+  console.log('═══════════════════════════════════════════');
+  
+  const nomPrenPrest = remboursement.nomPrenPrest?.toUpperCase().trim() || '';
+  const persoIdBS = remboursement.persoId;
+
+  console.log('👤 Nom bénéficiaire BS:', nomPrenPrest);
+  console.log('🆔 PersoId BS:', persoIdBS);
+
+  // ⚠️ PRIORITÉ 1 : Recherche par NOM dans les familles
+  if (this.currentUser?.familles && this.currentUser.familles.length > 0) {
+    console.log('\n🔎 PRIORITÉ 1: Recherche par NOM dans familles');
     
-    if (!remboursement) {
-      console.log('❌ Remboursement non trouvé pour:', refBsPhys);
-      this.selectedType = null;
-      return;
-    }
-
-    console.log('═══════════════════════════════════════════');
-    console.log('🔍 ANALYSE DU REMBOURSEMENT', refBsPhys);
-    console.log('═══════════════════════════════════════════');
-    console.log('📋 Objet remboursement complet:', remboursement);
-    console.log('👤 nomPrenPrest:', remboursement.nomPrenPrest);
-    console.log('🆔 persoId du BS:', remboursement.persoId);
-    
-    // Récupérer le nom du prestataire du remboursement
-    const nomPrenPrest = remboursement.nomPrenPrest?.toUpperCase().trim() || '';
-    const persoIdBS = remboursement.persoId;
-
-    console.log('👤 Nom prestataire (normalisé):', nomPrenPrest);
-    console.log('👤 Adhérent actuel:', this.currentUser?.persoName);
-    console.log('🆔 PersoId adhérent:', this.currentUser?.persoId);
-
-    // ⚠️ MÉTHODE 1 : Correspondance par persoId (plus fiable)
-    if (persoIdBS) {
-      console.log('\n🔎 Méthode 1: Recherche par persoId');
+    for (const membreFamille of this.currentUser.familles) {
+      const prenomFamille = membreFamille.prenomPrestataire?.toUpperCase().trim() || '';
+      const nomFamille = membreFamille.nomPrestataire?.toUpperCase().trim() || '';
+      const nomComplet = `${prenomFamille} ${nomFamille}`.trim();
+      const typePrest = membreFamille.typPrestataire?.toUpperCase();
       
-      // Vérifier si c'est l'adhérent
-      if (persoIdBS === this.currentUser?.persoId) {
-        console.log('✅ PersoId correspond à l\'adhérent');
-        this.selectedType = 'ADHERENT';
-        return;
-      }
-
-      // Chercher dans les familles par persoId
-      if (this.currentUser?.familles && this.currentUser.familles.length > 0) {
-        for (const membreFamille of this.currentUser.familles) {
-          console.log(`  Vérif: ${membreFamille.persoId} === ${persoIdBS}`);
-          
-          if (membreFamille.persoId === persoIdBS) {
-            const typePrest = membreFamille.typPrestataire?.toUpperCase();
-            console.log(`✅ PersoId trouvé dans famille: ${membreFamille.prenomPrestataire} (${typePrest})`);
-            
-            if (typePrest === 'CONJOINT') {
-              this.selectedType = 'CONJOINT';
-              if (this.prestataireList) {
-                this.prestataireList.showConjoint();
-              }
-              return;
-            } else if (typePrest === 'ENFANT') {
-              this.selectedType = 'ENFANT';
-              if (this.prestataireList) {
-                this.prestataireList.showEnfants();
-              }
-              return;
-            }
-          }
+      console.log(`  📝 Vérif: "${nomPrenPrest}" vs "${prenomFamille}" ou "${nomComplet}" → ${typePrest}`);
+      
+      const correspondance = 
+        prenomFamille && (
+          nomPrenPrest === prenomFamille ||
+          nomPrenPrest === nomComplet ||
+          nomPrenPrest.includes(prenomFamille) ||
+          prenomFamille.includes(nomPrenPrest)
+        );
+      
+      if (correspondance) {
+        console.log(`✅ CORRESPONDANCE TROUVÉE: "${prenomFamille}" → ${typePrest}`);
+        
+        if (typePrest === 'CONJOINT') {
+          this.selectedType = 'CONJOINT';
+          this.typeBeneficiaireSelected = 'Conjoint';
+          // ❌ NE PAS APPELER showConjoint() - cela ouvre la modal
+          // if (this.prestataireList) {
+          //   this.prestataireList.showConjoint();
+          // }
+          return;
+        } else if (typePrest === 'ENFANT') {
+          this.selectedType = 'ENFANT';
+          this.typeBeneficiaireSelected = 'Enfant';
+          // ❌ NE PAS APPELER showEnfants() - cela ouvre la modal
+          // if (this.prestataireList) {
+          //   this.prestataireList.showEnfants();
+          // }
+          return;
         }
       }
     }
+  }
 
-    //  MÉTHODE 2 : Correspondance par nom (fallback)
-    console.log('\n Méthode 2: Recherche par nom');
+  // PRIORITÉ 2 : Vérifier si c'est l'adhérent par nom
+  console.log('\n🔎 PRIORITÉ 2: Vérification adhérent par nom');
+  const userDisplayName = this.getUserDisplayName().toUpperCase().trim();
+  const persoName = this.currentUser?.persoName?.toUpperCase().trim() || '';
+  
+  if (nomPrenPrest === userDisplayName || 
+      nomPrenPrest === persoName ||
+      (persoName && nomPrenPrest.includes(persoName))) {
+    console.log('✅ C\'est l\'adhérent (par nom)');
+    this.selectedType = 'ADHERENT';
+    this.typeBeneficiaireSelected = 'Adhérent';
+    return;
+  }
+
+  // PRIORITÉ 3 : Correspondance par persoId
+  if (persoIdBS) {
+    console.log('\n🔎 PRIORITÉ 3: Vérification par persoId');
     
+    if (persoIdBS === this.currentUser?.persoId) {
+      console.log('✅ PersoId correspond à l\'adhérent');
+      this.selectedType = 'ADHERENT';
+      this.typeBeneficiaireSelected = 'Adhérent';
+      return;
+    }
+
     if (this.currentUser?.familles && this.currentUser.familles.length > 0) {
-      console.log(' Liste des familles:');
-      
       for (const membreFamille of this.currentUser.familles) {
-        const prenomFamille = membreFamille.prenomPrestataire?.toUpperCase().trim() || '';
-        const typePrest = membreFamille.typPrestataire?.toUpperCase();
-        
-        console.log(`  - ${prenomFamille} (${typePrest}) [persoId: ${membreFamille.persoId}]`);
-        
-        // Vérifier plusieurs types de correspondance
-        const correspondance = 
-          prenomFamille && (
-            nomPrenPrest.includes(prenomFamille) ||
-            prenomFamille.includes(nomPrenPrest) ||
-            nomPrenPrest === prenomFamille
-          );
-        
-        if (correspondance) {
-          console.log(` Correspondance nom trouvée: "${prenomFamille}" ↔ "${nomPrenPrest}" → ${typePrest}`);
+        if (membreFamille.persoId === persoIdBS) {
+          const typePrest = membreFamille.typPrestataire?.toUpperCase();
+          console.log(`✅ PersoId trouvé: ${membreFamille.prenomPrestataire} (${typePrest})`);
           
           if (typePrest === 'CONJOINT') {
             this.selectedType = 'CONJOINT';
-            if (this.prestataireList) {
-              this.prestataireList.showConjoint();
-            }
+            this.typeBeneficiaireSelected = 'Conjoint';
             return;
           } else if (typePrest === 'ENFANT') {
             this.selectedType = 'ENFANT';
-            if (this.prestataireList) {
-              this.prestataireList.showEnfants();
-            }
+            this.typeBeneficiaireSelected = 'Enfant';
             return;
           }
         }
       }
     }
-
-    //  MÉTHODE 3 : Vérifier si c'est l'adhérent par nom
-    console.log('\n Méthode 3: Vérification adhérent par nom');
-    const userDisplayName = this.getUserDisplayName().toUpperCase().trim();
-    const persoName = this.currentUser?.persoName?.toUpperCase().trim() || '';
-    
-    console.log(`  Comparaison: "${nomPrenPrest}" vs "${userDisplayName}" ou "${persoName}"`);
-    
-    if (nomPrenPrest === userDisplayName || 
-        nomPrenPrest === persoName ||
-        (persoName && nomPrenPrest.includes(persoName))) {
-      console.log(' C\'est l\'adhérent (par nom)');
-      this.selectedType = 'ADHERENT';
-      return;
-    }
-
-    // Si aucune correspondance trouvée
-    console.log('\nAUCUNE CORRESPONDANCE TROUVÉE');
-    console.log('═══════════════════════════════════════════\n');
-    this.selectedType = null;
   }
 
-  /**
-   *  Gestion du changement de bulletin
-   */
-  onBulletinChange(event: any): void {
+  // Si aucune correspondance
+  console.log('\n⚠️ AUCUNE CORRESPONDANCE TROUVÉE');
+  this.selectedType = 'ADHERENT';
+  this.typeBeneficiaireSelected = 'Adhérent';
+  console.log('═══════════════════════════════════════════\n');
+}
+
+/**
+ * ✅ MÉTHODE MISE À JOUR : Gestion du changement de bulletin
+ */
+onBulletinChange(event: any): void {
   this.updateSelectedTypeFromBulletin(event.value);
 
   const remboursement = this.remboursements.find(r => r.refBsPhys === event.value);
   if (remboursement) {
     this.beneficiaireSelected = remboursement.nomPrenPrest;
     this.dateSoinSelected = this.formatDate(remboursement.datBs);
+    // Le type est déjà défini dans updateSelectedTypeFromBulletin
   } else {
     this.beneficiaireSelected = '';
     this.dateSoinSelected = '';
+    this.typeBeneficiaireSelected = '';
   }
 }
+
+/**
+ * ✅ NOUVELLE MÉTHODE : Filtrage manuel du bulletin
+ */
+onFilterBulletin(event: any): void {
+  const query = event.filter?.toUpperCase().trim();
+  
+  if (query && !this.bulletinOptions.some(opt => opt.value === query)) {
+    console.log('⌨️ Recherche manuelle:', query);
+    this.searchBulletinManually(query);
+  }
+}
+
+/**
+ * ✅ NOUVELLE MÉTHODE : Recherche manuelle
+ */
+searchBulletinManually(refBsPhys: string): void {
+  if (!this.currentUser?.persoId) return;
+  
+  const found = this.remboursements.find(r => r.refBsPhys === refBsPhys);
+  
+  if (found) {
+    this.selectedBulletin = refBsPhys;
+    this.updateSelectedTypeFromBulletin(refBsPhys);
+    this.beneficiaireSelected = found.nomPrenPrest;
+    this.dateSoinSelected = this.formatDate(found.datBs);
+  } else {
+    console.log('⚠️ Bulletin non trouvé');
+    this.typeBeneficiaireSelected = '';
+  }
+}
+
+ 
 
 
   formatDate(date: Date): string {
@@ -384,19 +406,19 @@ export class AccueilComponent implements OnInit, OnDestroy {
 
   numContrat: string = '';
 
-  loadNumContrat(): void {
-    if (!this.currentUser) return;
-    const codeClt = this.currentUser.persoId;
-    this.authService.getNumContrat(codeClt, this.currentUser.persoId)
-      .subscribe({
-        next: (res) => {
-          this.numContrat = res;
-        },
-        error: (err) => {
-          console.error('Erreur lors de la récupération du numéro de contrat', err);
-        }
-      });
-  }
+ loadNumContrat(): void {
+  if (!this.currentUser) return;
+  const codeClt = this.currentUser.persoId; // ✅ Utilise persoId comme codeClt
+  this.authService.getNumContrat(codeClt, this.currentUser.persoId)
+    .subscribe({
+      next: (res) => {
+        this.numContrat = res;
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération du numéro de contrat', err);
+      }
+    });
+}
 
   getUserAddress(): string {
     if (!this.currentUser) return '';
@@ -432,5 +454,41 @@ updateBeneficiaireEtDate(refBsPhys: string): void {
   }
 }
 
+resetBulletin(): void {
+  console.log('🔄 Réinitialisation du bulletin');
+  
+  // Réinitialiser la sélection du bulletin
+  this.selectedBulletin = '';
+  
+  // Réinitialiser les informations du bénéficiaire
+  this.beneficiaireSelected = '';
+  this.dateSoinSelected = '';
+  
+  // Réinitialiser le type sélectionné
+  this.selectedType = null;
+  this.typeBeneficiaireSelected = '';
+  
+  console.log('✅ Bulletin réinitialisé - tous les champs sont vides');
+}
+
+downloadBSVierge(): void {
+  console.log('📥 Téléchargement du BS vierge...');
+  
+  // Chemin vers le fichier PDF dans le dossier assets
+  const pdfPath = '/assets/layout/pdf/bs_vierge.pdf';
+  
+  // Créer un lien temporaire pour le téléchargement
+  const link = document.createElement('a');
+  link.href = pdfPath;
+  link.download = 'Bulletin_Soins_Vierge.pdf';
+  link.target = '_blank';
+  
+  // Déclencher le téléchargement
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  console.log('✅ Téléchargement du BS vierge déclenché');
+}
 
 }

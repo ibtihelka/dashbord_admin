@@ -1,138 +1,148 @@
-<div class="page-container" >
+<div class="page-container">
   <div class="page-content">
-    <div class="ribs-container">
-      <p-toast></p-toast>
+    <!-- Bouton Home -->
+    <div class="header-content">
+      <button class="btn-back-circle" (click)="goToAccueil()" title="Retour à l'accueil">
+        <i class="pi pi-home"></i>
+      </button>
+    </div>
 
-      <!-- Header -->
-      <div class="ribs-header">
-        <div class="header-content">
-          <h1>
-            <i class="pi pi-credit-card"></i>
-            Mon RIB
-          </h1>
-          <p>Consultez et modifiez votre RIB bancaire</p>
-        </div>
-      </div>
+    <!-- Conteneur blanc principal -->
+    <div class="white-container">
+      <div class="ribs-container">
+        <p-toast></p-toast>
 
-      <!-- Loading -->
-      <div class="loading-container" *ngIf="loading">
-        <p-progressSpinner></p-progressSpinner>
-        <p>Chargement de votre RIB...</p>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="!loading && !currentRib">
-        <i class="pi pi-credit-card"></i>
-        <h2>Aucun RIB trouvé</h2>
-        <p>Vous n'avez pas encore enregistré de RIB</p>
-      </div>
-
-      <!-- RIB Display -->
-      <div class="ribs-grid" *ngIf="!loading && currentRib">
-        <div class="rib-card">
-          <div class="card-icon">
-            <i class="pi pi-credit-card"></i>
+        <!-- Header -->
+        <div class="ribs-header">
+          <div class="header-content-inner">
+            <h1>
+              <i class="pi pi-credit-card"></i>
+              Mon RIB
+            </h1>
+            <p>Consultez et modifiez votre RIB bancaire</p>
           </div>
-          
-          <div class="card-content">
-            <div class="card-header">
-              <h3>Mon RIB actuel</h3>
-              <button 
-                pButton 
-                label="Modifier" 
-                icon="pi pi-pencil" 
-                class="p-button-outlined p-button-success"
-                (click)="openModifyRibDialog()">
-              </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-container" *ngIf="loading">
+          <p-progressSpinner></p-progressSpinner>
+          <p>Chargement de votre RIB...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!loading && !currentRib">
+          <i class="pi pi-credit-card"></i>
+          <h2>Aucun RIB trouvé</h2>
+          <p>Vous n'avez pas encore enregistré de RIB</p>
+        </div>
+
+        <!-- RIB Display -->
+        <div class="ribs-grid" *ngIf="!loading && currentRib">
+          <div class="rib-card">
+            <div class="card-icon">
+              <i class="pi pi-credit-card"></i>
             </div>
             
-            <div class="card-body">
-              <div class="rib-display">
-                <label>RIB:</label>
-                <span class="rib-number">{{ formatRibDisplay(currentRib.rib) }}</span>
+            <div class="card-content">
+              <div class="card-header">
+                <h3>Mon RIB actuel</h3>
+                <button 
+                  pButton 
+                  label="Modifier" 
+                  icon="pi pi-pencil" 
+                  class="p-button-outlined p-button-success"
+                  (click)="openModifyRibDialog()">
+                </button>
               </div>
-            </div>
-            
-            <div class="card-footer">
-              <div class="footer-info">
-                <span class="info-item" *ngIf="currentRib.dateCreation">
+              
+              <div class="card-body">
+                <div class="rib-display">
+                  <label>RIB:</label>
+                  <span class="rib-number">{{ formatRibDisplay(currentRib.rib) }}</span>
+                </div>
+              </div>
+              
+              <div class="card-footer">
+                <div class="footer-info">
+                  <span class="info-item" *ngIf="currentRib.dateCreation">
                  
-                </span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Dialog pour modifier RIB -->
+        <p-dialog 
+          header="Modifier votre RIB" 
+          [(visible)]="displayModifyRibDialog"
+          [modal]="true"
+          [style]="{width: '550px'}"
+          [draggable]="false"
+          [resizable]="false">
+          
+          <div class="dialog-content">
+            <div class="info-message">
+              <i class="pi pi-info-circle"></i>
+              <p>Pour modifier votre RIB, veuillez saisir le nouveau numéro et le confirmer</p>
+            </div>
+
+            <div class="form-group">
+              <label for="ancienRib">Ancien RIB <span class="required">*</span></label>
+              <input 
+                id="ancienRib"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyRibForm.ancienRib"
+                [disabled]="true"
+                class="w-full rib-input" />
+            </div>
+
+            <div class="form-group">
+              <label for="nouveauRib">Nouveau RIB <span class="required">*</span></label>
+              <input 
+                id="nouveauRib"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyRibForm.nouveauRib"
+                placeholder="Ex: 12345678901234567890"
+                maxlength="23"
+                class="w-full rib-input" />
+              <small class="help-text">Format: 20 chiffres (espaces autorisés)</small>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmerRib">Confirmer votre nouveau RIB <span class="required">*</span></label>
+              <input 
+                id="confirmerRib"
+                type="text" 
+                pInputText 
+                [(ngModel)]="modifyRibForm.confirmerRib"
+                placeholder="Saisissez à nouveau le nouveau RIB"
+                maxlength="23"
+                class="w-full rib-input" />
+            </div>
+          </div>
+
+          <ng-template pTemplate="footer">
+            <button 
+              pButton 
+              label="Annuler" 
+              icon="pi pi-times" 
+              class="p-button-text"
+              (click)="closeModifyRibDialog()">
+            </button>
+            <button 
+              pButton 
+              label="Envoyer" 
+              icon="pi pi-check"
+              class="p-button-success"
+              (click)="submitModifyRib()">
+            </button>
+          </ng-template>
+        </p-dialog>
       </div>
-
-      <!-- Dialog pour modifier RIB -->
-      <p-dialog 
-        header="Modifier votre RIB" 
-        [(visible)]="displayModifyRibDialog"
-        [modal]="true"
-        [style]="{width: '550px'}"
-        [draggable]="false"
-        [resizable]="false">
-        
-        <div class="dialog-content">
-          <div class="info-message">
-            <i class="pi pi-info-circle"></i>
-            <p>Pour modifier votre RIB, veuillez saisir le nouveau numéro et le confirmer</p>
-          </div>
-
-          <div class="form-group">
-            <label for="ancienRib">Ancien RIB <span class="required">*</span></label>
-            <input 
-              id="ancienRib"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyRibForm.ancienRib"
-              [disabled]="true"
-              class="w-full rib-input" />
-          </div>
-
-          <div class="form-group">
-            <label for="nouveauRib">Nouveau RIB <span class="required">*</span></label>
-            <input 
-              id="nouveauRib"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyRibForm.nouveauRib"
-              placeholder="Ex: 12345678901234567890"
-              maxlength="23"
-              class="w-full rib-input" />
-            <small class="help-text">Format: 20 chiffres (espaces autorisés)</small>
-          </div>
-
-          <div class="form-group">
-            <label for="confirmerRib">Confirmer votre nouveau RIB <span class="required">*</span></label>
-            <input 
-              id="confirmerRib"
-              type="text" 
-              pInputText 
-              [(ngModel)]="modifyRibForm.confirmerRib"
-              placeholder="Saisissez à nouveau le nouveau RIB"
-              maxlength="23"
-              class="w-full rib-input" />
-          </div>
-        </div>
-
-        <ng-template pTemplate="footer">
-          <button 
-            pButton 
-            label="Annuler" 
-            icon="pi pi-times" 
-            class="p-button-text"
-            (click)="closeModifyRibDialog()">
-          </button>
-          <button 
-            pButton 
-            label="Envoyer" 
-            icon="pi pi-check"
-            class="p-button-success"
-            (click)="submitModifyRib()">
-          </button>
-        </ng-template>
-      </p-dialog>
     </div>
   </div>
 </div>

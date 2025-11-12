@@ -1,4 +1,3 @@
-// prestataire-layout.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Prestataire } from 'src/app/demo/api/prestataire.model';
@@ -16,16 +15,17 @@ export class PrestataireLayoutComponent implements OnInit {
   menuItems = [
     
     {
-      label: 'Créer un rapport',
-      icon: 'pi pi-file-edit',
-      routerLink: '/prestataire/creer-rapport'
-    },
-    {
       label: 'Mes rapports',
       icon: 'pi pi-list',
       routerLink: '/prestataire/mes-rapports'
     },
-    {
+   {
+      label: 'Créer un rapport',
+      icon: 'pi pi-file-edit',
+      routerLink: '/prestataire/creer-rapport',
+     
+      badgeClass: 'p-badge-success'
+    }, {
       label: 'Mon profil',
       icon: 'pi pi-user',
       routerLink: '/prestataire/profil'
@@ -47,11 +47,25 @@ export class PrestataireLayoutComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/accueil']);
   }
 
   toggleSidebar(): void {
     this.sidebarVisible = !this.sidebarVisible;
   }
+
+  getRoleIcon(): string {
+    return this.prestataire?.role === 'DENTISTE' ? 'pi-heart' : 'pi-eye';
+  }
+
+  getRoleColor(): string {
+    return this.prestataire?.role === 'DENTISTE' ? 'text-blue-500' : 'text-purple-500';
+  }
+
+  getFullNameWithTitle(): string {
+  if (!this.prestataire) return '';
+  const titre = this.prestataire.sexe?.toLowerCase() === 'femme' ? 'Docteur' : 'Docteur';
+  return `${titre} ${this.prestataire.nom} ${this.prestataire.prenom || ''}`.trim();
 }
 
+}

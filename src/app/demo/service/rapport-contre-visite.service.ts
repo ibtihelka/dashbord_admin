@@ -7,16 +7,11 @@ export interface RapportContreVisite {
   prestataireId: string;
   beneficiaireId: string;
   beneficiaireNom: string;
-  typeBeneficiaire: string;
-  refBsPhys: string;
   typeRapport: string;
+  refBsPhys: string;
   observation: string;
   dateRapport?: Date;
-  
-  // Champs DENTISTE
-  lignesDentaire?: string; // JSON string
-  
-  // Champs OPTICIEN
+  lignesDentaire?: string;
   acuiteVisuelleOD?: string;
   acuiteVisuelleOG?: string;
   prixMonture?: number;
@@ -47,6 +42,12 @@ export interface Remboursement {
   statBs: string;
 }
 
+export interface Adherent {
+  persoId: string;
+  cin: string; // ✅ Utiliser CIN comme matricule
+  persoName: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,20 +65,21 @@ export class RapportContreVisiteService {
     };
   }
 
-  /**
-   * Créer un nouveau rapport contre visite
-   */
-  creerRapport(rapport: RapportContreVisite): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/create`,
-      rapport,
+  // ✅ Récupérer tous les adhérents
+  getAllAdherents(): Observable<Adherent[]> {
+    return this.http.get<Adherent[]>(`${this.apiUrl}/adherents`, this.getHttpOptions());
+  }
+
+  // ✅ Récupérer les remboursements par CIN (matricule)
+  getRemboursementsByMatricule(cin: string): Observable<Remboursement[]> {
+    // D'abord récupérer l'adhérent pour obtenir son persoId
+    return this.http.get<Remboursement[]>(
+      `${this.apiUrl}/remboursements-by-cin/${cin}`,
       this.getHttpOptions()
     );
   }
 
-  /**
-   * Récupérer les bénéficiaires d'un remboursement
-   */
+  // ✅ Récupérer les bénéficiaires d'un bulletin de soins
   getBeneficiaires(refBsPhys: string): Observable<{ beneficiaires: Beneficiaire[] }> {
     return this.http.get<{ beneficiaires: Beneficiaire[] }>(
       `${this.apiUrl}/beneficiaires/${refBsPhys}`,
@@ -85,40 +87,46 @@ export class RapportContreVisiteService {
     );
   }
 
-  /**
-   * Récupérer tous les remboursements disponibles
-   */
-  getAllRemboursements(): Observable<Remboursement[]> {
-    return this.http.get<Remboursement[]>(
-      `${this.apiUrl}/remboursements`,
-      this.getHttpOptions()
-    );
+ getBeneficiaire(refBsPhys: string): Observable<{ success: boolean, beneficiaire: Beneficiaire }> {
+  return this.http.get<{ success: boolean, beneficiaire: Beneficiaire }>(
+    `${this.apiUrl}/beneficiaire/${refBsPhys}`,
+    this.getHttpOptions()
+  );
+}
+
+
+  // ✅ Créer un rapport par matricule (CIN)
+  creerRapportParMatricule(
+    matriculeAdherent: string,
+    refBsPhys: string,
+    prestataireId: string,
+    rapport: RapportContreVisite
+  ): Observable<any> {
+    const body = {
+      matriculeAdherent,
+      refBsPhys,
+      prestataireId,
+      rapport
+    };
+    return this.http.post<any>(`${this.apiUrl}/create`, body, this.getHttpOptions());
   }
 
-  /**
-   * Récupérer les rapports d'un prestataire
-   */
+  // Récupérer les rapports par prestataire
   getRapportsParPrestataire(prestataireId: string): Observable<RapportContreVisite[]> {
     return this.http.get<RapportContreVisite[]>(
-      `${this.apiUrl}/prestataire/${prestataireId}`,
+      `${this.apiUrl}/prestataire/${prestataireId}`, 
       this.getHttpOptions()
     );
   }
 
-  /**
-   * Parser les lignes dentaires (JSON string -> objets)
-   */
   parseLignesDentaire(lignesJson: string): LigneDentaire[] {
-    try {
-      return JSON.parse(lignesJson);
-    } catch (e) {
-      return [];
+    try { 
+      return JSON.parse(lignesJson); 
+    } catch { 
+      return []; 
     }
   }
 
-  /**
-   * Stringifier les lignes dentaires (objets -> JSON string)
-   */
   stringifyLignesDentaire(lignes: LigneDentaire[]): string {
     return JSON.stringify(lignes);
   }
